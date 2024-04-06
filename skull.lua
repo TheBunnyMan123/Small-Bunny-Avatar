@@ -41,8 +41,6 @@ local function base64Decode(data)
         return string.char(c)
     end))
 end
-
-local vis = true
 local swingDelay = 0
 local oldTick = 0
 
@@ -62,10 +60,10 @@ function events.skull_render(delta, block, item, entity, mode)
     if block == nil then
         return
     end
-    models.skull.Skull.TheHead.Head:setVisible(vis)
+    models.skull.Skull.TheHead.Head:setVisible(true)
     models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-    models.skull.Skull["Ear 1"]:setVisible(vis)
-    models.skull.Skull["Ear 2"]:setVisible(vis)
+    models.skull.Skull["Ear 1"]:setVisible(true)
+    models.skull.Skull["Ear 2"]:setVisible(true)
     if block:getProperties() == nil then
         return
     end
@@ -74,9 +72,6 @@ function events.skull_render(delta, block, item, entity, mode)
         models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
         models.skull.Skull:setPos(0, -10.1, 1.8):setScale(1).Table:setVisible(false)
     else
-        if hideSkull then
-            models.skull.Skull.TheHead.Head:setVisible(false)
-        end
         local is_table = block:getProperties().rotation % 4 == 0
 
         models.skull.Skull

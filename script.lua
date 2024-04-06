@@ -11,7 +11,6 @@ anims(animations.model)
 -- vars
 moveFirstPersonCamera = false
 swingDelay = 0
-hideSkull = false
 nameplateHead = '["",{"text":"${badges}"},{"text":"\n"},{"text":":rabbit: "},{"text":"Bunny","color":"#40E0D0"},{"text":" :rabbit:"}'
 nameplateOther = '["",{"text":":rabbit: "},{"text":"Bunny","color":"#40E0D0"},{"text":" :rabbit: "}, {"text":"${badges}"}]'
 nameplate_extra = ""
