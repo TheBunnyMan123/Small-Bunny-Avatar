@@ -4,57 +4,9 @@ vanilla_model.CAPE:setVisible(false)
 vanilla_model.ELYTRA:setVisible(false)
 
 --libs
-local json = require "json-prettify"
-local anims = require("JimmyAnims")
-local fakeNameplate = require("nameplate")
+local anims = require("libs/JimmyAnims")
+local fakeNameplate = require("libs/nameplate")
 anims(animations.model)
-function tableContains(table, value)
-  for i = 1,#testTable do
-    if (testTable[i] == value) then
-      return true
-    end
-  end
-  return false
-end
-local base64='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
--- encoding
-function base64Encode(data)
-    return ((data:gsub('.', function(x) 
-        local r,base64='',x:byte()
-        for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
-        return r;
-    end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
-        if (#x < 6) then return '' end
-        local c=0
-        for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
-        return b:sub(c+1,c+1)
-    end)..({ '', '==', '=' })[#data%3+1])
-end
-
--- decoding
-function base64Decode(data)
-    data = string.gsub(data, '[^'..base64..'=]', '')
-    return (data:gsub('.', function(x)
-        if (x == '=') then return '' end
-        local r,f='',(base64:find(x)-1)
-        for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
-        return r;
-    end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
-        if (#x ~= 8) then return '' end
-        local c=0
-        for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
-            return string.char(c)
-    end))
-end
-
-
-local function splitByChunk(text, chunkSize)
-  local s = {}
-  for i=1, #text, chunkSize do
-      s[#s+1] = text:sub(i,i+chunkSize - 1)
-  end
-  return s
-end
 
 -- vars
 moveFirstPersonCamera = false
