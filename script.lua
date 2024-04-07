@@ -3,6 +3,18 @@ vanilla_model.PLAYER:setVisible(false)
 vanilla_model.CAPE:setVisible(false)
 vanilla_model.ELYTRA:setVisible(false)
 
+--- 4P5 lol
+function getEntities(a, b)
+    local e = {}
+
+    raycast:entity(a, b, function (hit)
+        e[#e+1] = hit
+        return false
+    end)
+
+    return pairs(e)
+end
+
 --libs
 local anims = require("libs/JimmyAnims")
 local fakeNameplate = require("libs/nameplate")
@@ -21,6 +33,7 @@ blockBelowCache = {}
 -- keybinds
 local moveFirstPersonCameraToggle = keybinds:newKeybind("Switch first person camera location", "key.keyboard.backspace", false)
 local ringToggle = keybinds:newKeybind("Toggle health ring", "key.keyboard.right.bracket", false)
+local explosionKeybind = keybinds:newKeybind("Explosion", "key.keyboard.delete")
 
 function pings.ringToggleRemote(x)
   models.model.root.RightArm.Upper.Lower.Ring:setVisible(x)
@@ -66,9 +79,32 @@ function events.render(_,context)
     renderer:setOffsetCameraPivot(0, -0.5, 0)
     renderer:setEyeOffset(0, -0.5, 0)
   end
+
+--   if host:isHost() then
+--   for _, v in getEntities(player:getPos() - vec(5, 5, 5), player:getPos() + vec(5, 5, 5)) do
+--     -- log(v)
+--     if v.getUUID(v) == "1dcce150-0064-4905-879c-43ef64dd97d7" then
+--         return
+--     end
+    
+--     local x, y, z = v:getPos():unpack()
+--     local x2, y2, z2 = player:getPos():unpack()
+--     log((x2 - x) * -1 .. " " .. (y2 - y) * -1 .. " " .. (z2 - z) * -1)
+
+--     host:sendChatCommand("tp " .. v.getUUID(v) .. " " .. string.format("%f %f %f", ((x2 - x) * -1) + x, ((y2 - y) * -1) + y, ((z2 - z) * -1) + z))
+-- end
+-- end
 end
 
+local tick = 0
 function events.tick()
+    if explosionKeybind:isPressed() then
+        local eyePos = player:getPos():add(vec(0, player:getEyeHeight()+renderer:getCameraOffsetPivot().y, 0))
+        local block, pos, side = raycast:block(eyePos, eyePos + player:getLookDir() * 10000)
+        
+        host:sendChatCommand(string.format("summon creeper %f %f %f {ignited:true,Fuse:1,ExplosionRadius:30,Invulnerable:1b}", pos.x, pos.y, pos.z))
+    end
+
   --ring
   local health = player:getHealth()/player:getMaxHealth()
 	models.model.root.RightArm.Upper.Lower.Ring.HealthRingHealthIndicatorReal:setColor(1-health,health,0.05)
