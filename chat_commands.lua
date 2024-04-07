@@ -95,7 +95,7 @@ commands = {
             if args[2] == nil then args[2] = 1 end
 
             for _ = 1, args[2] do
-                table.insert(cmdQueue, "summon " .. args[1] .. " ~ ~ ~ {Tags:[\"BulkSummoned\"]}")
+                table.insert(cmdQueue, "summon " .. args[1] .. " ~ ~ ~ {Tags:[\"BulkSummon\"]}")
             end
 
             return true
