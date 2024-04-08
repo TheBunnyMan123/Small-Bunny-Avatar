@@ -42,10 +42,10 @@ function calcTileOrigin(worldOrigin, tileArray, tileSize)
 end
 
 function clone(cornerOne, cornerTwo, destination)
-    log("clone " ..  
-    cornerOne.x .. " " .. cornerOne.y .. " " .. cornerOne.z .. " " .. 
-    cornerTwo.x .. " " .. cornerTwo.y .. " " .. cornerTwo.z .. " " .. 
-    destination.x .. " " .. destination.y .. " " .. destination.z)
+    -- log("clone " ..  
+    -- cornerOne.x .. " " .. cornerOne.y .. " " .. cornerOne.z .. " " .. 
+    -- cornerTwo.x .. " " .. cornerTwo.y .. " " .. cornerTwo.z .. " " .. 
+    -- destination.x .. " " .. destination.y .. " " .. destination.z)
 
     host:sendChatCommand("clone " ..  
         cornerOne.x .. " " .. cornerOne.y .. " " .. cornerOne.z .. " " .. 

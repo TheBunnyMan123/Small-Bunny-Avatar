@@ -11,14 +11,9 @@ function calcTileOrigin(worldOrigin, tileArray, tileSize)
 end
 
 function clone(cornerOne, cornerTwo, destination)
-    log("clone " ..  
-    cornerOne.x .. " " .. cornerOne.y .. " " .. cornerOne.z .. " " .. 
-    cornerTwo.x .. " " .. cornerTwo.y .. " " .. cornerTwo.z .. " " .. 
-    destination.x .. " " .. destination.y .. " " .. destination.z)
-
-    host:sendChatCommand("clone " ..  
-        cornerOne.x .. " " .. cornerOne.y .. " " .. cornerOne.z .. " " .. 
-        cornerTwo.x .. " " .. cornerTwo.y .. " " .. cornerTwo.z .. " " .. 
+    host:sendChatCommand("clone " ..
+        cornerOne.x .. " " .. cornerOne.y .. " " .. cornerOne.z .. " " ..
+        cornerTwo.x .. " " .. cornerTwo.y .. " " .. cornerTwo.z .. " " ..
         destination.x .. " " .. destination.y .. " " .. destination.z
     )
 end
@@ -42,20 +37,27 @@ function funcs:generate(tileArray, tileSize, origin, worldSize)
 
     local tiles = {}
 
-    for x = 0, tileArray.x-1 do
-        for y = 0, tileArray.y-1 do
+    for x = 0, tileArray.x - 1 do
+        for y = 0, tileArray.y - 1 do
             local tileX = (tileOrigin.x - (x + (x * tileSize.x)))
-            local tileY = ((tileOrigin.y - (y + ((y * tileSize.y)))) + ((tileSize.y - 5) * 2))
+            local tileY = (tileOrigin.z - (y + ((y * tileSize.y))))
+            if x == 0 and y == 0 then
+                host:sendChatCommand("setblock " ..
+                    tileX .. " " .. tileOrigin.y - 1 .. " " .. tileY .. " glass"
+                )
+            end
+            log(tileX, tileY)
             table.insert(tiles, vec(tileX, tileY))
         end
     end
 
     for x = 1, worldSize.x do
-        for y = 0, worldSize.y-1 do
+        for y = 0, worldSize.y - 1 do
             local tile = tiles[math.random(1, #tiles)]
 
             local cornerOne = vec(tile.x, tileOrigin.y, tile.y)
-            local cornerTwo = vec(tile.x - tileSize.x, tileOrigin.y + tileSize.z, tile.y - tileSize.y + 1)
+            local cornerTwo = vec(tile.x - tileSize.x, tileOrigin.y + tileSize.z,
+                tile.y - tileSize.y + 1)
             putOnGrid(cornerOne, cornerTwo, vec(x, y), tileSize, origin)
         end
     end
