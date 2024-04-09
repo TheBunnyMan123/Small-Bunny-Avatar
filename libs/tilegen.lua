@@ -45,7 +45,7 @@ end
 function funcs:generate(tileArray, tileSize, origin, worldSize)
     log("Generating:")
     log("Tile Array Size: " .. tostring(tileArray))
-    log("Size: " .. tostring(tileSize))
+    log("Tile Size: " .. tostring(tileSize))
     log("Origin: " .. tostring(origin))
     log("World Size: " .. tostring(worldSize))
 

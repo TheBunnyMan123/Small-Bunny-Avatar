@@ -130,6 +130,31 @@ commands = {
             return true
         end,
     },
+    {
+        cmd = "gridgen",
+        desc = "Generate",
+        args = {
+            {
+                arg = "vec2: tile size (length, width)",
+                required = true,
+            },
+            {
+                arg = "vec3: origin",
+                required = true,
+            },
+            {
+                arg = "vec2: world size (x, y)",
+                required = true,
+            },
+        },
+        func = function(args)
+            if not args or #args < 7 then return false end
+
+            require("libs.gridgen"):generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]), vec(args[6], args[7]))
+
+            return true
+        end,
+    },
 }
 
 -- A mirror of the top, using the command name as the index. This makes command access a lot simpler later
