@@ -118,10 +118,6 @@ commands = {
                 required = true,
             },
             {
-                arg = "vec3: origin",
-                required = true,
-            },
-            {
                 arg = "vec2: world size (x, y)",
                 required = true,
             },
