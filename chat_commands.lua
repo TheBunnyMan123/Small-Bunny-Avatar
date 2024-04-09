@@ -195,8 +195,6 @@ events.CHAT_SEND_MESSAGE:register(function(msg)
         printf(toSend)
     end
     host:appendChatHistory(msg)
-
-    return
 end, "COMMANDS.SEND_MESSAGE")
 
 events.tick:register(function()
