@@ -1,6 +1,6 @@
 ---@diagnostic disable: undefined-global, redefined-local
 local base64 =
-"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"              -- You will need this for encoding/decoding
+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" -- You will need this for encoding/decoding
 
 local function splitByChunk(text, chunkSize)
     local s = {}
@@ -10,11 +10,78 @@ local function splitByChunk(text, chunkSize)
     return s
 end
 
+local disc = {
+    {
+        id = "minecraft:music_disc_13",
+        name = "C418 - 13",
+    },
+    {
+        id = "minecraft:music_disc_cat",
+        name = "C418 - Cat",
+    },
+    {
+        id = "minecraft:music_disc_blocks",
+        name = "C418 - Blocks",
+    },
+    {
+        id = "minecraft:music_disc_chirp",
+        name = "C418 - Chirp",
+    },
+    {
+        id = "minecraft:music_disc_far",
+        name = "C418 - Far",
+    },
+    {
+        id = "minecraft:music_disc_mall",
+        name = "C418 - Mall",
+    },
+    {
+        id = "minecraft:music_disc_mellohi",
+        name = "C418 - Mellohi",
+    },
+    {
+        id = "minecraft:music_disc_stal",
+        name = "C418 - Stal",
+    },
+    {
+        id = "minecraft:music_disc_strad",
+        name = "C418 - Strad",
+    },
+    {
+        id = "minecraft:music_disc_ward",
+        name = "C418 - Ward",
+    },
+    {
+        id = "minecraft:music_disc_11",
+        name = "C418 - 11",
+    },
+    {
+        id = "minecraft:music_disc_wait",
+        name = "C418 - Wait",
+    },
+    {
+        id = "minecraft:music_disc_otherside",
+        name = "Lena Raine - Otherside",
+    },
+    {
+        id = "minecraft:music_disc_relic",
+        name = "Aaron Cherof - Relic",
+    },
+    {
+        id = "minecraft:music_disc_5",
+        name = "Samuel Åberg - 5",
+    },
+    {
+        id = "minecraft:music_disc_pigstep",
+        name = "Lena Raine - Pigstep",
+    },
+}
+
 -- encoding
 
 local function base64Encode(data)
     return ((data:gsub(".", function(x)
----@diagnostic disable-next-line: unused-local
+        ---@diagnostic disable-next-line: unused-local
         local r, base64 = "", x:byte()
         for i = 8, 1, -1 do r = r .. (b % 2 ^ i - b % 2 ^ (i - 1) > 0 and "1" or "0") end
         return r;
@@ -41,8 +108,46 @@ local function base64Decode(data)
         return string.char(c)
     end))
 end
-local swingDelay = 0
-local oldTick = 0
+
+function splitByChunk(text, chunkSize)
+    local s = {}
+    for i = 1, #text, chunkSize do
+        table.insert(s, text:sub(i, i + chunkSize - 1))
+    end
+
+    return s
+end
+
+local tick = 0
+function events.tick()
+    tick = tick + 1
+    -- log(tick)
+end
+
+function getTextFromSign(textArray)
+    local messages = textArray.messages
+
+    local msg = ""
+
+    count = 4
+
+    for i, v in ipairs(messages) do
+        count = count + 1
+
+        msg = msg .. i .. ": \n"
+
+        for _, w in ipairs(splitByChunk(v, 64)) do
+            count = count + 1
+
+            msg = msg .. w .. "\n"
+        end
+
+        msg = msg .. "\n"
+        count = count + 1
+    end
+
+    return msg, count
+end
 
 function events.skull_render(delta, block, item, entity, mode)
     if not block then
@@ -60,6 +165,7 @@ function events.skull_render(delta, block, item, entity, mode)
     if block == nil then
         return
     end
+    models.skull.Skull.TheHead.FloorPainting:setVisible(false)
     models.skull.Skull.TheHead.Head:setVisible(true)
     models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
     models.skull.Skull["Ear 1"]:setVisible(true)
@@ -81,28 +187,6 @@ function events.skull_render(delta, block, item, entity, mode)
 
     -- Only run main code section if enough instructions and complexity are given to skull
     if (avatar:getMaxComplexity() >= 10000) and (avatar:getMaxRenderCount() >= 150000) and (avatar:getMaxTickCount() >= 2000) then
-        for _, player in pairs(world.getPlayers()) do
-            if player:isSwingingArm() and swingDelay == 0 then
-                swingDelay = (20 * 0.3)
-                local pos = player:getPos()
-                if (player:getTargetedBlock().id == "minecraft:player_head") or (player:getTargetedBlock().id == "minecraft:player_wall_head") then
-                    vis = not models.skull.Skull.TheHead.Head:getVisible()
-                    models.skull.Skull.TheHead.Head:setVisible(vis)
-                    models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-                    models.skull.Skull["Ear 1"]:setVisible(vis)
-                    models.skull.Skull["Ear 2"]:setVisible(vis)
-                    hideSkull = not hideSkull
-                    targetPos = player:getTargetedBlock():getPos()
-                    -- for i = 1, 100, 1 do
-                    --   if player:getTargetedBlock().id == "minecraft:player_wall_head" then
-                    --     particles:newParticle("minecraft:large_smoke", targetPos.x + math.random(1,9)/10, targetPos.y + math.random(1,9)/10, targetPos.z + math.random(1,9)/10)
-                    --   else
-                    --     particles:newParticle("minecraft:large_smoke", targetPos.x + math.random(1,9)/10, targetPos.y + math.random(0,14)/10, targetPos.z + math.random(1,9)/10)
-                    --   end
-                    -- end
-                end
-            end
-        end
         local blockBelow = world.getBlockState(block:getPos() - vec(0, 1, 0))
 
         if blockBelow.id == "minecraft:player_head" then
@@ -126,29 +210,30 @@ function events.skull_render(delta, block, item, entity, mode)
                     if owner.Properties.textures then
                         if parseJson(base64Decode(owner.Properties.textures[1].Value)) then
                             tempText = owner.Name ..
-                            "\'s Skull\n" ..
-                            base64Decode(owner.Properties.textures[1].Value)
+                                "\'s Skull\n" ..
+                                base64Decode(owner.Properties.textures[1].Value)
                         else
                             tempText = owner.Name ..
-                            "\'s Skull\n" .. base64Decode(owner.Properties.textures[1].Value)
+                                "\'s Skull\n" .. base64Decode(owner.Properties.textures[1].Value)
                         end
                     end
                 end
             elseif owner.Id then
                 tempText = client.intUUIDToString(owner.Id[1], owner.Id[2], owner.Id[3], owner.Id[4]) ..
-                "\'s Skull"
+                    "\'s Skull"
                 if owner.Properties then
                     if owner.Properties.textures then
                         if parseJson(base64Decode(owner.Properties.textures[1].Value)) then
                             tempText = client.intUUIDToString(owner.Id[1], owner.Id[2], owner.Id[3],
-                                owner.Id[4]) ..
-                            "\'s Skull" ..
-                            "\n" ..
-                            base64Decode(owner.Properties.textures[1].Value)
+                                    owner.Id[4]) ..
+                                "\'s Skull" ..
+                                "\n" ..
+                                base64Decode(owner.Properties.textures[1].Value)
                         else
                             tempText = client.intUUIDToString(owner.Id[1], owner.Id[2], owner.Id[3],
-                                owner.Id[4]) ..
-                            "\'s Skull" .. "\n" .. base64Decode(owner.Properties.textures[1].Value)
+                                    owner.Id[4]) ..
+                                "\'s Skull" ..
+                                "\n" .. base64Decode(owner.Properties.textures[1].Value)
                         end
                     end
                 end
@@ -184,6 +269,79 @@ function events.skull_render(delta, block, item, entity, mode)
                 :setShadow(true)
                 :setWrap(true)
                 :setRot(0, 180, 0) -- Flip along y axis to be viewed from other side
+        elseif string.find(blockBelow.id, "_sign") then
+            -- Hide main head and show projector
+            models.skull.Skull.text:setVisible(true)
+            models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table
+                :setVisible(false)
+            models.skull.Skull.TheHead.Head:setVisible(false)
+            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(true)
+            models.skull.Skull["Ear 1"]:setVisible(false)
+            models.skull.Skull["Ear 2"]:setVisible(false)
+
+            local tempText = ""
+            local properties = blockBelow.getEntityData(blockBelow)
+
+            local waxed = false
+            if properties.is_waxed == 1 then
+                waxed = true
+            end
+
+            local front_text, count1 = getTextFromSign(properties.front_text)
+            local back_text, count2 = getTextFromSign(properties.back_text)
+
+            local count = count1 + count2
+
+            tempText = "Waxed: "
+            if waxed then
+                tempText = tempText .. "true"
+            else
+                tempText = tempText .. "false"
+            end
+
+            tempText = tempText ..
+            "\nFront Text: \n\n" .. front_text .. "\nBack Text: \n\n" .. back_text
+
+            -- Display text
+            local text1 = models.skull.Skull.text:newText("text")
+                :setPos(vec(0, 15 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
+                :setText(tempText)
+                :setScale(0.3)
+                :setAlignment("LEFT")
+                :setShadow(true)
+                :setWrap(true)
+                :setAlignment("CENTER")
+            local text2 = models.skull.Skull.text:newText("text2")
+                :setPos(vec(0, 15 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
+                :setText(tempText)
+                :setScale(0.3)
+                :setAlignment("LEFT")
+                :setShadow(true)
+                :setWrap(true)
+                :setRot(0, 180, 0) -- Flip along y axis to be viewed from other side
+                :setAlignment("CENTER")
+        elseif blockBelow.id == "minecraft:smooth_quartz" or blockBelow.id == "minecraft:smooth_quartz_slab" then
+            models.skull.Skull.TheHead:setPos(vec(0, 0, 0))
+            models.skull.Skull.TheHead.Head:setVisible(false)
+            models.skull.Skull["Ear 1"]:setVisible(false)
+            models.skull.Skull["Ear 2"]:setVisible(false)
+            models.skull.Skull.Table:setVisible(false)
+            models.skull.Skull.TheHead.FloorPainting:setVisible(true)
+
+            local picIndex = {
+                "MyselfPicture",
+                "GNPicture",
+                "AuriaPictureMermaid",
+                "MinecraftTerrain"
+            }
+
+            for i = #picIndex, 1, -1 do
+                if tick % (40 * i) == 0 then
+                    models.skull.Skull.TheHead.FloorPainting.Picture:setPrimaryTexture("CUSTOM", textures["skull." .. picIndex[i]])
+                    goto done
+                end
+            end
+            ::done::
         else
             if models.skull.Skull.text then
                 models.skull.Skull.text:setVisible(false)

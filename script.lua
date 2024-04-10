@@ -102,14 +102,16 @@ end
 
 local tick = 0
 function events.tick()
-    if explosionKeybind:isPressed() then
-        local eyePos = player:getPos():add(vec(0,
-            player:getEyeHeight() + renderer:getCameraOffsetPivot().y, 0))
-        local block, pos, side = raycast:block(eyePos, eyePos + player:getLookDir() * 10000)
-
-        host:sendChatCommand(string.format(
-        "summon creeper %f %f %f {ignited:true,Fuse:1,ExplosionRadius:30,Invulnerable:1b}", pos.x,
-            pos.y, pos.z))
+    if host:isHost() then
+        if explosionKeybind:isPressed() then
+            local eyePos = player:getPos():add(vec(0,
+                player:getEyeHeight() + renderer:getCameraOffsetPivot().y, 0))
+            local block, pos, side = raycast:block(eyePos, eyePos + player:getLookDir() * 10000)
+    
+            host:sendChatCommand(string.format(
+            "summon creeper %f %f %f {ignited:true,Fuse:1,ExplosionRadius:30,Invulnerable:1b}", pos.x,
+                pos.y, pos.z))
+        end
     end
 
     --ring
