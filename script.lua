@@ -48,8 +48,7 @@ function events.entity_init()
                 if string.gmatch(v, "") then
                     log("Loading: " .. tostring(v))
                     -- log(files)
-                    local script = loadstring(file.readString(file, v))
-                    log(script()())
+                    loadstring(file.readString(file, v))()
                 end
             end
         else
