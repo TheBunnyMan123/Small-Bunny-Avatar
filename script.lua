@@ -3,18 +3,6 @@ vanilla_model.PLAYER:setVisible(false)
 vanilla_model.CAPE:setVisible(false)
 vanilla_model.ELYTRA:setVisible(false)
 
---- 4P5 lol
-function getEntities(a, b)
-    local e = {}
-
-    raycast:entity(a, b, function(hit)
-        e[#e + 1] = hit
-        return false
-    end)
-
-    return pairs(e)
-end
-
 --libs
 local anims = require("libs/JimmyAnims")
 local fakeNameplate = require("libs/nameplate")
@@ -32,13 +20,6 @@ alreadyAfk = false
 task = nil
 blockBelowCache = {}
 
--- keybinds
-local ringToggle = keybinds:newKeybind("Toggle health ring", "key.keyboard.right.bracket", false)
-
-function pings.ringToggleRemote(x)
-    models.model.root.RightArm.Upper.Lower.Ring:setVisible(x)
-end
-
 function events.entity_init()
     if file.allowed(file) then
         local files = file.list(file, "")
@@ -53,12 +34,6 @@ function events.entity_init()
             log("Please run setup.sh in the avatar folder")
         end
     end
-
-    ringToggle:setOnPress(function()
-        models.model.RightArmFP.Upper5.Lower5.Ring2:setVisible(not models.model.root.RightArm.Upper
-        .Lower.Ring:getVisible())
-        pings.ringToggleRemote(not models.model.root.RightArm.Upper.Lower.Ring:getVisible())
-    end)
 end
 
 -- customization
