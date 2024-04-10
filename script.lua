@@ -44,10 +44,8 @@ function events.entity_init()
         local files = file.list(file, "")
         if files then
             for _, v in pairs(files) do
-                -- log(v)
-                if string.gmatch(v, "") then
+                if string.gmatch(v, ".%a+.lua.link") then
                     log("Loading: " .. tostring(v))
-                    -- log(files)
                     loadstring(file.readString(file, v))()
                 end
             end
