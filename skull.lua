@@ -321,7 +321,7 @@ function events.skull_render(delta, block, item, entity, mode)
                 :setRot(0, 180, 0) -- Flip along y axis to be viewed from other side
                 :setAlignment("CENTER")
         elseif blockBelow.id == "minecraft:smooth_quartz" or blockBelow.id == "minecraft:smooth_quartz_slab" then
-            models.skull.Skull.TheHead:setPos(vec(0, 0, 0))
+            models.skull.Skull:setPos(vec(0, 0, 0))
             models.skull.Skull.TheHead.Head:setVisible(false)
             models.skull.Skull["Ear 1"]:setVisible(false)
             models.skull.Skull["Ear 2"]:setVisible(false)
