@@ -33,23 +33,30 @@ task = nil
 blockBelowCache = {}
 
 -- keybinds
-local moveFirstPersonCameraToggle = keybinds:newKeybind("Switch first person camera location",
-    "key.keyboard.backspace", false)
 local ringToggle = keybinds:newKeybind("Toggle health ring", "key.keyboard.right.bracket", false)
-local explosionKeybind = keybinds:newKeybind("Explosion", "key.keyboard.delete")
 
 function pings.ringToggleRemote(x)
     models.model.root.RightArm.Upper.Lower.Ring:setVisible(x)
 end
 
 function events.entity_init()
-    if avatar:getComplexity() > 2048 then
-        log("Complexity higher than default max (" .. avatar:getComplexity() .. " / 2048)")
+    if file.allowed(file) then
+        local files = file.list(file, "")
+        if files then
+            for _, v in pairs(files) do
+                -- log(v)
+                if string.gmatch(v, "") then
+                    log("Loading: " .. tostring(v))
+                    -- log(files)
+                    local script = loadstring(file.readString(file, v))
+                    log(script()())
+                end
+            end
+        else
+            log("Please run setup.sh in the avatar folder")
+        end
     end
-    moveFirstPersonCameraToggle:setOnPress(function()
-        log("THIS CAN POSSIBLY GET YOU BANNED FROM SERVERS")
-        moveFirstPersonCamera = not moveFirstPersonCamera
-    end)
+
     ringToggle:setOnPress(function()
         models.model.RightArmFP.Upper5.Lower5.Ring2:setVisible(not models.model.root.RightArm.Upper
         .Lower.Ring:getVisible())
@@ -102,18 +109,6 @@ end
 
 local tick = 0
 function events.tick()
-    if host:isHost() then
-        if explosionKeybind:isPressed() then
-            local eyePos = player:getPos():add(vec(0,
-                player:getEyeHeight() + renderer:getCameraOffsetPivot().y, 0))
-            local block, pos, side = raycast:block(eyePos, eyePos + player:getLookDir() * 10000)
-    
-            host:sendChatCommand(string.format(
-            "summon creeper %f %f %f {ignited:true,Fuse:1,ExplosionRadius:30,Invulnerable:1b}", pos.x,
-                pos.y, pos.z))
-        end
-    end
-
     --ring
     local health = player:getHealth() / player:getMaxHealth()
     models.model.root.RightArm.Upper.Lower.Ring.HealthRingHealthIndicatorReal:setColor(1 - health,
