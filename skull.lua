@@ -152,6 +152,10 @@ function getTextFromSign(textArray)
 end
 
 function events.skull_render(delta, block, item, entity, mode)
+    if models.skull.Skull.BlahajText then
+        models.skull.Skull.BlahajText:remove()
+    end
+
     if not block then
         if models.skull.Skull.text then
             models.skull.Skull.text:setVisible(false)
@@ -355,16 +359,12 @@ function events.skull_render(delta, block, item, entity, mode)
             models.skull.Skull["Ear 2"]:setVisible(false)
             models.skull.Skull.Table:setVisible(false)
             models.skull.Skull.TheHead.FloorPainting:setVisible(false)
-            models.skull.Skull.text:setVisible(true)
+            models.skull.Skull.text:setVisible(false)
             models.blahaj.Skull:setVisible(true)
 
             models.blahaj.Skull:setRot(
                 0, math.lerp(oldTick * 3, tick * 3, delta), 0
             )
-
-            if models.skull.Skull.BlahajText then
-                models.skull.Skull.BlahajText:remove()
-            end
 
             local facecamera = models.skull.Skull
                 :newPart("BlahajText")
