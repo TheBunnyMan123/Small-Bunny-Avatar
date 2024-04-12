@@ -367,12 +367,12 @@ function events.skull_render(delta, block, item, entity, mode)
             )
 
             local facecamera = models.skull.Skull
+                :setPos(vec(0, 15, 0))
                 :newPart("BlahajText")
                 :setVisible(true)
                 :setParentType("CAMERA")
 
             facecamera:newText("text")
-                :setPos(vec(0, 15, 0)) -- Raise position by 25 + (3 times count)
                 :setText(toJson({
                     {text = ":blahaj:", color = "white", bold = false},
                     {text = " BLAHAJ ", color = "aqua", bold = false},
