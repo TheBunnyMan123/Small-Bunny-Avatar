@@ -118,9 +118,9 @@ function splitByChunk(text, chunkSize)
     return s
 end
 
-local tick = 0
-local oldTick = -1
-function events.tick()
+tick = 0
+oldTick = -1
+function events.world_tick()
     oldTick = tick
     tick = tick + 1
     -- log(tick)
@@ -355,12 +355,36 @@ function events.skull_render(delta, block, item, entity, mode)
             models.skull.Skull["Ear 2"]:setVisible(false)
             models.skull.Skull.Table:setVisible(false)
             models.skull.Skull.TheHead.FloorPainting:setVisible(false)
-            models.skull.Skull.text:setVisible(false)
+            models.skull.Skull.text:setVisible(true)
             models.blahaj.Skull:setVisible(true)
 
             models.blahaj.Skull:setRot(
                 0, math.lerp(oldTick * 3, tick * 3, delta), 0
             )
+
+            if models.skull.Skull.BlahajText then
+                models.skull.Skull.BlahajText:remove()
+            end
+
+            local facecamera = models.skull.Skull
+                :newPart("BlahajText")
+                :setVisible(true)
+                :setParentType("CAMERA")
+
+            facecamera:newText("text")
+                :setPos(vec(0, 15, 0)) -- Raise position by 25 + (3 times count)
+                :setText(toJson({
+                    {text = ":blahaj:", color = "white", bold = false},
+                    {text = " BLAHAJ ", color = "aqua", bold = false},
+                    {text = ":blahaj:", color = "white", bold = false}
+                }))
+                :setScale(0.3)
+                :setAlignment("LEFT")
+                :setShadow(true)
+                :setWrap(true)
+                :setAlignment("CENTER")
+                :setVisible(true)
+                :setRot(0, 0, 0)
         else
             if models.skull.Skull.text then
                 models.skull.Skull.text:setVisible(false)
