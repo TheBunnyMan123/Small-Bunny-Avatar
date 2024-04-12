@@ -119,7 +119,9 @@ function splitByChunk(text, chunkSize)
 end
 
 local tick = 0
+local oldTick = -1
 function events.tick()
+    oldTick = tick
     tick = tick + 1
     -- log(tick)
 end
@@ -157,8 +159,10 @@ function events.skull_render(delta, block, item, entity, mode)
         models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
         models.skull.Skull:setPos(0, -19, 0):setScale(1.55).Table:setVisible(false)
         models.skull.Skull.TheHead.Head:setVisible(false)
+        models.skull.Skull.TheHead.FloorPainting:setVisible(false)
         models.skull.Skull["Ear 1"]:setVisible(true)
         models.skull.Skull["Ear 2"]:setVisible(true)
+        models.blahaj.Skull:setVisible(false)
         return
     end
     models.skull.Skull.TheHead.Head:setVisible(true)
@@ -170,6 +174,8 @@ function events.skull_render(delta, block, item, entity, mode)
     models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
     models.skull.Skull["Ear 1"]:setVisible(true)
     models.skull.Skull["Ear 2"]:setVisible(true)
+    models.blahaj.Skull:setVisible(false)
+
     if block:getProperties() == nil then
         return
     end
@@ -342,6 +348,19 @@ function events.skull_render(delta, block, item, entity, mode)
                 end
             end
             ::done::
+        elseif blockBelow.id=="minecraft:prismarine" then
+            models.skull.Skull:setPos(vec(0, 0, 0))
+            models.skull.Skull.TheHead.Head:setVisible(false)
+            models.skull.Skull["Ear 1"]:setVisible(false)
+            models.skull.Skull["Ear 2"]:setVisible(false)
+            models.skull.Skull.Table:setVisible(false)
+            models.skull.Skull.TheHead.FloorPainting:setVisible(false)
+            models.skull.Skull.text:setVisible(false)
+            models.blahaj.Skull:setVisible(true)
+
+            models.blahaj.Skull:setRot(
+                0, math.lerp(oldTick * 3, tick * 3, delta), 0
+            )
         else
             if models.skull.Skull.text then
                 models.skull.Skull.text:setVisible(false)
