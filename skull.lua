@@ -151,55 +151,11 @@ function getTextFromSign(textArray)
     return msg, count
 end
 
-function events.skull_render(delta, block, item, entity, mode)
-    if models.skull.Skull.BlahajText then
-        models.skull.Skull.BlahajText:remove()
-    end
-
-    if not block then
-        if models.skull.Skull.text then
-            models.skull.Skull.text:setVisible(false)
-        end
-        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-        models.skull.Skull:setPos(0, -19, 0):setScale(1.55).Table:setVisible(false)
-        models.skull.Skull.TheHead.Head:setVisible(false)
-        models.skull.Skull.TheHead.FloorPainting:setVisible(false)
-        models.skull.Skull["Ear 1"]:setVisible(true)
-        models.skull.Skull["Ear 2"]:setVisible(true)
-        models.blahaj.Skull:setVisible(false)
-        return
-    end
-    models.skull.Skull.TheHead.Head:setVisible(true)
-    if block == nil then
-        return
-    end
-    models.skull.Skull.TheHead.FloorPainting:setVisible(false)
-    models.skull.Skull.TheHead.Head:setVisible(true)
-    models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-    models.skull.Skull["Ear 1"]:setVisible(true)
-    models.skull.Skull["Ear 2"]:setVisible(true)
-    models.blahaj.Skull:setVisible(false)
-
-    if block:getProperties() == nil then
-        return
-    end
-    if block.id == "minecraft:player_wall_head" then
-        models.skull.Skull.TheHead.Head:setVisible(true)
-        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-        models.skull.Skull:setPos(0, -10.1, 1.8):setScale(1).Table:setVisible(false)
-    else
-        local is_table = block:getProperties().rotation % 4 == 0
-
-        models.skull.Skull
-            :setPos(is_table and vec(0, 0, 0) or vec(0, -12, 0)):setScale(1)
-            .Table:setVisible(is_table)
-    end
-
-    -- Only run main code section if enough instructions and complexity are given to skull
-    if (avatar:getMaxComplexity() >= 10000) and (avatar:getMaxRenderCount() >= 150000) and (avatar:getMaxTickCount() >= 2000) then
-        local blockBelow = world.getBlockState(block:getPos() - vec(0, 1, 0))
-
-        if blockBelow.id == "minecraft:player_head" then
+local funcs = {
+    {
+        exact = true,
+        block = "minecraft:player_head",
+        func = function()
             -- Hide main head and show projector
             models.skull.Skull.text:setVisible(true)
             models.skull.Skull:setPos(vec(0, -12 - 8, 0)):setScale(1):setVisible(true).Table
@@ -279,7 +235,12 @@ function events.skull_render(delta, block, item, entity, mode)
                 :setShadow(true)
                 :setWrap(true)
                 :setRot(0, 180, 0) -- Flip along y axis to be viewed from other side
-        elseif string.find(blockBelow.id, "_sign") then
+        end
+    },
+    {
+        exact = false,
+        block = "_sign",
+        func = function()
             -- Hide main head and show projector
             models.skull.Skull.text:setVisible(true)
             models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table
@@ -317,7 +278,6 @@ function events.skull_render(delta, block, item, entity, mode)
                 :setPos(vec(0, 15 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
                 :setText(tempText)
                 :setScale(0.3)
-                :setAlignment("LEFT")
                 :setShadow(true)
                 :setWrap(true)
                 :setAlignment("CENTER")
@@ -325,12 +285,16 @@ function events.skull_render(delta, block, item, entity, mode)
                 :setPos(vec(0, 15 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
                 :setText(tempText)
                 :setScale(0.3)
-                :setAlignment("LEFT")
                 :setShadow(true)
                 :setWrap(true)
                 :setRot(0, 180, 0) -- Flip along y axis to be viewed from other side
                 :setAlignment("CENTER")
-        elseif blockBelow.id == "minecraft:smooth_quartz" or blockBelow.id == "minecraft:smooth_quartz_slab" then
+        end
+    },
+    {
+        exact = false,
+        block = "minecraft:smooth_quartz",
+        func = function()
             models.skull.Skull:setPos(vec(0, 0, 0))
             models.skull.Skull.TheHead.Head:setVisible(false)
             models.skull.Skull["Ear 1"]:setVisible(false)
@@ -352,7 +316,12 @@ function events.skull_render(delta, block, item, entity, mode)
                 end
             end
             ::done::
-        elseif blockBelow.id=="minecraft:prismarine" then
+        end
+    },
+    {
+        exact = true,
+        block = "minecraft:prismarine",
+        func = function()
             models.skull.Skull:setPos(vec(0, 0, 0))
             models.skull.Skull.TheHead.Head:setVisible(false)
             models.skull.Skull["Ear 1"]:setVisible(false)
@@ -380,70 +349,125 @@ function events.skull_render(delta, block, item, entity, mode)
                     {text = ":blahaj:", color = "white", bold = false}
                 }))
                 :setScale(0.3)
-                :setAlignment("LEFT")
                 :setShadow(true)
                 :setWrap(true)
                 :setAlignment("CENTER")
                 :setVisible(true)
                 :setRot(0, 0, 0)
-        else
-            -- Hide main head and show projector
-            models.skull.Skull.text:setVisible(true)
-            models.skull.Skull:setVisible(true)
-            models.skull.Skull.TheHead.Head:setVisible(true)
-            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-            models.skull.Skull["Ear 1"]:setVisible(true)
-            models.skull.Skull["Ear 2"]:setVisible(true)
-
-            local count = 1
-
-            local tempText = "You decapitated me!\nPlace my head on one of the following blocks for something cool to happen." .. (function()
-                local tempTempText = ""
-
-                for _, v in pairs({
-                    {
-                        block = "Player Head (floor)",
-                        desc = "Displays info about the head"
-                    },
-                    {
-                        block = "Any Sign",
-                        desc = "Displays info about the sign"
-                    },
-                    {
-                        block = "Smooth Quartz / Smooth Quartz Slab",
-                        desc = "Becomes a picture frame that loops through pictures"
-                    },
-                    {
-                        block = "Prismarine",
-                        desc = ":blahaj: SPINNING BLAHAJ :blahaj:"
-                    }
-                }) do
-                    count = count + 1
-                    tempTempText = tempTempText .. "\n" .. v.block .. ": " .. v.desc
-                end
-                
-                return tempTempText
-            end)()
-            
-            -- Display text
-            local text1 = models.skull.Skull.text:newText("text")
-                :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
-                :setText(tempText)
-                :setScale(0.3)
-                :setAlignment("LEFT")
-                :setShadow(true)
-                :setWrap(true)
-                :setAlignment("CENTER")
-            local text2 = models.skull.Skull.text:newText("text2")
-                :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
-                :setText(tempText)
-                :setScale(0.3)
-                :setAlignment("LEFT")
-                :setShadow(true)
-                :setWrap(true)
-                :setRot(0, 180, 0) -- Flip along y axis to be viewed from other side
-                :setAlignment("CENTER")
         end
+    }
+}
+
+function events.skull_render(delta, block, item, entity, mode)
+    if models.skull.Skull.BlahajText then
+        models.skull.Skull.BlahajText:remove()
+    end
+
+    if not block then
+        if models.skull.Skull.text then
+            models.skull.Skull.text:setVisible(false)
+        end
+        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
+        models.skull.Skull:setPos(0, -19, 0):setScale(1.55).Table:setVisible(false)
+        models.skull.Skull.TheHead.Head:setVisible(false)
+        models.skull.Skull.TheHead.FloorPainting:setVisible(false)
+        models.skull.Skull["Ear 1"]:setVisible(true)
+        models.skull.Skull["Ear 2"]:setVisible(true)
+        models.blahaj.Skull:setVisible(false)
+        return
+    end
+    models.skull.Skull.TheHead.Head:setVisible(true)
+    if block == nil then
+        return
+    end
+    models.skull.Skull.TheHead.FloorPainting:setVisible(false)
+    models.skull.Skull.TheHead.Head:setVisible(true)
+    models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
+    models.skull.Skull["Ear 1"]:setVisible(true)
+    models.skull.Skull["Ear 2"]:setVisible(true)
+    models.blahaj.Skull:setVisible(false)
+
+    if block:getProperties() == nil then
+        return
+    end
+    if block.id == "minecraft:player_wall_head" then
+        models.skull.Skull.TheHead.Head:setVisible(true)
+        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
+        models.skull.Skull:setPos(0, -10.1, 1.8):setScale(1).Table:setVisible(false)
+    else
+        local is_table = block:getProperties().rotation % 4 == 0
+
+        models.skull.Skull
+            :setPos(is_table and vec(0, 0, 0) or vec(0, -12, 0)):setScale(1)
+            .Table:setVisible(is_table)
+    end
+
+    -- Only run main code section if enough instructions and complexity are given to skull
+    if (avatar:getMaxComplexity() >= 10000) and (avatar:getMaxRenderCount() >= 150000) and (avatar:getMaxTickCount() >= 2000) then
+        local blockBelow = world.getBlockState(block:getPos() - vec(0, 1, 0))
+
+        for _, v in pairs(funcs) do
+            if (v.exact == true and blockBelow.id == v.block) or (v.exact == false and blockBelow.id:find(v.block)) then
+                v.func()
+                return
+            end
+        end
+
+        models.skull.Skull.text:setVisible(true)
+        models.skull.Skull:setVisible(true)
+        models.skull.Skull.TheHead.Head:setVisible(true)
+        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
+        models.skull.Skull["Ear 1"]:setVisible(true)
+        models.skull.Skull["Ear 2"]:setVisible(true)
+
+        local count = 1
+
+        local tempText = "You decapitated me!\nPlace my head on one of the following blocks for something cool to happen." .. (function()
+            local tempTempText = ""
+
+            for _, v in pairs({
+                {
+                    block = "Player Head (floor)",
+                    desc = "Displays info about the head"
+                },
+                {
+                    block = "Any Sign",
+                    desc = "Displays info about the sign"
+                },
+                {
+                    block = "Smooth Quartz / Smooth Quartz Slab",
+                    desc = "Becomes a picture frame that loops through pictures"
+                },
+                {
+                    block = "Prismarine",
+                    desc = ":blahaj: SPINNING BLAHAJ :blahaj:"
+                }
+            }) do
+                count = count + 1
+                tempTempText = tempTempText .. "\n" .. v.block .. ": " .. v.desc
+            end
+            
+            return tempTempText
+        end)()
+        
+        -- Display text
+        local text1 = models.skull.Skull.text:newText("text")
+            :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
+            :setText(tempText)
+            :setScale(0.3)
+            :setAlignment("LEFT")
+            :setShadow(true)
+            :setWrap(true)
+            :setAlignment("CENTER")
+        local text2 = models.skull.Skull.text:newText("text2")
+            :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
+            :setText(tempText)
+            :setScale(0.3)
+            :setAlignment("LEFT")
+            :setShadow(true)
+            :setWrap(true)
+            :setRot(0, 180, 0) -- Flip along y axis to be viewed from other side
+            :setAlignment("CENTER")
     else
         -- If not enough instructions and complexity are given to skull, display text requesting higher permissions
 
