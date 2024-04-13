@@ -5,8 +5,8 @@ local line
 local line2
 
 function pings.line(pos1, pos2)
-    line = lineLib:new():setA(pos1:unpack()):setB(pos2:unpack()):immediateUpdate():setColor(1, 1, 1, 1):setWidth(0.3):setDepth(0.1)
-    line2 = lineLib:new():setA(pos1:unpack()):setB(pos2:unpack()):immediateUpdate():setColor(1, 0.2, 0.2, 1):setWidth(0.4):setDepth(0)
+    line2 = lineLib:new():setA(pos1:unpack()):setB(pos2:unpack()):setColor(1, 0.2, 0.2, 1):setWidth(0.4):setDepth(0.1)
+    line = lineLib:new():setA(pos1:unpack()):setB(pos2:unpack()):setColor(1, 1, 1, 1):setWidth(0.3):setDepth(0.2)
 end
 
 function pings.free()
@@ -39,8 +39,6 @@ function events.tick()
                 return
         end
     
-        destructionTimer = 60
-
         destructionTimer = 60
 
         local eyePos = player:getPos():add(vec(0,
