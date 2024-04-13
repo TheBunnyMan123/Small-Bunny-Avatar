@@ -387,9 +387,62 @@ function events.skull_render(delta, block, item, entity, mode)
                 :setVisible(true)
                 :setRot(0, 0, 0)
         else
-            if models.skull.Skull.text then
-                models.skull.Skull.text:setVisible(false)
-            end
+            -- Hide main head and show projector
+            models.skull.Skull.text:setVisible(true)
+            models.skull.Skull:setVisible(true)
+            models.skull.Skull.TheHead.Head:setVisible(true)
+            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
+            models.skull.Skull["Ear 1"]:setVisible(true)
+            models.skull.Skull["Ear 2"]:setVisible(true)
+
+            local count = 1
+
+            local tempText = "You decapitated me!\nPlace my head on one of the following blocks for something cool to happen." .. (function()
+                local tempTempText = ""
+
+                for _, v in pairs({
+                    {
+                        block = "Player Head (floor)",
+                        desc = "Displays info about the head"
+                    },
+                    {
+                        block = "Any Sign",
+                        desc = "Displays info about the sign"
+                    },
+                    {
+                        block = "Smooth Quartz / Smooth Quartz Slab",
+                        desc = "Becomes a picture frame that loops through pictures"
+                    },
+                    {
+                        block = "Prismarine",
+                        desc = ":blahaj: SPINNING BLAHAJ :blahaj:"
+                    }
+                }) do
+                    count = count + 1
+                    tempTempText = tempTempText .. "\n" .. v.block .. ": " .. v.desc
+                end
+                
+                return tempTempText
+            end)()
+            
+            -- Display text
+            local text1 = models.skull.Skull.text:newText("text")
+                :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
+                :setText(tempText)
+                :setScale(0.3)
+                :setAlignment("LEFT")
+                :setShadow(true)
+                :setWrap(true)
+                :setAlignment("CENTER")
+            local text2 = models.skull.Skull.text:newText("text2")
+                :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
+                :setText(tempText)
+                :setScale(0.3)
+                :setAlignment("LEFT")
+                :setShadow(true)
+                :setWrap(true)
+                :setRot(0, 180, 0) -- Flip along y axis to be viewed from other side
+                :setAlignment("CENTER")
         end
     else
         -- If not enough instructions and complexity are given to skull, display text requesting higher permissions
