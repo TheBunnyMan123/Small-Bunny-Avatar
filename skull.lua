@@ -368,6 +368,7 @@ function events.skull_render(delta, block, item, entity, mode)
 
             local facecamera = models.skull.Skull
                 :setPos(vec(0, 15, 0))
+                :setPivot(0,0,0)
                 :newPart("BlahajText")
                 :setVisible(true)
                 :setParentType("CAMERA")
