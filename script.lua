@@ -23,7 +23,7 @@ blockBelowCache = {}
 local figway
 
 function events.entity_init()
-    if file.allowed(file) then
+    if file.allowed(file) and host:isHost() then
         local files = file.list(file, "")
         if files then
             log()

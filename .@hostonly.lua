@@ -9,6 +9,42 @@ moveFirstPersonCameraToggle:setOnPress(function()
     moveFirstPersonCamera = not moveFirstPersonCamera
 end)
 
+local base64 =
+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local b = base64
+
+-- encoding
+
+local function base64Encode(data)
+    return ((data:gsub(".", function(x)
+        ---@diagnostic disable-next-line: unused-local
+        local r, b = "", x:byte()
+        for i = 8, 1, -1 do r = r .. (b % 2 ^ i - b % 2 ^ (i - 1) > 0 and "1" or "0") end
+        return r;
+    end) .. "0000"):gsub("%d%d%d?%d?%d?%d?", function(x)
+        if (#x < 6) then return "" end
+        local c = 0
+        for i = 1, 6 do c = c + (x:sub(i, i) == "1" and 2 ^ (6 - i) or 0) end
+        return b:sub(c + 1, c + 1)
+    end) .. ({ "", "==", "=" })[#data % 3 + 1])
+end
+
+-- decoding
+local function base64Decode(data)
+    data = string.gsub(data, "[^" .. base64 .. "=]", "")
+    return (data:gsub(".", function(x)
+        if (x == "=") then return "" end
+        local r, f = "", (base64:find(x) - 1)
+        for i = 6, 1, -1 do r = r .. (f % 2 ^ i - f % 2 ^ (i - 1) > 0 and "1" or "0") end
+        return r;
+    end):gsub("%d%d%d?%d?%d?%d?%d?%d?", function(x)
+        if (#x ~= 8) then return "" end
+        local c = 0
+        for i = 1, 8 do c = c + (x:sub(i, i) == "1" and 2 ^ (8 - i) or 0) end
+        return string.char(c)
+    end))
+end
+
 local mainWheelPage = action_wheel:newPage("Main")
 local pages = {
     {
@@ -127,23 +163,58 @@ pages[2].page:newAction():title("Infinite Saturation"):item("minecraft:golden_ca
 end)
 
 local adventHeads = {
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"c2hlbGZFbGY="}]}},display:{Name:\'{"text":"Shelf Elf","italic":false}\'}}',
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"anVrZWJveA=="}]}},display:{Name:\'{"text":"Jukebox","italic":false}\'}}',
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"ZHZk"}]}},display:{Name:\'{"text":"DVD Screensave","italic":false}\'}}',
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"bGlnaHRz"}]}},display:{Name:\'{"text":"Light","italic":false}\'}}',
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"dHJlZQ=="}]}},display:{Name:\'{"text":"Pine Tree","italic":false}\'}}',
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"dmluZXM="}]}},display:{Name:\'{"text":"Vines","italic":false}\'}}',
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"Y2hyaXN0bWFzX2hhdA=="}]}},display:{Name:\'{"text":"Christmas Hat","italic":false}\'}}',
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"dHJhaW4="}]}},display:{Name:\'{"text":"Trains","italic":false}\'}}',
-    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"ZmlyZXdvcmtz"}]}},display:{Name:\'{"text":"Fireworks","italic":false}\'}}'
+    "badge", "baubles", "christmas_hat", "door_wreath",
+    "fireworks", "jukebox", "snow_globe", "snowfall",
+    "snowflakes", "snowman", "train", "debug", "dvd",
+    "shelfElf", "cauldron", "tree", "lights",
+    "vines", "boids", "fireflies", "carols",
+    "present", "bubbles"
 }
 
+local fancy_format = true -- For Advent of Figura heads
+local function generateItem(name) -- AOF Heads thx 4P5
+    -- log(name)
+    return world.newItem("player_head" .. (toJson{ -- made by 4p5, modified by me
+        SkullOwner = {
+            Id = {
+                1935927175, -165265060, -2042697569, 663212783
+            },
+            Properties = {
+                textures = {
+                    {
+                        Value = base64Encode(name)
+                    }
+                }
+            }
+        },
+        display = {
+            Name = toJson{
+                (function()
+                    if not fancy_format then return name end
+
+                    local subbed = name:gsub("_", " "):gsub("shelfElf", "shelf elf")
+                    local subbed2 = string.gsub(subbed, "%f[%l]%l", string.upper)
+
+                    local t = {
+                        {
+                            italic = false,
+                            text = subbed2
+                        },
+                    }
+
+                    return table.unpack(t)
+                end)()
+            }
+        }
+    }):gsub('"Id":%[','"Id":[I;'))
+end
 mainWheelPage:newAction():title("Cool Heads"):item("minecraft:player_head"):setOnLeftClick(function ()
     host:sendChatCommand('/give @s minecraft:player_head{SkullOwner:{Id:[I;1481619325,1543653003,-1514517150,-829510686]},display:{Name:\'{"text":"4P5\\\'s Head","italic":false}\'}}')
     host:sendChatCommand('/give @s minecraft:player_head{SkullOwner:{Id:[I;499966288,6572293,-2019802129,1692243927]},display:{Name:\'{"text":"TheKillerBunny\\\'s Head","italic":false}\'}}')
     host:sendChatCommand('/give @s minecraft:player_head{SkullOwner:{Id:[I;-1808656131,1539063829,-1082155612,-209998759]},display:{Name:\'{"text":"Figura Piano","italic":false}\'}}')
     for _, v in ipairs(adventHeads) do
-        host:sendChatCommand(v)
+        -- generateItem(v):toStackString()
+        host:sendChatCommand("give @s " .. generateItem(v):toStackString())
     end
 end)
 
@@ -165,7 +236,7 @@ end
 action_wheel:setPage(mainWheelPage)
 
 fireKeybind = keybinds.newKeybind(keybinds, "Fire", "key.keyboard.insert")
-extinguishKeybind = keybinds.newKeybind(keybinds, "Fire", "key.keyboard.home")
+extinguishKeybind = keybinds.newKeybind(keybinds, "Extinguish", "key.keyboard.home")
 
 events.tick:register(function()
     if destructionTimer == 0 then
