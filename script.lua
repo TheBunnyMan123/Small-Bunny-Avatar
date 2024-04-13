@@ -39,13 +39,15 @@ end
 local tick = 0
 local oldTick = -1
 -- customization
+local frame = 0
 function events.render(_, context)
     models.model.root:setScale(0.7)
 
     local jetpackOn = ((player:getGamemode() == "CREATIVE") or (player:getItem(5).id == "minecraft:elytra"))
     models.model.root.Body.Jetpack:setVisible(jetpackOn)
 
-    local smokeOn = (not player:isOnGround() and jetpackOn)
+    local smokeOn = (not player:isOnGround() and jetpackOn and context ~= "FIRST_PERSON")
+
     if smokeOn then
         local smokePivotLeft = models.model.root.Body.Jetpack.SmokePivotLeft
         local smokePivotRight = models.model.root.Body.Jetpack.SmokePivotRight
@@ -56,11 +58,7 @@ function events.render(_, context)
         particles:newParticle("minecraft:smoke", smokePivotRight:partToWorldMatrix():apply(0,0,0),vec(0,-0.2,0)):setScale(0.25)
         particles:newParticle("minecraft:flame", smokePivotLeft:partToWorldMatrix():apply(0,0,0), vec(0,-0.2,0)):setLifetime(4 - fireTimeOff):setScale(0.5)
         particles:newParticle("minecraft:flame", smokePivotRight:partToWorldMatrix():apply(0,0,0), vec(0,-0.2,0)):setLifetime(4 - fireTimeOff):setScale(0.5)
-
-    elseif oldTick == tick then
-        oldTick = tick
     end
-
     -- camera
     if renderer:isFirstPerson() then
         renderer:setOffsetCameraPivot(moveFirstPersonCamera and vec(0, -0.5, 0) or vec(0, 0, 0))
