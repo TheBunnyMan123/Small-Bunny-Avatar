@@ -27,21 +27,23 @@ commands = {
                 { text = "\n---------------", color = "gray" },
                 { text = " COMMANDS ",        color = "green" },
                 { text = "---------------",   color = "gray" },
-            }                                                                              -- The commands header
+            }
+            
+                                             -- The commands header
             for _, v in ipairs(commands) do
-                table.insert(toSend, { text = "\n" .. v.cmd, color = "light_purple" })     -- The command name
+                table.insert(toSend, { text = "\n" .. v.cmd, color = "light_purple" }) -- The command name
 
                 for _, w in ipairs(v.args) do
                     table.insert(toSend, {
                         text = w.required and (" {" .. w.arg .. "}") or (" [" .. w.arg .. "]"),
                         color = w.required and "red" or "yellow",
-                    })                                                                                        -- Argument
+                    })                                                   -- Argument
                 end
-                table.insert(toSend, { text = " | ", color = "gray" })                                        -- Seperator
-                table.insert(toSend, { text = v.desc, color = "green" })                                      -- Description
+                table.insert(toSend, { text = " | ", color = "gray" })   -- Seperator
+                table.insert(toSend, { text = v.desc, color = "green" }) -- Description
             end
             table.insert(toSend,
-                { text = "\n----------------------------------------", color = "gray" })                      -- Footer
+                { text = "\n----------------------------------------", color = "gray" }) -- Footer
             printf(toSend)
         end,
     },
@@ -74,7 +76,7 @@ commands = {
 
             host:sendChatCommand(summonStr)
             host:sendChatCommand("ride @s mount @e[type=" ..
-            args[1] .. ",sort=nearest,limit=1,tag=ToRide]")
+                args[1] .. ",sort=nearest,limit=1,tag=ToRide]")
 
             return true
         end,
@@ -105,7 +107,7 @@ commands = {
     },
     {
         cmd = "tilegen",
-        desc = "Generate",
+        desc = "Generate a tilemapped area",
         args = {
             {
                 arg = "vec2: tile array size (x, y)",
@@ -135,7 +137,7 @@ commands = {
     },
     {
         cmd = "gridgen",
-        desc = "Generate",
+        desc = "Generate a grid",
         args = {
             {
                 arg = "vec2: tile size (length, width)",
@@ -159,6 +161,29 @@ commands = {
             return true
         end,
     },
+    -- {
+    --     cmd = "waypoint",
+    --     desc = "Get code for adding a waypoint",
+    --     args = {},
+    --     func = function(args)
+    --         local serverData = client.getServerData()
+
+    --         if not serverData.ip then
+    --             serverData.ip = "none"
+    --         end
+
+    --         local playerPos = player:getPos()
+
+    --         logJson(
+    --             toJson(
+    --                 {
+    --                     text = '{name="NAME",server="'..serverData.ip .. " - " .. serverData.name..'",pos=vec(' .. math.floor(playerPos.x) .. "," .. math.floor(playerPos.y) .. "," .. math.floor(playerPos.z) .. ")"..',dimension="'..world.getDimension()..'",}'
+    --                 }
+
+    --             )
+    --         )
+    --     end,
+    -- },
 }
 
 -- A mirror of the top, using the command name as the index. This makes command access a lot simpler later
@@ -188,13 +213,13 @@ events.CHAT_SEND_MESSAGE:register(function(msg)
         local toSend = {
             { text = "Invalid Command Usage. Usage: ", color = "dark_red" },
             { text = command.cmd,                      color = "light_purple" },
-        }     -- The command name
+        } -- The command name
 
         for _, w in ipairs(command.args) do
             table.insert(toSend, {
                 text = w.required and (" {" .. w.arg .. "}") or (" [" .. w.arg .. "]"),
                 color = w.required and "red" or "yellow",
-            })     -- Argument
+            }) -- Argument
         end
         printf(toSend)
     end
