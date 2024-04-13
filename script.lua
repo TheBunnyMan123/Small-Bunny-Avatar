@@ -4,9 +4,7 @@ vanilla_model.CAPE:setVisible(false)
 vanilla_model.ELYTRA:setVisible(false)
 
 --libs
-local anims = require("libs/JimmyAnims")
 local fakeNameplate = require("libs/nameplate")
-anims(animations.model)
 
 -- vars
 moveFirstPersonCamera = false
@@ -38,24 +36,30 @@ function events.entity_init()
         end
     end
 end
-
+local tick = 0
+local oldTick = -1
 -- customization
 function events.render(_, context)
-    local fp = (context == "FIRST_PERSON")
-    models.model.RightArmFP:setVisible(fp)
-    models.model.root.RightArm:setVisible(not fp)
-    models.model.root.Head.HelmetPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.Head.HelmetItemPivot:setScale(0.75, 0.75, 0.75)
-    models.model.root.Body.ChestplatePivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.RightArm.Upper.RightShoulderPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.LeftArm.Upper4.LeftShoulderPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.RightArm.Upper.Lower.RightItemPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.LeftArm.Upper4.Lower4.LeftItemPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.Body.LeggingsPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.LeftLeg.Upper2.LeftLeggingPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.RightLeg.Upper3.RightLeggingPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.LeftLeg.Upper2.Lower2.LeftBootPivot:setScale(0.7, 0.7, 0.7)
-    models.model.root.RightLeg.Upper3.Lower3.RightBootPivot:setScale(0.7, 0.7, 0.7)
+    models.model.root:setScale(0.7)
+
+    local jetpackOn = ((player:getGamemode() == "CREATIVE") or (player:getItem(5).id == "minecraft:elytra"))
+    models.model.root.Body.Jetpack:setVisible(jetpackOn)
+
+    local smokeOn = (not player:isOnGround() and jetpackOn)
+    if smokeOn and (oldTick ~= tick) then
+        local smokePivotLeft = models.model.root.Body.Jetpack.SmokePivotLeft
+        local smokePivotRight = models.model.root.Body.Jetpack.SmokePivotRight
+        local plrRot = player:getLookDir()
+        local fireTimeOff = player:getVelocity():length()
+
+        particles:newParticle("minecraft:smoke", smokePivotLeft:partToWorldMatrix():apply(0,0,0),vec(0,-0.2,0)):setScale(0.25)
+        particles:newParticle("minecraft:smoke", smokePivotRight:partToWorldMatrix():apply(0,0,0),vec(0,-0.2,0)):setScale(0.25)
+        particles:newParticle("minecraft:flame", smokePivotLeft:partToWorldMatrix():apply(0,0,0), vec(0,-0.2,0)):setLifetime(4 - fireTimeOff):setScale(0.5)
+        particles:newParticle("minecraft:flame", smokePivotRight:partToWorldMatrix():apply(0,0,0), vec(0,-0.2,0)):setLifetime(4 - fireTimeOff):setScale(0.5)
+
+    elseif oldTick == tick then
+        oldTick = tick
+    end
 
     -- camera
     if renderer:isFirstPerson() then
@@ -82,15 +86,8 @@ function events.render(_, context)
     -- end
 end
 
-local tick = 0
 function events.tick()
-    --ring
-    local health = player:getHealth() / player:getMaxHealth()
-    models.model.root.RightArm.Upper.Lower.Ring.HealthRingHealthIndicatorReal:setColor(1 - health,
-        health, 0.05)
-    models.model.RightArmFP.Upper5.Lower5.Ring2.HealthRingHealthIndicatorReal2:setColor(1 - health,
-        health, 0.05)
-
+    tick = tick + 1
     if swingDelay > 0 then
         swingDelay = swingDelay - 1
     end

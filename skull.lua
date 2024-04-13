@@ -1,7 +1,8 @@
 ---@diagnostic disable: undefined-global, redefined-local
 local base64 =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" -- You will need this for encoding/decoding
-
+tick = 0
+oldTick = -1
 local function splitByChunk(text, chunkSize)
     local s = {}
     for i = 1, #text, chunkSize do
@@ -118,8 +119,6 @@ function splitByChunk(text, chunkSize)
     return s
 end
 
-tick = 0
-oldTick = -1
 function events.world_tick()
     oldTick = tick
     tick = tick + 1
@@ -155,7 +154,7 @@ local funcs = {
     {
         exact = true,
         block = "minecraft:player_head",
-        func = function()
+        func = function(delta, blockBelow)
             -- Hide main head and show projector
             models.skull.Skull.text:setVisible(true)
             models.skull.Skull:setPos(vec(0, -12 - 8, 0)):setScale(1):setVisible(true).Table
@@ -240,7 +239,7 @@ local funcs = {
     {
         exact = false,
         block = "_sign",
-        func = function()
+        func = function(delta, blockBelow)
             -- Hide main head and show projector
             models.skull.Skull.text:setVisible(true)
             models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table
@@ -294,7 +293,7 @@ local funcs = {
     {
         exact = false,
         block = "minecraft:smooth_quartz",
-        func = function()
+        func = function(delta, blockBelow)
             models.skull.Skull:setPos(vec(0, 0, 0))
             models.skull.Skull.TheHead.Head:setVisible(false)
             models.skull.Skull["Ear 1"]:setVisible(false)
@@ -321,7 +320,7 @@ local funcs = {
     {
         exact = true,
         block = "minecraft:prismarine",
-        func = function()
+        func = function(delta, blockBelow)
             models.skull.Skull:setPos(vec(0, 0, 0))
             models.skull.Skull.TheHead.Head:setVisible(false)
             models.skull.Skull["Ear 1"]:setVisible(false)
@@ -408,7 +407,7 @@ function events.skull_render(delta, block, item, entity, mode)
 
         for _, v in pairs(funcs) do
             if (v.exact == true and blockBelow.id == v.block) or (v.exact == false and blockBelow.id:find(v.block)) then
-                v.func()
+                v.func(delta, blockBelow)
                 return
             end
         end
