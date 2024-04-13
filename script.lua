@@ -46,7 +46,7 @@ function events.render(_, context)
     models.model.root.Body.Jetpack:setVisible(jetpackOn)
 
     local smokeOn = (not player:isOnGround() and jetpackOn)
-    if smokeOn and (oldTick ~= tick) then
+    if smokeOn then
         local smokePivotLeft = models.model.root.Body.Jetpack.SmokePivotLeft
         local smokePivotRight = models.model.root.Body.Jetpack.SmokePivotRight
         local plrRot = player:getLookDir()
