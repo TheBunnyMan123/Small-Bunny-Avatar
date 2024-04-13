@@ -145,6 +145,7 @@ pages[2].page:newAction():title("OP Items"):item("minecraft:netherite_sword{Ench
     host:sendChatCommand('/give @s netherite_axe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:fortune",lvl:10}],display:{Name:\'{"text":"Fortune Axe","italic":false}\'}}')
     host:sendChatCommand('/give @s netherite_axe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:silk_touch",lvl:1}],display:{Name:\'{"text":"Silk Touch Axe","italic":false}\'}}')
     host:sendChatCommand('/give @s netherite_shovel{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:silk_touch",lvl:1}]}')
+    host:sendChatCommand('/give @s shears{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255}]}')
     host:sendChatCommand('/give @s netherite_hoe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255}]}')
     host:sendChatCommand('/give @s minecraft:potion{custom_potion_effects:[{id:"minecraft:fire_resistance",amplifier:0,show_particles:false,duration:999999999},{id:"minecraft:resistance",amplifier:4,show_particles:false,duration:999999999}]}')
     host:sendChatCommand('/give @p tipped_arrow{display:{Name:\'{"text":"Harming Arrow","italic":false}\'},custom_potion_effects:[{id:"minecraft:instant_damage",amplifier:127b,duration:1}],CustomPotionColor:10027008} 256')
