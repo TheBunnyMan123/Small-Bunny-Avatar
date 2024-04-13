@@ -14,16 +14,15 @@ local pages = {
     {
         page = action_wheel:newPage("Creation & Destruction"),
         item = "minecraft:wooden_axe"
-    }
+    },
+    {
+        page = action_wheel:newPage("General Cheats"),
+        item = "minecraft:debug_stick"
+    },
 } 
 
 destructionIsEnabled = false
 destructionTimer = 0
-
-
-pages[1].page:newAction():title("Back"):setItem("minecraft:barrier"):setOnLeftClick(function()
-    action_wheel:setPage(mainWheelPage)
-end)
 
 local throwCommand = "summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}"
 local waterParticleCommand = "particle dust 0.141 0.800 1.000 1 %f %f %f 10 10 10 1 10000 force"
@@ -60,6 +59,93 @@ pages[1].page:newAction():title("Throw Held Block"):setItem("minecraft:sand"):se
   end
 end)
 
+difficultyPage = action_wheel:newPage("Difficulties")
+difficultyPage:newAction():title("Peaceful"):setOnLeftClick(function() 
+    host:sendChatCommand("difficulty peaceful")
+end):item("minecraft:lime_wool")
+difficultyPage:newAction():title("Easy"):setOnLeftClick(function() 
+    host:sendChatCommand("difficulty easy")
+end):item("minecraft:yellow_wool")
+difficultyPage:newAction():title("Normal"):setOnLeftClick(function() 
+    host:sendChatCommand("difficulty normal")
+end):item("minecraft:orange_wool")
+difficultyPage:newAction():title("Hard"):setOnLeftClick(function() 
+    host:sendChatCommand("difficulty hard")
+end):item("minecraft:red_wool")
+difficultyPage:newAction():title("Back"):setOnLeftClick(function() 
+    action_wheel:setPage(pages[2].page)
+end):item("minecraft:barrier")
+
+gamemodePage = action_wheel:newPage("Gamemodes")
+gamemodePage:newAction():title("Adventure"):setOnLeftClick(function() 
+    host:sendChatCommand("gamemode adventure")
+end):item("minecraft:glass")
+gamemodePage:newAction():title("Creative"):setOnLeftClick(function() 
+    host:sendChatCommand("gamemode creative")
+end):item("minecraft:wooden_axe")
+gamemodePage:newAction():title("Spectator"):setOnLeftClick(function() 
+    host:sendChatCommand("gamemode spectator")
+end):item("minecraft:totem_of_undying")
+gamemodePage:newAction():title("Survival"):setOnLeftClick(function() 
+    host:sendChatCommand("gamemode survival")
+end):item("minecraft:diamond_sword")
+gamemodePage:newAction():title("Back"):setOnLeftClick(function() 
+    action_wheel:setPage(pages[2].page)
+end):item("minecraft:barrier")
+
+pages[2].page:newAction():title("Difficulty"):item("minecraft:zombie_spawn_egg"):setOnLeftClick(function()
+    action_wheel:setPage(difficultyPage)
+end)
+
+pages[2].page:newAction():title("Gamemode"):item("minecraft:enchanted_golden_apple"):setOnLeftClick(function()
+    action_wheel:setPage(gamemodePage)
+end)
+
+pages[2].page:newAction():title("OP Items"):item("minecraft:netherite_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:255}]}"):setOnLeftClick(function()
+    host:sendChatCommand('/give @s minecraft:netherite_sword{Enchantments:[{id:"minecraft:sharpness",lvl:255},{id:"minecraft:fire_aspect",lvl:255},{id:"minecraft:sweeping",lvl:255},{id:"minecraft:looting",lvl:10}],Unbreakable:1b}')
+    host:sendChatCommand('/give @s minecraft:bow{Enchantments:[{id:"minecraft:power",lvl:255},{id:"minecraft:infinity",lvl:255},{id:"minecraft:flame",lvl:255}],Unbreakable:1b}')
+    host:sendChatCommand('/give @s netherite_pickaxe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:fortune",lvl:10}],display:{Name:\'{"text":"Fortune Pickaxe","italic":false}\'}}')
+    host:sendChatCommand('/give @s netherite_pickaxe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:silk_touch",lvl:1}],display:{Name:\'{"text":"Silk Touch Pickaxe","italic":false}\'}}')
+    host:sendChatCommand('/give @s netherite_axe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:fortune",lvl:10}],display:{Name:\'{"text":"Fortune Axe","italic":false}\'}}')
+    host:sendChatCommand('/give @s netherite_axe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:silk_touch",lvl:1}],display:{Name:\'{"text":"Silk Touch Axe","italic":false}\'}}')
+    host:sendChatCommand('/give @s netherite_shovel{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:silk_touch",lvl:1}]}')
+    host:sendChatCommand('/give @s netherite_hoe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255}]}')
+    host:sendChatCommand('/give @s minecraft:potion{custom_potion_effects:[{id:"minecraft:fire_resistance",amplifier:0,show_particles:false,duration:999999999},{id:"minecraft:resistance",amplifier:4,show_particles:false,duration:999999999}]}')
+    host:sendChatCommand('/give @p tipped_arrow{display:{Name:\'{"text":"Harming Arrow","italic":false}\'},custom_potion_effects:[{id:"minecraft:instant_damage",amplifier:127b,duration:1}],CustomPotionColor:10027008} 256')
+    host:sendChatCommand('/give @s minecraft:netherite_helmet{Trim:{material:gold,pattern:shaper},Enchantments:[{id:"minecraft:aqua_affinity",lvl:1},{id:"minecraft:respiration",lvl:255},{id:"minecraft:protection",lvl:255},{id:"minecraft:thorns",lvl:255}],Unbreakable:1b}')
+    host:sendChatCommand('/give @s minecraft:netherite_chestplate{Trim:{material:gold,pattern:dune},Enchantments:[{id:"minecraft:protection",lvl:255},{id:"minecraft:thorns",lvl:255}],Unbreakable:1b}')
+    host:sendChatCommand('/give @s minecraft:netherite_leggings{Trim:{material:gold,pattern:eye},Enchantments:[{id:"minecraft:protection",lvl:255},{id:"minecraft:thorns",lvl:255},{id:"minecraft:swift_sneak",lvl:10}],Unbreakable:1b}')
+    host:sendChatCommand('/give @s minecraft:netherite_boots{Trim:{material:gold,pattern:eye},Enchantments:[{id:"minecraft:protection",lvl:255},{id:"minecraft:feather_falling",lvl:255},{id:"minecraft:depth_strider",lvl:10},{id:"minecraft:soul_speed",lvl:10}],Unbreakable:1b}')
+end)
+
+pages[2].page:newAction():title("Keep Inventory"):item("minecraft:totem_of_undying"):setOnLeftClick(function()
+    host:sendChatCommand('gamerule keepInventory true')
+end)
+
+pages[2].page:newAction():title("Infinite Saturation"):item("minecraft:golden_carrot"):setOnLeftClick(function ()
+    host:sendChatCommand('/effect give @s minecraft:saturation infinite 127 true')
+end)
+
+local adventHeads = {
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"c2hlbGZFbGY="}]}},display:{Name:\'{"text":"Shelf Elf","italic":false}\'}}',
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"anVrZWJveA=="}]}},display:{Name:\'{"text":"Jukebox","italic":false}\'}}',
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"ZHZk"}]}},display:{Name:\'{"text":"DVD Screensave","italic":false}\'}}',
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"bGlnaHRz"}]}},display:{Name:\'{"text":"Light","italic":false}\'}}',
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"dHJlZQ=="}]}},display:{Name:\'{"text":"Pine Tree","italic":false}\'}}',
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"dmluZXM="}]}},display:{Name:\'{"text":"Vines","italic":false}\'}}',
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"Y2hyaXN0bWFzX2hhdA=="}]}},display:{Name:\'{"text":"Christmas Hat","italic":false}\'}}',
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"dHJhaW4="}]}},display:{Name:\'{"text":"Trains","italic":false}\'}}',
+    '/give @s player_head{SkullOwner:{Id:[I;1935927175,-165265060,-2042697569,663212783],Properties:{textures:[{Value:"ZmlyZXdvcmtz"}]}},display:{Name:\'{"text":"Fireworks","italic":false}\'}}'
+}
+
+mainWheelPage:newAction():title("Cool Heads"):item("minecraft:player_head"):setOnLeftClick(function ()
+    host:sendChatCommand('/give @s minecraft:player_head{SkullOwner:{Id:[I;1481619325,1543653003,-1514517150,-829510686]},display:{Name:\'{"text":"4P5\\\'s Head","italic":false}\'}}')
+    host:sendChatCommand('/give @s minecraft:player_head{SkullOwner:{Id:[I;499966288,6572293,-2019802129,1692243927]},display:{Name:\'{"text":"TheKillerBunny\\\'s Head","italic":false}\'}}')
+    host:sendChatCommand('/give @s minecraft:player_head{SkullOwner:{Id:[I;-1808656131,1539063829,-1082155612,-209998759]},display:{Name:\'{"text":"Figura Piano","italic":false}\'}}')
+    for _, v in ipairs(adventHeads) do
+        host:sendChatCommand(v)
+    end
+end)
 
 local destructionEnabledAction = pages[1].page:newAction():title("Enable Destruction Keybinds"):setItem("minecraft:tnt"):setOnToggle(function()
     destructionIsEnabled = true
@@ -67,6 +153,10 @@ local destructionEnabledAction = pages[1].page:newAction():title("Enable Destruc
 end)
 
 for _, v in ipairs(pages) do
+    v.page:newAction():title("Back"):setItem("minecraft:barrier"):setOnLeftClick(function()
+        action_wheel:setPage(mainWheelPage)
+    end)
+
     mainWheelPage:newAction():title(v.page:getTitle()):setItem(v.item):onLeftClick(function()
         action_wheel:setPage(v.page)
     end)
