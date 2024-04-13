@@ -20,10 +20,13 @@ alreadyAfk = false
 task = nil
 blockBelowCache = {}
 
+local figway
+
 function events.entity_init()
     if file.allowed(file) then
         local files = file.list(file, "")
         if files then
+            log()
             for _, v in pairs(files) do
                 if string.gmatch(v, ".%a+.lua.link") then
                     log("Loading: " .. tostring(v))
