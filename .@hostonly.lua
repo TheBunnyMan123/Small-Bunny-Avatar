@@ -163,6 +163,8 @@ pages[2].page:newAction():title("Infinite Saturation"):item("minecraft:golden_ca
     host:sendChatCommand('/effect give @s minecraft:saturation infinite 127 true')
 end)
 
+mainWheelPage:setAction(-1, autoanims)
+
 local adventHeads = {
     "badge", "baubles", "christmas_hat", "door_wreath",
     "fireworks", "jukebox", "snow_globe", "snowfall",

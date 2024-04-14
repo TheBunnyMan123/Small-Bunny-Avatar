@@ -6,6 +6,10 @@ vanilla_model.ELYTRA:setVisible(false)
 --libs
 local fakeNameplate = require("libs/nameplate")
 
+
+
+autoanims = require("libs.auto_animations")
+
 -- vars
 moveFirstPersonCamera = false
 swingDelay = 0
@@ -21,6 +25,29 @@ blockBelowCache = {}
 local figway
 
 function events.entity_init()
+    nameplate.ALL:setText(nameplateOther)
+    nameplate.ENTITY:setText(toJson(
+        {
+            {
+                text = "${badges}"
+            },
+            {
+                text = "\n:rabbit: "
+            },
+            {
+                text = "Bunny",
+                color = "aqua"
+            },
+            {
+                text = " :rabbit:",
+                color = "white"
+            }
+        }
+    ))
+    nameplate.ENTITY:setPos(models.model.root.Head.nameplate:getTruePos() - vec(0, 0.5, 0))
+
+    -- fakeNameplate(models.model.root.Head.nameplate, vec(0, 0, 0), 0, nameplateHead)
+
     if file.allowed(file) and host:isHost() then
         local files = file.list(file, "")
         if files then
