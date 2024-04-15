@@ -1,13 +1,8 @@
 local explosionKeybind = keybinds:newKeybind("Explosion", "key.keyboard.delete")
-local moveFirstPersonCameraToggle = keybinds:newKeybind("Switch first person camera location",
-    "key.keyboard.backspace", false)
+
 if avatar:getComplexity() > 2048 then
     log("Complexity higher than default max (" .. avatar:getComplexity() .. " / 2048)")
 end
-moveFirstPersonCameraToggle:setOnPress(function()
-    log("THIS CAN POSSIBLY GET YOU BANNED FROM SERVERS")
-    moveFirstPersonCamera = not moveFirstPersonCamera
-end)
 
 local base64 =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"

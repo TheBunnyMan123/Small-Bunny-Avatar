@@ -42,7 +42,7 @@ function events.tick()
         destructionTimer = 60
 
         local eyePos = player:getPos():add(vec(0,
-            player:getEyeHeight() + renderer:getCameraOffsetPivot().y, 0))
+            player:getEyeHeight() - 0.5, 0))
         local _, pos, _ = raycast:block(eyePos, eyePos + player:getLookDir() * 10000)
 
         host:sendChatCommand(('summon tnt %f %f %f'):format(pos:unpack()))

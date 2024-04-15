@@ -87,13 +87,13 @@ function events.render(_, context)
         particles:newParticle("minecraft:flame", smokePivotRight:partToWorldMatrix():apply(0,0,0), vec(0,-0.2,0)):setLifetime(4 - fireTimeOff):setScale(0.5)
     end
     -- camera
-    if renderer:isFirstPerson() then
-        renderer:setOffsetCameraPivot(moveFirstPersonCamera and vec(0, -0.5, 0) or vec(0, 0, 0))
-        renderer:setEyeOffset(moveFirstPersonCamera and vec(0, -0.5, 0) or vec(0, 0, 0))
-    else
-        renderer:setOffsetCameraPivot(0, -0.5, 0)
-        renderer:setEyeOffset(0, -0.5, 0)
-    end
+    -- if renderer:isFirstPerson() then
+    --     renderer:setOffsetCameraPivot(moveFirstPersonCamera and vec(0, -0.5, 0) or vec(0, 0, 0))
+    --     renderer:setEyeOffset(moveFirstPersonCamera and vec(0, -0.5, 0) or vec(0, 0, 0))
+    -- else
+    --     renderer:setOffsetCameraPivot(0, -0.5, 0)
+    --     renderer:setEyeOffset(0, -0.5, 0)
+    -- end
 
     --   if host:isHost() then
     --   for _, v in getEntities(player:getPos() - vec(5, 5, 5), player:getPos() + vec(5, 5, 5)) do

@@ -1,3 +1,5 @@
+moveCamera = false
+
 local base64 =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 local b = base64
@@ -276,7 +278,11 @@ mainWheelPage:newAction():title("Cool Heads"):item("minecraft:player_head"):setO
     end
 end):color(0.2,0.2,0.2)
 
-iter = 0
+mainWheelPage:newAction():title("Move Camera"):item("minecraft:glass"):setOnToggle(function (state)
+    moveCamera = state
+end):color(0.2, 0.2, 0.2)
+
+iter = 1
 for _, v in ipairs(pages) do
     iter = iter + 1
     v.page:setAction(1, action_wheel:newAction():title("§lBack§r"):setItem("minecraft:arrow"):setOnLeftClick(function()
@@ -293,3 +299,30 @@ while iter % 8 ~= 0 do
 end
 
 action_wheel:setPage(mainWheelPage)
+
+local oldCamPos = renderer:getCameraOffsetPivot()
+
+local function calcMatrix(p)
+    return p and (calcMatrix(p:getParent()) * p:getPositionMatrix()) or matrices.mat4()
+end
+
+local function calcPos(p)
+    if p:getParent() then
+        if p:getParent():getTruePos() == vec(0, 0, 0) then
+            return vec(1, 1, 1)
+        end
+    end
+    return p and (calcPos(p:getParent()) * p:getTruePos()) or vectors.vec3()
+end
+
+events.render:register(function (delta, context, matrix)
+    -- log(moveCamera, oldCamPos)
+    -- log(models.model.root.Head:getPos() / 16)
+    if moveCamera then
+        renderer:setOffsetCameraPivot(calcMatrix(models.model.root.Head):apply())
+    else
+        renderer:setOffsetCameraPivot(oldCamPos)
+    end
+end, "CAMERA.RENDER")
+
+log("Success!")
