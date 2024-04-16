@@ -1,3 +1,4 @@
+---@class tilegen
 local funcs = {}
 
 function calcTileOrigin(worldOrigin, tileArray, tileSize)

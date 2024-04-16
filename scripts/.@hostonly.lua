@@ -12,7 +12,7 @@ local b = base64
 
 local function base64Encode(data)
     return ((data:gsub(".", function(x)
-        ---@diagnostic disable-next-line: unused-local
+        ---@diagnostic disable-next-line: unused-local, redefined-local
         local r, b = "", x:byte()
         for i = 8, 1, -1 do r = r .. (b % 2 ^ i - b % 2 ^ (i - 1) > 0 and "1" or "0") end
         return r;

@@ -402,7 +402,7 @@ function events.skull_render(delta, block, item, entity, mode)
     end
 
     -- Only run main code section if enough instructions and complexity are given to skull
-    if (avatar:getMaxComplexity() >= 10000) and (avatar:getMaxRenderCount() >= 150000) and (avatar:getMaxTickCount() >= 2000) then
+    if not minimal then
         local blockBelow = world.getBlockState(block:getPos() - vec(0, 1, 0))
 
         for _, v in pairs(funcs) do

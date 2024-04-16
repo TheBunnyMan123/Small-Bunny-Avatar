@@ -1,3 +1,4 @@
+---@class gridgen
 local funcs = {}
 
 function putOnGrid(tileSlot, tileSize, worldOrigin, iteratorAdded)

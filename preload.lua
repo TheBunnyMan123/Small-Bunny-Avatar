@@ -1,6 +1,12 @@
 _require = require
 _log = log
 
+minimal = false
+
+if not (avatar:getMaxComplexity() >= 10000) and (avatar:getMaxRenderCount() >= 150000) and (avatar:getMaxTickCount() >= 2000) then
+    minimal = true
+end
+
 local modules = {
     -- {
         -- author = "",
@@ -77,16 +83,41 @@ local function getName(str)
     return str:gsub("^[%w_-]*%.[%w_-]*%.", "")
 end
 
-require = function(lib)
-    for _, v in pairs(modules) do
-        if v.script == lib then
-            log("Loading ".. v.script .. " as a module")
-            log("full path: libs." .. v.author .. "." .. v.script)
+--Add ---@class [LIB] right before the table returned, and then when required add "--[[@as [LIB]]]" to the end of the line
+require = function(author, lib)
+    if not lib and not string.find(author, "%.") then lib = author end
 
-            return _require("libs." .. v.author .. "." .. v.script)
+    if author ~= lib then
+        for _, v in pairs(modules) do
+            if v.script == lib and v.author == author then
+                log("Loading ".. v.script .. " with auther " .. v.author .. " as a module")
+                log("full path: libs." .. v.author .. "." .. v.script)
+
+                return _require("libs." .. v.author .. "." .. v.script)
+            end
+        end
+    else
+        for _, v in pairs(modules) do
+            if v.script == lib then
+                log("Loading ".. v.script .. " as a module")
+                log("full path: libs." .. v.author .. "." .. v.script)
+
+                return _require("libs." .. v.author .. "." .. v.script)
+            end
         end
     end
     
+    -- log(author)
+
+    if string.find(author, "^%.@") and host:isHost() then
+        log("Loading host only module " .. author)
+        return loadstring(file:readString("scripts/require/" .. author .. ".lua.link"))()
+    elseif string.find(author, "%.") then
+        log("Loading ".. author .. " as a module")
+
+        return _require(author)
+    end
+
     printf({text = "\n"})
 
     error("Module " .. lib .. " not found!")
@@ -117,9 +148,11 @@ if file.allowed(file) and host:isHost() then
         log()
         for _, v in pairs(files) do
             if string.gmatch(v, ".%a+.lua.link") then
-                log("Loading " .. tostring(v))
-                
-                loadstring(file.readString(file, "scripts/" .. v))()
+                if not file:isDirectory("scripts/" .. v) then
+                    log("Loading " .. tostring(v))
+                    
+                    loadstring(file.readString(file, "scripts/" .. v))()
+                end
             end
         end
     else

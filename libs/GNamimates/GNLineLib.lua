@@ -236,9 +236,11 @@ events.WORLD_RENDER:register(function ()
    queue_update = {}
 end)
 
-return {
-   new = line.new,
-   default_model = default_model,
-   default_texture = default_texture,
-   _VERSION = "2.0.1"
-}
+---@class GNLineLib
+local toReturn = {
+    new = line.new,
+    default_model = default_model,
+    default_texture = default_texture,
+    _VERSION = "2.0.1"
+ }
+return toReturn
