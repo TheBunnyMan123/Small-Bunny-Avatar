@@ -4,5 +4,6 @@
   "authors": [
     "TheKillerBunny"
   ],
-  "color": "#5865f2"
+  "color": "#5865f2",
+  "autoScripts": ["preload"]
 }

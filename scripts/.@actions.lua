@@ -324,5 +324,3 @@ events.render:register(function (delta, context, matrix)
         renderer:setOffsetCameraPivot(oldCamPos)
     end
 end, "CAMERA.RENDER")
-
-log("Success!")

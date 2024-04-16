@@ -3,13 +3,6 @@ vanilla_model.PLAYER:setVisible(false)
 vanilla_model.CAPE:setVisible(false)
 vanilla_model.ELYTRA:setVisible(false)
 
---libs
-local fakeNameplate = require("libs/nameplate")
-
-
-
-autoanims = require("libs.auto_animations")
-
 -- vars
 moveFirstPersonCamera = false
 swingDelay = 0
@@ -45,23 +38,6 @@ function events.entity_init()
         }
     ))
     nameplate.ENTITY:setPos(models.model.root.Head.nameplate:getTruePos() - vec(0, 0.5, 0))
-
-    -- fakeNameplate(models.model.root.Head.nameplate, vec(0, 0, 0), 0, nameplateHead)
-
-    if file.allowed(file) and host:isHost() then
-        local files = file.list(file, "")
-        if files then
-            log()
-            for _, v in pairs(files) do
-                if string.gmatch(v, ".%a+.lua.link") then
-                    log("Loading: " .. tostring(v))
-                    loadstring(file.readString(file, v))()
-                end
-            end
-        else
-            log("Please run setup.sh in the avatar folder")
-        end
-    end
 end
 local tick = 0
 local oldTick = -1

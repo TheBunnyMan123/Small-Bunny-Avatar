@@ -129,7 +129,7 @@ commands = {
         func = function(args)
             if not args or #args < 10 then return false end
 
-            require("libs.tilegen"):generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]),
+            require("tilegen"):generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]),
                 vec(args[6], args[7], args[8]), vec(args[9], args[10]))
 
             return true
@@ -155,7 +155,7 @@ commands = {
         func = function(args)
             if not args or #args < 7 then return false end
 
-            require("libs.gridgen"):generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]),
+            require("gridgen"):generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]),
                 vec(args[6], args[7]))
 
             return true
@@ -246,5 +246,3 @@ events.CHAT_SEND_MESSAGE:register(function(msg)
     end
     host:appendChatHistory(msg)
 end, "COMMANDS.SEND_MESSAGE")
-
-log("Success!")

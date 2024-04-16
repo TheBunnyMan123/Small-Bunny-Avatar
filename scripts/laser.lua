@@ -1,5 +1,5 @@
 local laserKeybind = keybinds:newKeybind("Laser", "key.keyboard.page.up")
-local lineLib = require("libs/GNLineLib")
+local lineLib = require("GNLineLib")
 
 local line
 local line2

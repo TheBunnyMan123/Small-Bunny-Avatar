@@ -348,5 +348,3 @@ function events.CHAT_RECEIVE_MESSAGE(msg)
     
     lastTick = tick
 end
-
-log("Success!")

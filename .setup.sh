@@ -1,8 +1,8 @@
 #!/bin/bash
 
-mkdir --parents ../../data
+mkdir --parents ../../data/scripts
 
-for entry in .@*
+for entry in scripts/.@*
 do
   REALPATH=$(realpath ./$entry)
   ENTR=$(realpath ../../data/$entry.link)
