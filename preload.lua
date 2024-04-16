@@ -16,10 +16,29 @@ printf = function(arg)
     end
 end
 
+warn = function(str)
+    printf(
+                {
+                    {
+                        text = "\n[WARN] ",
+                        color = "yellow"
+                    },
+                    {
+                        text = str,
+                        color = "yellow"
+                    }
+                }
+            )
+end
+
 log = function(...)
     local inArgs = {...}
 
     for _, v in ipairs(inArgs) do
+        if v == nil then
+            warn("Tried to log nil value")
+        end
+
         if type(v) == "string" then
             printf(
                 {
@@ -37,21 +56,6 @@ log = function(...)
             _log(v)
         end
     end
-end
-
-warn = function(str)
-    printf(
-                {
-                    {
-                        text = "\n[WARN] ",
-                        color = "yellow"
-                    },
-                    {
-                        text = str,
-                        color = "yellow"
-                    }
-                }
-            )
 end
 
 function table.contains(tbl, val)
@@ -106,7 +110,6 @@ for _, v in pairs(listFiles("scripts", true)) do
 end
 
 autoanims = require("auto_animations")
-_log(autoanims)
 
 if file.allowed(file) and host:isHost() then
     local files = file.list(file, "scripts")
