@@ -2,6 +2,27 @@ _require = require
 _log = log
 
 minimal = false
+figcolors = {
+    AWESOME_BLUE = "#5EA5FF",
+    PURPLE = "#A672EF",
+    BLUE = "#00F0FF",
+    SOFT_BLUE = "#99BBEE",
+    RED = "#FF2400",
+    ORANGE = "#FFC400",
+
+    CHEESE = "#F8C53A",
+
+    LUA_LOG = "#5555FF",
+    LUA_ERROR = "#FF5555",
+    LUA_PING = "#A155DA",
+
+    DEFAULT = "#5AAAFF",
+    DISCORD = "#5865F2",
+    KOFI = "#27AAE0",
+    GITHUB = "#FFFFFF",
+    MODRINTH = "#1BD96A",
+    CURSEFORGE = "#F16436"
+}
 
 if not (avatar:getMaxComplexity() >= 10000) and (avatar:getMaxRenderCount() >= 150000) and (avatar:getMaxTickCount() >= 2000) then
     minimal = true
@@ -22,9 +43,25 @@ printf = function(arg)
     end
 end
 
+logf = printf
+
+function isAPI(arg)
+        local mtbl = getmetatable(arg)
+
+        if not mtbl then
+            return false
+        end
+
+        if mtbl.__index then
+            return true
+        else
+            return false
+        end
+end
+
 warn = function(str)
     printf(
-                {
+            {
                     {
                         text = "\n[WARN] ",
                         color = "yellow"
@@ -37,31 +74,137 @@ warn = function(str)
             )
 end
 
-log = function(...)
-    local inArgs = {...}
+function colorFromValue(arg)
+    if type(arg) == "string" then
+        return "white"
+    elseif type(arg) == "table" then
+        return figcolors.AWESOME_BLUE
+    elseif type(arg) == "boolean" then
+        return figcolors.LUA_PING
+    elseif type(arg) == "function" then
+        return "green"
+    elseif type(arg) == "number" then
+        return figcolors.BLUE
+    elseif type(arg) == "nil" then
+        return figcolors.LUA_ERROR
+    elseif type(arg) == "thread" then
+        return "gold"
+    else
+        return "yellow"
+    end
+end
 
-    for _, v in ipairs(inArgs) do
-        if v == nil then
-            warn("Tried to log nil value")
+log = function(...)
+    local inArgs = table.pack(...)
+    local out = {
+        {
+            {
+                text = "\n[DEBUG] ",
+                color = "gray"
+            }
+        }
+    }
+
+    for i = 1, inArgs.n do
+        v = inArgs[i]
+        if i ~= 1 then
+            table.insert(out, {
+                text = "    ",
+                color = "white"
+            })
         end
 
-        if type(v) == "string" then
-            printf(
-                {
+        if v == nil then
+            table.insert(out, 
                     {
-                        text = "\n[DEBUG] ",
-                        color = "gray"
-                    },
+                        text = "nil",
+                        color = colorFromValue(nil),
+                    }
+            )
+        elseif type(v) == "string" then
+            table.insert(out, 
                     {
                         text = v,
-                        color = "white"
+                        color = colorFromValue(v)
                     }
-                }
             )
-        else
-            _log(v)
+        elseif type(v) == "table" or isAPI(v) then
+            local hoverText = {
+                {
+                    text = type(v) .. ": ",
+                    color = colorFromValue(v)
+                },
+                {
+                    text = "{\n",
+                    color = "gray"
+                }
+            }
+
+            local function iterTable(tbl)
+                for key, value in pairs(tbl) do
+                    if type(value) == "string" then
+                        value = "\"" .. value .. "\""
+                    end
+
+                    local toInsert = {
+                        {
+                            text = "\n  [",
+                            color = "gray"
+                        },
+                        {
+                            text = "\"" .. key .. "\"",
+                            color = "white"
+                        },
+                        {
+                            text = "] = ",
+                            color = "gray"
+                        },
+                        {
+                            text = tostring(value),
+                            color = colorFromValue(value)
+                        }
+                    }
+
+                    for _, w in ipairs(toInsert) do
+                        table.insert(hoverText, w)
+                    end
+                end
+            end
+
+            if isAPI(v) then
+                iterTable(getmetatable(v).__index)
+                goto continue
+            end
+
+            iterTable(v)
+
+            ::continue::
+            table.insert(hoverText, {
+                text = "\n}",
+                color = "gray"
+            })
+
+            table.insert(out, 
+                    {
+                        text = ((type(v) == "table" and tostring(v)) or type(v)),
+                        color = colorFromValue(v),
+                        hoverEvent = {
+                            action = "show_text",
+                            value = hoverText
+                        }
+                    }
+            )
+        elseif v ~= nil then
+            table.insert(out, 
+                    {
+                        text = tostring(v),
+                        color = colorFromValue(v),
+                    }
+            )
         end
     end
+
+    printf(out)
 end
 
 function table.contains(tbl, val)
