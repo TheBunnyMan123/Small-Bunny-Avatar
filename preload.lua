@@ -21,7 +21,7 @@ figcolors = {
     KOFI = "#27AAE0",
     GITHUB = "#FFFFFF",
     MODRINTH = "#1BD96A",
-    CURSEFORGE = "#F16436"
+    CURSEFORGE = "#F16436",
 }
 
 if not (avatar:getMaxComplexity() >= 10000) and (avatar:getMaxRenderCount() >= 150000) and (avatar:getMaxTickCount() >= 2000) then
@@ -30,8 +30,8 @@ end
 
 local modules = {
     -- {
-        -- author = "",
-        -- script = ""
+    -- author = "",
+    -- script = ""
     -- }
 }
 
@@ -46,32 +46,32 @@ end
 logf = printf
 
 function isAPI(arg)
-        local mtbl = getmetatable(arg)
+    local mtbl = getmetatable(arg)
 
-        if not mtbl then
-            return false
-        end
+    if not mtbl then
+        return false
+    end
 
-        if mtbl.__index then
-            return true
-        else
-            return false
-        end
+    if type(mtbl.__index) == "table" or type(mtbl.__index) == "function" then
+        return true
+    else
+        return false
+    end
 end
 
 warn = function(str)
     printf(
+        {
             {
-                    {
-                        text = "\n[WARN] ",
-                        color = "yellow"
-                    },
-                    {
-                        text = str,
-                        color = "yellow"
-                    }
-                }
-            )
+                text = "\n[WARN] ",
+                color = "yellow",
+            },
+            {
+                text = str,
+                color = "yellow",
+            },
+        }
+    )
 end
 
 function colorFromValue(arg)
@@ -94,15 +94,49 @@ function colorFromValue(arg)
     end
 end
 
+function string.split(input, seperator)
+    if seperator == nil then
+        seperator = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(input, "([^" .. seperator .. "]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
+
+function metaTableFromMetaFunction(api, func)
+    local mtable = {}
+    local pattern = '%[[%s%S]-%]'                 -- Matches any characters within quotes inside brackets (single or double)
+
+    local results = {}
+
+    for line in string.gmatch(logTable(api, 1, true), "[^\n]*") do                               -- Iterate over lines using string.gmatch
+        local capture = string.gmatch(line, pattern)()                      -- Start from the beginning of the line
+        
+        if capture then  
+            local presubbed = string.gsub(capture, '%[%"', "")
+            local subbed = string.gsub(presubbed, '%"%]', "")                                 -- Find the first match and stop after finding one
+            table.insert(results, subbed)                                -- Add captured value
+        end
+    end
+
+    for _, v in pairs(results) do
+        mtable[v] = func(api, v)
+    end
+
+    return mtable
+end
+
 log = function(...)
     local inArgs = table.pack(...)
     local out = {
         {
             {
                 text = "\n[DEBUG] ",
-                color = "gray"
-            }
-        }
+                color = "gray",
+            },
+        },
     }
 
     for i = 1, inArgs.n do
@@ -110,34 +144,47 @@ log = function(...)
         if i ~= 1 then
             table.insert(out, {
                 text = "    ",
-                color = "white"
+                color = "white",
             })
         end
 
+        ::begin::
+
         if v == nil then
-            table.insert(out, 
-                    {
-                        text = "nil",
-                        color = colorFromValue(nil),
-                    }
+            table.insert(out,
+                {
+                    text = "nil",
+                    color = colorFromValue(nil),
+                }
+            )
+        elseif string.lower(type(v)):find("matrix") or string.lower(type(v)):find("vector") then
+            table.insert(out,
+                {
+                    text = tostring(v),
+                    color = colorFromValue(v),
+                }
             )
         elseif type(v) == "string" then
-            table.insert(out, 
-                    {
-                        text = v,
-                        color = colorFromValue(v)
-                    }
+            table.insert(out,
+                {
+                    text = v,
+                    color = colorFromValue(v),
+                }
             )
         elseif type(v) == "table" or isAPI(v) then
             local hoverText = {
                 {
-                    text = type(v) .. ": ",
-                    color = colorFromValue(v)
+                    text = type(v),
+                    color = colorFromValue(v),
+                },
+                {
+                    text = ": ",
+                    color = "white"
                 },
                 {
                     text = "{\n",
-                    color = "gray"
-                }
+                    color = "gray",
+                },
             }
 
             local function iterTable(tbl)
@@ -149,20 +196,20 @@ log = function(...)
                     local toInsert = {
                         {
                             text = "\n  [",
-                            color = "gray"
+                            color = "gray",
                         },
                         {
                             text = "\"" .. key .. "\"",
-                            color = "white"
+                            color = "white",
                         },
                         {
                             text = "] = ",
-                            color = "gray"
+                            color = "gray",
                         },
                         {
                             text = tostring(value),
-                            color = colorFromValue(value)
-                        }
+                            color = colorFromValue(value),
+                        },
                     }
 
                     for _, w in ipairs(toInsert) do
@@ -172,7 +219,13 @@ log = function(...)
             end
 
             if isAPI(v) then
-                iterTable(getmetatable(v).__index)
+                -- log(type(getmetatable(v).__index))
+                
+                if type(getmetatable(v).__index) == "table" then
+                    iterTable(getmetatable(v).__index)
+                else
+                    iterTable(metaTableFromMetaFunction(v, getmetatable(v).__index))
+                end
                 goto continue
             end
 
@@ -181,25 +234,25 @@ log = function(...)
             ::continue::
             table.insert(hoverText, {
                 text = "\n}",
-                color = "gray"
+                color = "gray",
             })
 
-            table.insert(out, 
-                    {
-                        text = ((type(v) == "table" and tostring(v)) or type(v)),
-                        color = colorFromValue(v),
-                        hoverEvent = {
-                            action = "show_text",
-                            value = hoverText
-                        }
-                    }
+            table.insert(out,
+                {
+                    text = ((type(v) == "table" and tostring(v)) or type(v)),
+                    color = colorFromValue(v),
+                    hoverEvent = {
+                        action = "show_text",
+                        value = hoverText,
+                    },
+                }
             )
         elseif v ~= nil then
-            table.insert(out, 
-                    {
-                        text = tostring(v),
-                        color = colorFromValue(v),
-                    }
+            table.insert(out,
+                {
+                    text = tostring(v),
+                    color = colorFromValue(v),
+                }
             )
         end
     end
@@ -233,7 +286,7 @@ require = function(author, lib)
     if author ~= lib then
         for _, v in pairs(modules) do
             if v.script == lib and v.author == author then
-                log("Loading ".. v.script .. " with auther " .. v.author .. " as a module")
+                log("Loading " .. v.script .. " with auther " .. v.author .. " as a module")
                 log("full path: libs." .. v.author .. "." .. v.script)
 
                 return _require("libs." .. v.author .. "." .. v.script)
@@ -242,26 +295,26 @@ require = function(author, lib)
     else
         for _, v in pairs(modules) do
             if v.script == lib then
-                log("Loading ".. v.script .. " as a module")
+                log("Loading " .. v.script .. " as a module")
                 log("full path: libs." .. v.author .. "." .. v.script)
 
                 return _require("libs." .. v.author .. "." .. v.script)
             end
         end
     end
-    
+
     -- log(author)
 
     if string.find(author, "^%.@") and host:isHost() then
         log("Loading host only module " .. author)
         return loadstring(file:readString("scripts/require/" .. author .. ".lua.link"))()
     elseif string.find(author, "%.") then
-        log("Loading ".. author .. " as a module")
+        log("Loading " .. author .. " as a module")
 
         return _require(author)
     end
 
-    printf({text = "\n"})
+    printf({ text = "\n" })
 
     error("Module " .. lib .. " not found!")
 end
@@ -270,11 +323,11 @@ for _, v in pairs(listFiles("libs", true)) do
     local name = getName(v)
     local author = getAuthor(v)
 
-    log("Adding "  .. author .. "." .. name .. " to modules")
+    log("Adding " .. author .. "." .. name .. " to modules")
 
     table.insert(modules, {
         author = author,
-        script = name
+        script = name,
     })
 end
 
@@ -293,7 +346,7 @@ if file.allowed(file) and host:isHost() then
             if string.gmatch(v, ".%a+.lua.link") then
                 if not file:isDirectory("scripts/" .. v) then
                     log("Loading " .. tostring(v))
-                    
+
                     loadstring(file.readString(file, "scripts/" .. v))()
                 end
             end
