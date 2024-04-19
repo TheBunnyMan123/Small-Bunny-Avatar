@@ -268,7 +268,7 @@ events.tick:register(function()
         destructionTimer = 60
 
         local eyePos = player:getPos():add(vec(0,
-            player:getEyeHeight() + renderer:getCameraOffsetPivot().y, 0))
+            player:getEyeHeight(), 0))
         local block, pos, side = raycast:block(eyePos, eyePos + player:getLookDir() * 10000)
 
         host:sendChatCommand(string.format(
@@ -301,7 +301,7 @@ events.tick:register(function()
         destructionTimer = 60
 
         local eyePos = player:getPos():add(vec(0,
-            player:getEyeHeight() + renderer:getCameraOffsetPivot().y, 0))
+            player:getEyeHeight(), 0))
         local _, pos, _ = raycast:block(eyePos, eyePos + player:getLookDir() * 10000)
 
         fill(pos.x - 10, pos.y - 10, pos.z - 10, pos.x + 10, pos.y + 10, pos.z + 10, "fire replace air")
@@ -331,7 +331,7 @@ events.tick:register(function()
         destructionTimer = 60
 
         local eyePos = player:getPos():add(vec(0,
-            player:getEyeHeight() + renderer:getCameraOffsetPivot().y, 0))
+            player:getEyeHeight(), 0))
         local _, pos, _ = raycast:block(eyePos, eyePos + player:getLookDir() * 10000)
 
         host:sendChatCommand(string.format(waterParticleCommand, pos.x, pos.y, pos.z))
