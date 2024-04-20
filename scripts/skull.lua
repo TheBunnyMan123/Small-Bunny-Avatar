@@ -320,7 +320,9 @@ local funcs = {
     {
         exact = true,
         block = "minecraft:prismarine",
+        texture = "blahaj",
         func = function(delta, blockBelow)
+            models.blahaj.Skull:setVisible(true)
             models.skull.Skull:setPos(vec(0, 0, 0))
             models.skull.Skull.TheHead.Head:setVisible(false)
             models.skull.Skull["Ear 1"]:setVisible(false)
@@ -328,7 +330,6 @@ local funcs = {
             models.skull.Skull.Table:setVisible(false)
             models.skull.Skull.TheHead.FloorPainting:setVisible(false)
             models.skull.Skull.text:setVisible(false)
-            models.blahaj.Skull:setVisible(true)
 
             models.blahaj.Skull:setRot(
                 0, math.lerp(oldTick * 3, tick * 3, delta), 0
@@ -406,6 +407,18 @@ function events.skull_render(delta, block, item, entity, mode)
         local blockBelow = world.getBlockState(block:getPos() - vec(0, 1, 0))
 
         for _, v in pairs(funcs) do
+            if block:getEntityData() then
+                if v.texture and block:getEntityData().SkullOwner.Properties then
+                    if block:getEntityData().SkullOwner.Properties.textures then
+                        if base64Decode(block:getEntityData().SkullOwner.Properties.textures[1].Value) == v.texture then
+                            v.func(delta, blockBelow)
+                            return
+                        end
+                    end
+
+                end
+            end
+
             if (v.exact == true and blockBelow.id == v.block) or (v.exact == false and blockBelow.id:find(v.block)) then
                 v.func(delta, blockBelow)
                 return
