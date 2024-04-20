@@ -2,7 +2,7 @@ moveCamera = false
 
 local base64 =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-local b = base64
+-- local b = base64
 
 -- encoding
 
