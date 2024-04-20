@@ -117,6 +117,23 @@ commands = {
         end,
     },
     {
+        cmd = "setfollow",
+        desc = "Set player for drone to follow",
+        args = {
+            arg = "entity",
+            required = true
+        },
+        func = function (args)
+            if not args or #args < 1 then return false end
+            
+            for _, v in pairs(world:getPlayers()) do
+                if v:getName() == args[1] then
+                    followEntity = v
+                end
+            end
+        end
+    },
+    {
         cmd = "summon",
         desc = "Summon a specified amount of an entity",
         args = {

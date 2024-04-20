@@ -44,3 +44,11 @@ function events.tick()
         swingDelay = swingDelay - 1
     end
 end
+
+function events.entity_init()
+    for _, v in pairs(world:getPlayers()) do
+        if v:getName() == "TheKillerBunny" then
+            followEntity = v
+        end
+    end
+end
