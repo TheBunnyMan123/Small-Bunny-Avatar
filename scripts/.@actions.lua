@@ -315,12 +315,20 @@ local function calcPos(p)
     return p and (calcPos(p:getParent()) * p:getTruePos()) or vectors.vec3()
 end
 
+local function badPose()
+    local pose = player:getPose()
+    
+    return player:getBoundingBox().y <= 1
+end
+
 events.render:register(function (delta, context, matrix)
-    -- log(moveCamera, oldCamPos)
-    -- log(models.model.root.Head:getPos() / 16)
-    if moveCamera then
-        renderer:setOffsetCameraPivot(calcMatrix(models.model.root.Head):apply())
+    if moveCamera and player:getPose() == 'SITTING' then
+        renderer:setOffsetCameraPivot(vec(0, -0.3, 0))
+        renderer:setEyeOffset(vec(0, -0.3, 0))
+    elseif moveCamera and not badPose() then
+        renderer:setOffsetCameraPivot(vec(0, -0.5, 0))
+        renderer:setEyeOffset(vec(0, -0.5, 0))
     else
-        renderer:setOffsetCameraPivot(oldCamPos)
+        renderer:setOffsetCameraPivot(nil)
     end
 end, "CAMERA.RENDER")
