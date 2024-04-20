@@ -6,8 +6,6 @@ vanilla_model.ELYTRA:setVisible(false)
 -- vars
 moveFirstPersonCamera = false
 swingDelay = 0
-nameplateHead =
-'["",{"text":"${badges}"},{"text":"\n"},{"text":":rabbit: "},{"text":"Bunny","color":"#40E0D0"},{"text":" :rabbit:"}'
 nameplateOther =
 '["",{"text":":rabbit: "},{"text":"Bunny","color":"#40E0D0"},{"text":" :rabbit: "}, {"text":"${badges}"}]'
 nameplate_extra = ""
@@ -15,30 +13,6 @@ alreadyAfk = false
 task = nil
 blockBelowCache = {}
 
-local figway
-
-function events.entity_init()
-    nameplate.ALL:setText(nameplateOther)
-    nameplate.ENTITY:setText(toJson(
-        {
-            {
-                text = "${badges}"
-            },
-            {
-                text = "\n:rabbit: "
-            },
-            {
-                text = "Bunny",
-                color = "aqua"
-            },
-            {
-                text = " :rabbit:",
-                color = "white"
-            }
-        }
-    ))
-    nameplate.ENTITY:setPos(models.model.root.Head.nameplate:getTruePos() - vec(0, 0.5, 0))
-end
 local tick = 0
 local oldTick = -1
 -- customization

@@ -137,6 +137,50 @@ commands = {
         end,
     },
     {
+        cmd = "gradient",
+        desc = "Gradient Test",
+        args = {
+            {
+                arg = "vec3: Color 1 (0-255)",
+                required = true
+            },
+            {
+                arg = "vec3: Color 2 (0-255)",
+                required = true
+            },
+            {
+                args = "int: steps",
+                required = true
+            }
+        },
+        func = function(args)
+            if not args or #args < 7 then return false end
+
+            local color1 = vec(args[1], args[2], args[3])
+            local color2 = vec(args[4],args[5],args[6])
+            local steps = args[7]
+
+            local generatedSteps = {}
+
+            local delta = (color2 - color1) / (steps - 1)
+
+            for i = 0, steps - 1 do
+                table.insert(generatedSteps, color1 + (delta * i))
+            end
+
+            local strToLog = {}
+
+            for _, v in ipairs(generatedSteps) do
+                table.insert(strToLog, {
+                    text = "#",
+                    color = "#" .. vectors.rgbToHex(v / 255)
+                })
+            end
+
+            printf(strToLog)
+        end
+    },
+    {
         cmd = "gridgen",
         desc = "Generate a grid",
         args = {
