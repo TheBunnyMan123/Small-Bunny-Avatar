@@ -36,7 +36,7 @@ followEntity = nil
 function events.tick()
     if not followEntity then return end
     if not followEntity:isLoaded() then return end
-    targetPos = (followEntity:getPos() + vec(0, 1, 0)) * 16
+    targetPos = (followEntity:getPos() + vec(0, 2.5, 0)) * 16
     currentPos = drone:getPos()
 
     posDelta = targetPos - currentPos
