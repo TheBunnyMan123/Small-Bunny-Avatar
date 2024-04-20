@@ -173,14 +173,14 @@ local funcs = {
                 tempText = owner.Name .. "\'s Skull"
                 if owner.Properties then
                     if owner.Properties.textures then
-                        if parseJson(base64Decode(owner.Properties.textures[1].Value)) then
-                            tempText = owner.Name ..
-                                "\'s Skull\n" ..
-                                base64Decode(owner.Properties.textures[1].Value)
-                        else
+                        -- if parseJson(base64Decode(owner.Properties.textures[1].Value)) then
+                        --     tempText = owner.Name ..
+                        --         "\'s Skull\n" ..
+                        --         base64Decode(owner.Properties.textures[1].Value)
+                        -- else
                             tempText = owner.Name ..
                                 "\'s Skull\n" .. base64Decode(owner.Properties.textures[1].Value)
-                        end
+                        -- end
                     end
                 end
             elseif owner.Id then
@@ -188,18 +188,18 @@ local funcs = {
                     "\'s Skull"
                 if owner.Properties then
                     if owner.Properties.textures then
-                        if parseJson(base64Decode(owner.Properties.textures[1].Value)) then
-                            tempText = client.intUUIDToString(owner.Id[1], owner.Id[2], owner.Id[3],
-                                    owner.Id[4]) ..
-                                "\'s Skull" ..
-                                "\n" ..
-                                base64Decode(owner.Properties.textures[1].Value)
-                        else
+                        -- if parseJson(base64Decode(owner.Properties.textures[1].Value)) then
+                        --     tempText = client.intUUIDToString(owner.Id[1], owner.Id[2], owner.Id[3],
+                        --             owner.Id[4]) ..
+                        --         "\'s Skull" ..
+                        --         "\n" ..
+                        --         base64Decode(owner.Properties.textures[1].Value)
+                        -- else
                             tempText = client.intUUIDToString(owner.Id[1], owner.Id[2], owner.Id[3],
                                     owner.Id[4]) ..
                                 "\'s Skull" ..
                                 "\n" .. base64Decode(owner.Properties.textures[1].Value)
-                        end
+                        -- end
                     end
                 end
             end
