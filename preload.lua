@@ -107,17 +107,18 @@ end
 
 function metaTableFromMetaFunction(api, func)
     local mtable = {}
-    local pattern = '%[[%s%S]-%]'                 -- Matches any characters within quotes inside brackets (single or double)
+    local pattern =
+    "%[[%s%S]-%]"                 -- Matches any characters within quotes inside brackets (single or double)
 
     local results = {}
 
-    for line in string.gmatch(logTable(api, 1, true), "[^\n]*") do                               -- Iterate over lines using string.gmatch
-        local capture = string.gmatch(line, pattern)()                      -- Start from the beginning of the line
-        
-        if capture then  
+    for line in string.gmatch(logTable(api, 1, true), "[^\n]*") do -- Iterate over lines using string.gmatch
+        local capture = string.gmatch(line, pattern)()             -- Start from the beginning of the line
+
+        if capture then
             local presubbed = string.gsub(capture, '%[%"', "")
-            local subbed = string.gsub(presubbed, '%"%]', "")                                 -- Find the first match and stop after finding one
-            table.insert(results, subbed)                                -- Add captured value
+            local subbed = string.gsub(presubbed, '%"%]', "") -- Find the first match and stop after finding one
+            table.insert(results, subbed)                     -- Add captured value
         end
     end
 
@@ -179,7 +180,7 @@ log = function(...)
                 },
                 {
                     text = ": ",
-                    color = "white"
+                    color = "white",
                 },
                 {
                     text = "{\n",
@@ -220,7 +221,7 @@ log = function(...)
 
             if isAPI(v) then
                 -- log(type(getmetatable(v).__index))
-                
+
                 if type(getmetatable(v).__index) == "table" then
                     iterTable(getmetatable(v).__index)
                 else
@@ -317,6 +318,18 @@ require = function(author, lib)
     printf({ text = "\n" })
 
     error("Module " .. lib .. " not found!")
+end
+
+function gradient(color1, color2, steps)
+    local generatedSteps = {}
+
+    local delta = (color2 - color1) / (steps - 1)
+
+    for i = 0, steps - 1 do
+        table.insert(generatedSteps, color1 + (delta * i))
+    end
+
+    return generatedSteps
 end
 
 for _, v in pairs(listFiles("libs", true)) do

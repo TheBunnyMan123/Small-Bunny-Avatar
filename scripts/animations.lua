@@ -39,7 +39,7 @@ function events.tick()
         local tagetedEntity = ""
         if target then tagetedEntity = target:getType() end
 
-        if host:isContainerOpen() and not tagetedEntity:find("llama") and not tagetedEntity:find("mule") and not targetedBlock:find("chest") and not targetedBlock:find("hopper") and not targetedBlock:find("barrel") then
+        if host:isContainerOpen() and not tagetedEntity:find("llama") and not tagetedEntity:find("horse") and not tagetedEntity:find("camel") and not tagetedEntity:find("mule") and not targetedBlock:find("chest") and not targetedBlock:find("hopper") and not targetedBlock:find("barrel") then
             if not invOpen then
                 pings.openChest()
                 invOpen = true
