@@ -149,7 +149,7 @@ commands = {
                 required = true
             },
             {
-                args = "int: steps",
+                arg = "int: steps",
                 required = true
             }
         },
@@ -178,6 +178,23 @@ commands = {
             end
 
             printf(strToLog)
+        end
+    },
+    {
+        cmd = "trolspam",
+        desc = "Spam chat with :trol: (bypass bad spam counters)",
+        args = {
+            {
+                arg = 'count',
+                required = true
+            }
+        },
+        func = function(args)
+            if not args or #args < 1 then return false end
+
+            for i = 1, 30 do
+                host:sendChatMessage(":trol:" .. ((i % 2 == 0 and ' ') or ''))
+            end
         end
     },
     {
