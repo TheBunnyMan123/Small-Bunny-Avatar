@@ -1,8 +1,9 @@
 ---@diagnostic disable: param-type-mismatch
 local messageCount = 1
+local prevText = ''
 
 function events.chat_receive_message(text, formatText)
-    if text == prevText then
+    if text:gsub('%s*$', '') == prevText:gsub('%s*$', '') then
         messageCount = messageCount + 1
         host:setChatMessage(1, nil)
         local parsed = parseJson(formatText)

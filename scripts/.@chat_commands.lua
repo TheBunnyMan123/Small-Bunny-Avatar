@@ -192,7 +192,7 @@ commands = {
         func = function(args)
             if not args or #args < 1 then return false end
 
-            for i = 1, 30 do
+            for i = 1, args[1] do
                 host:sendChatMessage(":trol:" .. ((i % 2 == 0 and ' ') or ''))
             end
         end
