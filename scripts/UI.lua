@@ -1,10 +1,14 @@
 local UI = models:newPart("UI", "HUD")
 local healthGradient = gradient(vec(255, 85, 85), vec(85, 255, 85), 100)
 
+bypassHealth = false
 function events.render()
     local size = client:getScaledWindowSize()
 
-    if not player:getVehicle() then
+    ::health::
+
+    if not player:getVehicle() or bypassHealth then
+        bypassHealth = false
         UI:newText("Health"):text(toJson({
             { text = "Health", color = "red" },
             {text = ": ", color = "gray"},
@@ -13,15 +17,7 @@ function events.render()
                 local maxHealth = player:getMaxHealth()
                 local healthPercent = (health / maxHealth) * 100
 
-                for _, v in pairs(host:getStatusEffects()) do
-                    if v.name == "effect.minecraft.wither" then
-                        return "gray"
-                    elseif v.name == "effect.minecraft.poison" then
-                        return "dark_green"
-                    end
-                end
-
-                if player:getFrozenTicks() > 0 then
+                if player:getVehicle():getFrozenTicks() > 0 then
                     return "aqua"
                 end
 
@@ -35,11 +31,39 @@ function events.render()
             { text = tostring(math.round(player:getMaxHealth())), color = "red" }
         })):pos(vec((size.x / 2) - 50, size.y - 40, 0) * -1):alignment("CENTER"):setBackground(true):setBackgroundColor(0, 0, 0, 0.5)
     else
-        UI:newText("Health"):text(toJson({
-            { text = "Health", color = "#D2691E" },
-            {text = ": ", color = "gray"},
-            { text = tostring(math.round(player:getVehicle():getNbt().Health)), color = "#D2691E"},
-        })):pos(vec((size.x / 2) - 50, size.y - 40, 0) * -1):alignment("CENTER"):setBackground(true):setBackgroundColor(0, 0, 0, 0.5)
+        if not player:getVehicle().getMaxHealth or not player:getVehicle().getHealth then
+            bypassHealth = true
+            goto health
+        end
+
+        UI:newText("Health"):text(toJson({{ text = "Health", color = "#D2691E" },
+        {text = ": ", color = "gray"},
+        { text = tostring(math.round(player:getVehicle():getHealth() + player:getAbsorptionAmount())), color = (function()
+            local health = player:getHealth() + player:getAbsorptionAmount()
+            local maxHealth = player:getMaxHealth()
+            local healthPercent = (health / maxHealth) * 100
+
+            for _, v in pairs(host:getStatusEffects()) do
+                if v.name == "effect.minecraft.wither" then
+                    return "gray"
+                elseif v.name == "effect.minecraft.poison" then
+                    return "dark_green"
+                end
+            end
+
+            if player:getFrozenTicks() > 0 then
+                return "aqua"
+            end
+
+            if health > maxHealth then
+                return "#FFD700"
+            end
+
+            return '#' .. vectors.rgbToHex(healthGradient[math.clamp(math.round(healthPercent), 1, 100)] / 255)
+        end)() },
+        { text = " / ", color = "gray" },
+        { text = tostring(math.round(player:getVehicle():getMaxHealth())), color = "#D2691E" }
+    })):pos(vec((size.x / 2) - 50, size.y - 40, 0) * -1):alignment("CENTER"):setBackground(true):setBackgroundColor(0, 0, 0, 0.5)
     end
 
     UI:newText("Armor"):text(toJson({
