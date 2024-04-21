@@ -21,7 +21,7 @@ storedSteps = {
 local tick = 0
 function events.tick()
     tick = tick + 1
-    if tick % 20 == 0 then
+    if tick % 20 == 0 and enableFootsteps then
         for _, v in pairs(world:getPlayers()) do
             if v:isLoaded() then
                 local uuid = v:getUUID()
