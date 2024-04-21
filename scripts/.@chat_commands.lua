@@ -125,12 +125,8 @@ commands = {
         },
         func = function (args)
             if not args or #args < 1 then return false end
-            
-            for _, v in pairs(world:getPlayers()) do
-                if v:getName() == args[1] then
-                    followEntity = v
-                end
-            end
+            -- log(args[1])
+            pings.setDroneFollow(args[1])
         end
     },
     {

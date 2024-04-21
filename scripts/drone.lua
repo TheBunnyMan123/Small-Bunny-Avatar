@@ -33,6 +33,14 @@ end
 
 followEntity = nil
 
+function pings.setDroneFollow(entity)
+    for _, v in pairs(world:getPlayers()) do
+        if v:getName() == entity then
+            followEntity = v
+        end
+    end
+end
+
 function events.tick()
     if not followEntity then return end
     if not followEntity:isLoaded() then return end
