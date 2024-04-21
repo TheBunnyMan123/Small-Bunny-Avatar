@@ -1,6 +1,6 @@
-local color1 = vec(44, 255, 187)
-local color2 = vec(150, 255, 150)
-local steps = 50
+local color1 = vec(150, 255, 100)
+local color2 = vec(50, 255, 150)
+local steps = 10
 
 local generatedSteps = {}
 
@@ -10,11 +10,15 @@ for i = 0, steps - 1 do
     table.insert(generatedSteps, color1 + (delta * i))
 end
 
+table.remove(generatedSteps, #generatedSteps)
+
 delta = (color1 - color2) / (steps - 1)
 
 for i = 0, steps - 1 do
     table.insert(generatedSteps, color2 + (delta * i))
 end
+
+table.remove(generatedSteps, #generatedSteps)
 
 local tick = 0
 
@@ -31,8 +35,8 @@ logJson(toJson(toLog))
 function events.tick()
     tick = tick + 1
 
-    while tick > 100 do
-        tick = tick - 100
+    while tick > (steps * 2) - 2 do
+        tick = tick - ((steps * 2) - 2)
     end
 end
 
@@ -67,8 +71,8 @@ function events.render()
         end
 
         local index = i
-        while index > 100 do
-            index = index - 100
+        while index > (steps * 2) - 2 do
+            index = index - ((steps * 2) - 2)
         end
 
         table.insert(nameHead, {

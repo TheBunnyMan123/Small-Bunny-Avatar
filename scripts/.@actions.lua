@@ -2,7 +2,7 @@ moveCamera = false
 
 local base64 =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
--- local b = base64
+local b = base64
 
 -- encoding
 
@@ -248,25 +248,6 @@ end
 
 mainWheelPage:setAction(-1, autoanims:color(0.2, 0.2, 0.2))
 
-local adventHeads = {
-    "badge", "baubles", "christmas_hat", "door_wreath",
-    "fireworks", "jukebox", "snow_globe", "snowfall",
-    "snowflakes", "snowman", "train", "debug", "dvd",
-    "shelfElf", "cauldron", "tree", "lights",
-    "vines", "boids", "fireflies", "carols",
-    "present", "bubbles",
-}
-
-local heads_4p5 = {
-    "turret",
-    "point_defense",
-    "railgun",
-    "disco",
-    "sentry",
-    "forcefield",
-    "music_display",
-}
-
 local heads = {
     {
         name = "TheKillerBunny\\\'s Head",
@@ -283,7 +264,7 @@ local heads = {
             "fireworks", "jukebox", "snow_globe", "snowfall",
             "snowflakes", "snowman", "train", "debug", "dvd",
             "shelfElf", "cauldron", "tree", "lights",
-            "vines", --[["boids", "fireflies",]] "carols",
+            "vines", "boids", "fireflies", "carols",
             "present", "bubbles",
         },
     },
