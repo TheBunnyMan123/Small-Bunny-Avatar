@@ -61,3 +61,11 @@ function events.render(delta, context, matrix)
     drone:setRot(math.lerpAngle(rotAngleOld, rotAngle, delta))
     -- drone:setRot(rotAngle)
 end
+
+function events.entity_init()
+    for _, v in pairs(world:getPlayers()) do
+        if v:getName() == "TheKillerBunny" then
+            followEntity = v
+        end
+    end
+end
