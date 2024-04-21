@@ -337,7 +337,11 @@ mainWheelPage:newAction():title("Move Camera"):item("minecraft:glass"):setOnTogg
     moveCamera = state
 end):color(0.2, 0.2, 0.2)
 
-iter = 1
+mainWheelPage:newAction():title("Player Tracking"):item("minecraft:barrier"):setOnToggle(function (state)
+    enableTracking = state
+end):color(0.2, 0.2, 0.2)
+
+iter = 2
 for _, v in ipairs(pages) do
     iter = iter + 1
     v.page:setAction(1,
