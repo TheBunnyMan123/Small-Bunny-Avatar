@@ -83,7 +83,7 @@ function events.render()
             end)() },
             { text = " / ", color = "gray" },
             { text = tostring(math.round(player:getMaxHealth())), color = "red" }
-        })):pos(vec((size.x / 2) - 150, size.y - 10, 0) * -1):alignment("CENTER"):setBackground(true):setBackgroundColor(0, 0, 0, 0.5)
+        })):pos(vec((size.x / 2) - 175, size.y - 15, 0) * -1):alignment("CENTER"):setBackground(true):setBackgroundColor(0, 0, 0, 0.5)
 
         UI:newText("Health"):text(toJson({{ text = "Health", color = "#D2691E" },
         {text = ": ", color = "gray"},
