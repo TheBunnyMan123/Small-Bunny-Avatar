@@ -37,7 +37,25 @@ local pages = {
         page = action_wheel:newPage("General Cheats"),
         item = "minecraft:debug_stick",
     },
+    {
+        page = action_wheel:newPage("Hacks"),
+        item = "minecraft:barrier"
+    }
 }
+
+pages[3].page:setAction(2, action_wheel:newAction():title("Player Tracking"):item("minecraft:glass"):setOnToggle(function (state)
+    enableTracking = state
+end):color(0.2, 0.2, 0.2))
+
+pages[3].page:setAction(3, action_wheel:newAction():title("Player Footsteps"):item("minecraft:cocoa_beans"):setOnToggle(function (state)
+    enableFootsteps = state
+end):color(0.2, 0.2, 0.2))
+
+local iter = 3
+while iter % 8 ~= 0 do
+    pages[3].page:newAction():hoverColor(0, 0, 0)
+    iter = iter + 1
+end
 
 local creationDestructionActions = {
     {
@@ -337,11 +355,7 @@ mainWheelPage:newAction():title("Move Camera"):item("minecraft:glass"):setOnTogg
     moveCamera = state
 end):color(0.2, 0.2, 0.2)
 
-mainWheelPage:newAction():title("Player Tracking"):item("minecraft:barrier"):setOnToggle(function (state)
-    enableTracking = state
-end):color(0.2, 0.2, 0.2)
-
-iter = 2
+iter = 3
 for _, v in ipairs(pages) do
     iter = iter + 1
     v.page:setAction(1,

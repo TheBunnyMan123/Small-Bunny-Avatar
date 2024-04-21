@@ -83,6 +83,21 @@ commands = {
         end,
     },
     {
+        cmd = "setstepdisp",
+        desc = "Set which player to display footsteps for",
+        args = {
+            {
+                arg = "str: layer",
+                required = true
+            }
+        },
+        func = function(args)
+            if not args or #args < 1 then return false end
+
+            footstepUsername = args[1]
+        end
+    },
+    {
         cmd = "ride",
         desc = "Summon and ride an Entity",
         args = {

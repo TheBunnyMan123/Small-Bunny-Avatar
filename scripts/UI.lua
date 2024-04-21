@@ -7,7 +7,7 @@ local lines = {}
 local oldPositions = {
     TheKillerBunny = vec(0, 0, 0),
 }
-local playerColors = {}
+playerColors = {}
 
 enableTracking = false
 
@@ -291,6 +291,8 @@ function events.render(delta)
     if enableTracking then
         UI:newText("Tracking"):text(toJson(track(delta))):pos(vec(50, 30, -10000) * -1):light(15)
             :setBackgroundColor(0, 0, 0, 0.5)
+    else
+        UI:newText("Tracking")
     end
 
     UI:newText("Air"):text(toJson({
