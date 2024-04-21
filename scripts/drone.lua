@@ -55,7 +55,7 @@ end
 
 function events.render(delta, context, matrix)
     if not currentPos or not posDelta or not rotAngle or not rotAngleOld then return end 
-    drone:setVisible(context ~= "FIRST_PERSON" and not context:find("GUI"))
+    drone:setVisible(not context:find("GUI"))
 
     drone:setPos(math.lerp(currentPos, currentPos + (posDelta / 10), delta))
     drone:setRot(math.lerpAngle(rotAngleOld, rotAngle, delta))
