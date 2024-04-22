@@ -108,7 +108,7 @@ end
 function metaTableFromMetaFunction(api, func)
     local mtable = {}
     local pattern =
-    "%[[%s%S]-%]"                 -- Matches any characters within quotes inside brackets (single or double)
+    "%[[%s%S]-%]" -- Matches any characters within quotes inside brackets (single or double)
 
     local results = {}
 
@@ -366,5 +366,41 @@ if file.allowed(file) and host:isHost() then
         end
     else
         warn("Please run setup.sh in the avatar folder")
+    end
+end
+
+avars = {
+    entities = {
+        [1] = {
+            pos = vec(0, 0, 0),
+            hitbox = {
+                (vec(0, 0, 0)) - vec(0.4, 0.3, 0.4),
+                (vec(0, 0, 0)) + vec(0.4, 0.3, 0.4),
+            },
+        },
+    },
+}
+
+entities = {
+    drone = {
+        pos = vec(0, 0, 0),
+        hitbox = {
+            (vec(0, 0, 0)) - vec(0.4, 0.3, 0.4),
+            (vec(0, 0, 0)) + vec(0.4, 0.3, 0.4),
+        },
+    },
+}
+
+function events.render()
+    avars.entities = {}
+
+    local iter = 0
+    for _, v in pairs(entities) do
+        iter = iter + 1
+        avars.entities[iter] = v
+    end
+
+    for key, value in pairs(avars) do
+        avatar:store(key, value)
     end
 end

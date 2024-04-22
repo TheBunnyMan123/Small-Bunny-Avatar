@@ -1,8 +1,11 @@
 drone = models.drone.World
 
+local lineLib = require("GNLineLib") --[[@as GNLineLib]]
+local lines = {}
+
 customTarget = nil
 
-local targetPos 
+local targetPos
 local currentPos --drone:getTruePos()
 
 local posDelta = vec(0, 0, 0)
@@ -18,26 +21,26 @@ function pings.dronepos(pos)
 end
 
 function calcRot(dronePos, playerPos)
-  -- Calculate the direction vector from drone to player
-  local dirVec = playerPos - dronePos
+    -- Calculate the direction vector from drone to player
+    local dirVec = playerPos - dronePos
 
-  -- Check for near-zero x-component
-  if math.abs(dirVec.x) < 0.01 then
-    -- If x is near zero, use a small positive value to avoid division by zero
-    dirVec.x = 0.01
-  end
+    -- Check for near-zero x-component
+    if math.abs(dirVec.x) < 0.01 then
+        -- If x is near zero, use a small positive value to avoid division by zero
+        dirVec.x = 0.01
+    end
 
-  -- Flatten the direction vector to the horizontal plane (y = 0)
-  dirVec.y = 0
+    -- Flatten the direction vector to the horizontal plane (y = 0)
+    dirVec.y = 0
 
-  -- Calculate the angle in degrees between the positive z-axis and the direction vector
-  local angle = math.atan2(dirVec.x, dirVec.z) * (180 / math.pi)
+    -- Calculate the angle in degrees between the positive z-axis and the direction vector
+    local angle = math.atan2(dirVec.x, dirVec.z) * (180 / math.pi)
 
-  -- Convert the angle to a vector suitable for setRot
-  local rotVec = vec(0, angle - 180, 0)
+    -- Convert the angle to a vector suitable for setRot
+    local rotVec = vec(0, angle - 180, 0)
 
-  -- Return the rotation vector
-  return rotVec
+    -- Return the rotation vector
+    return rotVec
 end
 
 followEntity = nil
@@ -51,6 +54,17 @@ function pings.setDroneFollow(entity)
 end
 
 function events.tick()
+    drone:light(15)
+    for _, v in pairs(drone:getChildren()) do
+        v:light(15)
+        for _, w in pairs(v:getChildren()) do
+            w:light(15)
+            for _, x in pairs(w:getChildren()) do
+                x:light(15)
+            end
+        end
+    end
+
     if not followEntity then return end
     if not followEntity:isLoaded() then return end
     if customTarget then
@@ -67,21 +81,22 @@ function events.tick()
 end
 
 function events.render(delta, context, matrix)
-    if not currentPos or not posDelta or not rotAngle or not rotAngleOld then return end 
+    if not currentPos or not posDelta or not rotAngle or not rotAngleOld then return end
     drone:setVisible(not context:find("GUI"))
 
     drone:setPos(math.lerp(currentPos, currentPos + (posDelta / 10), delta))
     drone:setRot(math.lerpAngle(rotAngleOld, rotAngle, delta))
     -- drone:setRot(rotAngle)
 
-    avatar:store("entities", {
-        { pos = drone:getPos() / 16,
-            hitbox = {
-                (drone:getPos() / 16) - vec(0.5, 0.2, 0.5),
-                (drone:getPos() / 16) + vec(0.5, 0.2, 0.5) 
-            }
-        }
-    })
+    models.drone.World:setOffsetPivot(-0.5,0,2.1)
+
+    entities.drone = {
+        pos = (models.drone.World:getTruePos() / 16),
+        hitbox = {
+            vec(0.4, 0.1, 0.4) * -1,
+            vec(0.4, 0.1, 0.4),
+        },
+    }
 end
 
 function events.entity_init()

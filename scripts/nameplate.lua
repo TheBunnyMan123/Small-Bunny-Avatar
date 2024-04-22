@@ -90,7 +90,7 @@ function events.render()
         })
     end
 
-    avatar:store("color", generatedSteps[tick] / 255)
+    avars.color = generatedSteps[tick] / 255
 
     iter = 0
 
