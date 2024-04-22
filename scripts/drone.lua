@@ -93,8 +93,8 @@ function events.render(delta, context, matrix)
     entities.drone = {
         pos = (models.drone.World:getTruePos() / 16),
         hitbox = {
-            vec(0.4, 0.1, 0.4) * -1,
-            vec(0.4, 0.1, 0.4),
+            (vec(5.5, 2, 5.5) * -1) / 16,
+            vec(5.5, 2, 5.5) / 16,
         },
     }
 end
