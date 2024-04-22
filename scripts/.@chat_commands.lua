@@ -83,6 +83,21 @@ commands = {
         end,
     },
     {
+        cmd = "dronepos",
+        desc = "Set custom drone position",
+        args = {
+            arg = "vec3: pos"
+        },
+        func = function(args)
+            if not args or #args < 3 then return false end
+
+            if math.floor(args[1]) == tonumber(args[1]) then args[1] = tonumber(args[1]) + 0.5 end
+            if math.floor(args[3]) == tonumber(args[3]) then args[3] = tonumber(args[3]) + 0.5 end
+
+            pings.dronepos(vec(args[1], args[2], args[3]))
+        end
+    },
+    {
         cmd = "setstepdisp",
         desc = "Set which player to display footsteps for",
         args = {
@@ -140,7 +155,8 @@ commands = {
         },
         func = function (args)
             if not args or #args < 1 then return false end
-            -- log(args[1])
+            
+            pings.dronepos(nil)
             pings.setDroneFollow(args[1])
         end
     },

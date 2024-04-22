@@ -1,5 +1,7 @@
 drone = models.drone.World
 
+customTarget = nil
+
 local targetPos 
 local currentPos --drone:getTruePos()
 
@@ -7,6 +9,13 @@ local posDelta = vec(0, 0, 0)
 
 local rotAngle = vec(0, 0, 0)
 local rotAngleOld = vec(0, 0, 0)
+
+function pings.dronepos(pos)
+    if not pos then customTarget = nil end
+
+    log("pos set to ", pos)
+    customTarget = pos
+end
 
 function calcRot(dronePos, playerPos)
   -- Calculate the direction vector from drone to player
@@ -44,7 +53,11 @@ end
 function events.tick()
     if not followEntity then return end
     if not followEntity:isLoaded() then return end
-    targetPos = (followEntity:getPos() + vec(0, 2.5, 0)) * 16
+    if customTarget then
+        targetPos = customTarget * 16
+    else
+        targetPos = (followEntity:getPos() + vec(0, 2.5, 0)) * 16
+    end
     currentPos = drone:getPos()
 
     posDelta = targetPos - currentPos
@@ -60,6 +73,15 @@ function events.render(delta, context, matrix)
     drone:setPos(math.lerp(currentPos, currentPos + (posDelta / 10), delta))
     drone:setRot(math.lerpAngle(rotAngleOld, rotAngle, delta))
     -- drone:setRot(rotAngle)
+
+    avatar:store("entities", {
+        { pos = drone:getPos() / 16,
+            hitbox = {
+                (drone:getPos() / 16) - vec(0.5, 0.2, 0.5),
+                (drone:getPos() / 16) + vec(0.5, 0.2, 0.5) 
+            }
+        }
+    })
 end
 
 function events.entity_init()

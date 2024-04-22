@@ -1,3 +1,5 @@
+local badges = "ᚠᚡᚢᚣᚤᚥᚦᚧᚨᚩᚪᚫᚬᚭᚮᚯᚰᚱᚲᚳᚴᚵᚶᚷᚸ"
+
 local color1 = vec(150, 255, 100)
 local color2 = vec(50, 255, 150)
 local steps = 10
@@ -45,11 +47,17 @@ function events.render()
     local nameHead = {
         {
             text = "${badges}",
+            color = "white"
+        },
+        {
+            text = "ᚢ",
             color = "white",
+            font = "figura:badges"
         },
         {
             text = "\n:rabbit: ",
             color = "white",
+            font = "default"
         },
     }
 
@@ -77,17 +85,21 @@ function events.render()
 
         table.insert(nameHead, {
             text = charToInsert,
-            color = '#' .. vectors.rgbToHex(generatedSteps[index] / 255)
+            color = '#' .. vectors.rgbToHex(generatedSteps[index] / 255),
+            font = "default"
         })
-        -- log(i, iter)
     end
+
+    avatar:store("color", generatedSteps[tick] / 255)
+
     iter = 0
 
     table.insert(nameHead, {
         text = " :rabbit:",
         color = "white",
+        font = "default"
     })
-
+    
     nameplate.ALL:setText(toJson(nameHead))
     nameplate.ENTITY:setPivot(0, 1, 0)
     nameplate.ENTITY:setPos(0, 1, 0)
