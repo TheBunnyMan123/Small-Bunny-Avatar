@@ -150,13 +150,12 @@ commands = {
         cmd = "setfollow",
         desc = "Set player for drone to follow",
         args = {
-            arg = "entity",
+            arg = "player",
             required = true
         },
         func = function (args)
             if not args or #args < 1 then return false end
             
-            pings.dronepos(nil)
             pings.setDroneFollow(args[1])
         end
     },

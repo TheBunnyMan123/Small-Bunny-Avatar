@@ -40,8 +40,23 @@ local pages = {
     {
         page = action_wheel:newPage("Hacks"),
         item = "minecraft:barrier"
+    },
+    {
+        page = action_wheel:newPage("Nameplate Fonts"),
+        item = "minecraft:paper"
     }
 }
+
+pages[4].page:setAction(2, action_wheel:newAction():title("Default"):setOnLeftClick(function() pings.setNameFont("default") end):color(0.2, 0.2, 0.2))
+pages[4].page:setAction(3, action_wheel:newAction():title("Alt (Enchantment Table)"):setOnLeftClick(function() pings.setNameFont("alt") end):color(0.2, 0.2, 0.2))
+pages[4].page:setAction(4, action_wheel:newAction():title("Uniform (Unicode Font)"):setOnLeftClick(function() pings.setNameFont("uniform") end):color(0.2, 0.2, 0.2))
+pages[4].page:setAction(5, action_wheel:newAction():title("Illager Alt (Unused)"):setOnLeftClick(function() pings.setNameFont("illageralt") end):color(0.2, 0.2, 0.2))
+
+local iter = 5
+while iter % 8 ~= 0 do
+    pages[4].page:newAction():hoverColor(0, 0, 0)
+    iter = iter + 1
+end
 
 pages[3].page:setAction(2, action_wheel:newAction():title("Player Tracking"):item("minecraft:glass"):setOnToggle(function (state)
     enableTracking = state

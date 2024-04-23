@@ -43,14 +43,10 @@ function calcRot(dronePos, playerPos)
     return rotVec
 end
 
-followEntity = nil
+followPlrName = ""
 
-function pings.setDroneFollow(entity)
-    for _, v in pairs(world:getPlayers()) do
-        if v:getName() == entity then
-            followEntity = v
-        end
-    end
+function pings.setDroneFollow(e)
+    followPlrName = e
 end
 
 function events.tick()
@@ -69,19 +65,22 @@ function events.tick()
         end
     end
 
-    if not followEntity then return end
-    if not followEntity:isLoaded() then return end
-    if customTarget then
-        targetPos = customTarget * 16
-    else
-        targetPos = (followEntity:getPos() + vec(0, 2.5, 0)) * 16
+    for _, v in pairs(world:getPlayers()) do
+        if not v:isLoaded() then goto continue end
+        if string.lower(v:getName()) ~= string.lower(followPlrName) then goto continue end
+        if customTarget then
+            targetPos = customTarget * 16
+        else
+            targetPos = (v:getPos() + vec(0, 2.5, 0)) * 16
+        end
+        currentPos = drone:getPos()
+
+        posDelta = targetPos - currentPos
+
+        rotAngleOld = rotAngle
+        rotAngle = calcRot(currentPos, targetPos)
+        ::continue::
     end
-    currentPos = drone:getPos()
-
-    posDelta = targetPos - currentPos
-
-    rotAngleOld = rotAngle
-    rotAngle = calcRot(currentPos, targetPos)
 end
 
 function events.render(delta, context, matrix)
@@ -92,20 +91,14 @@ function events.render(delta, context, matrix)
     drone:setRot(math.lerpAngle(rotAngleOld, rotAngle, delta))
 
     entities.drone = {
-        pos = ((models.drone.World:getTruePos() + models.drone.World:getTruePivot()) / 16),
+        pos = ((models.drone.World:getTruePos() + models.drone.World:getTruePivot() - vec(0, 3, 0)) / 16),
         hitbox = {
-            (vec(5.5, 3, 5.5) * -1) / 16,
-            vec(5.5, 3, 5.5) / 16,
+            (vec(5.5, 0, 5.5) * -1) / 16,
+            vec(5.5, 6, 5.5) / 16,
         },
     }
     
     -- table.insert(lines, GNLineLib:new():setAB(entities.drone.pos + entities.drone.hitbox[1], entities.drone.pos + entities.drone.hitbox[2]):setWidth(0.1))
 end
 
-function events.entity_init()
-    for _, v in pairs(world:getPlayers()) do
-        if v:getName() == "TheKillerBunny" then
-            followEntity = v
-        end
-    end
-end
+followPlrName = "TheKillerBunny"

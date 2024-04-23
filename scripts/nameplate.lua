@@ -6,6 +6,13 @@ local steps = 10
 
 local generatedSteps = {}
 
+local nameplateFont = "default"
+local fonts = "illageralt uniform alt default"
+
+function pings.setNameFont(font)
+    nameplateFont = font
+end
+
 local delta = (color2 - color1) / (steps - 1)
 
 for i = 0, steps - 1 do
@@ -22,7 +29,7 @@ end
 
 table.remove(generatedSteps, #generatedSteps)
 
-local tick = 0
+local tick = 1
 
 local toLog = {}
 for _, v in ipairs(generatedSteps) do
@@ -44,10 +51,14 @@ end
 
 local iter = 0
 function events.render()
+    while tick > 100 do
+        tick = tick - 100
+    end
+
     local nameHead = {
         {
             text = "${badges}",
-            color = "white"
+            color = '#' .. vectors.rgbToHex(generatedSteps[tick] / 255)
         },
         {
             text = "ᚢ",
@@ -57,7 +68,7 @@ function events.render()
         {
             text = "\n:rabbit: ",
             color = "white",
-            font = "default"
+            font = nameplateFont
         },
     }
 
@@ -86,20 +97,21 @@ function events.render()
         table.insert(nameHead, {
             text = charToInsert,
             color = '#' .. vectors.rgbToHex(generatedSteps[index] / 255),
-            font = "default"
+            font = nameplateFont
         })
     end
 
     avars.color = generatedSteps[tick] / 255
+    avatar:setColor(generatedSteps[tick] / 255)
 
     iter = 0
 
     table.insert(nameHead, {
         text = " :rabbit:",
         color = "white",
-        font = "default"
+        font = nameplateFont
     })
-    
+
     nameplate.ALL:setText(toJson(nameHead))
     nameplate.ENTITY:setPivot(0, 1, 0)
     nameplate.ENTITY:setPos(0, 1, 0)
