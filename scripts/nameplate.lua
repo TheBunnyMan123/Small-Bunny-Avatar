@@ -103,6 +103,7 @@ function events.render()
 
     avars.color = generatedSteps[tick] / 255
     avatar:setColor(generatedSteps[tick] / 255)
+    avatar:setColor(generatedSteps[tick] / 255, "donator")
 
     iter = 0
 
