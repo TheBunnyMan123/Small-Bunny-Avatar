@@ -1,12 +1,12 @@
 local laserKeybind = keybinds:newKeybind("Laser", "key.keyboard.page.up")
-local lineLib = require("GNLineLib") --[[@as GNLineLib]]
+local GNLineLib = require("GNLineLib") --[[@as GNLineLib]]
 
 local line
 local line2
 
 function pings.line(pos1, pos2)
-    line2 = lineLib.new():setA(pos1:unpack()):setB(pos2:unpack()):setColor(1, 0.2, 0.2, 1):setWidth(0.4):setDepth(0.1)
-    line = lineLib.new():setA(pos1:unpack()):setB(pos2:unpack()):setColor(1, 1, 1, 1):setWidth(0.3):setDepth(0.2)
+    line2 = GNLineLib.new():setA(pos1:unpack()):setB(pos2:unpack()):setColor(1, 0.2, 0.2, 1):setWidth(0.4):setDepth(0.1)
+    line = GNLineLib.new():setA(pos1:unpack()):setB(pos2:unpack()):setColor(1, 1, 1, 1):setWidth(0.3):setDepth(0.2)
 end
 
 function pings.free()

@@ -1,6 +1,6 @@
 drone = models.drone.World
 
-local lineLib = require("GNLineLib") --[[@as GNLineLib]]
+local GNLineLib = require("GNLineLib") --[[@as GNLineLib]]
 local lines = {}
 
 customTarget = nil
@@ -54,6 +54,10 @@ function pings.setDroneFollow(entity)
 end
 
 function events.tick()
+    for _, v in pairs(lines) do
+        v:free()
+    end
+
     drone:light(15)
     for _, v in pairs(drone:getChildren()) do
         v:light(15)
@@ -86,17 +90,16 @@ function events.render(delta, context, matrix)
 
     drone:setPos(math.lerp(currentPos, currentPos + (posDelta / 10), delta))
     drone:setRot(math.lerpAngle(rotAngleOld, rotAngle, delta))
-    -- drone:setRot(rotAngle)
-
-    models.drone.World:setOffsetPivot(-0.5,0,2.1)
 
     entities.drone = {
-        pos = (models.drone.World:getTruePos() / 16),
+        pos = ((models.drone.World:getTruePos() + models.drone.World:getTruePivot()) / 16),
         hitbox = {
-            (vec(5.5, 2, 5.5) * -1) / 16,
-            vec(5.5, 2, 5.5) / 16,
+            (vec(5.5, 3, 5.5) * -1) / 16,
+            vec(5.5, 3, 5.5) / 16,
         },
     }
+    
+    -- table.insert(lines, GNLineLib:new():setAB(entities.drone.pos + entities.drone.hitbox[1], entities.drone.pos + entities.drone.hitbox[2]):setWidth(0.1))
 end
 
 function events.entity_init()
