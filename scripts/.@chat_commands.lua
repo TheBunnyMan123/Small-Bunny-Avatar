@@ -215,6 +215,25 @@ commands = {
         end,
     },
     {
+        cmd = "4phead",
+        desc = "Get a 4P5 head with a mode override",
+        args = {
+            {
+                arg = "string: mode",
+                required = true,
+            },
+        },
+        func = function(args)
+            if not args or #args < 1 then return false end
+
+            local tilegen = require(".@tilegen")--[[@as tilegen]]
+            tilegen:generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]), 
+                vec(args[6], args[7], args[8]), vec(args[9], args[10]))
+
+            return true
+        end,
+    },
+    {
         cmd = "gradient",
         desc = "Gradient Test",
         args = {

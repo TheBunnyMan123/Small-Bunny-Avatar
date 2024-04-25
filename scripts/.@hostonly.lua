@@ -338,13 +338,3 @@ events.tick:register(function()
         fill(pos.x - 10, pos.y - 10, pos.z - 10, pos.x + 10, pos.y + 10, pos.z + 10, "air replace fire")
     end
 end, "COMMANDS.TICK")
-
-local lastTick = 0
-
-function events.CHAT_RECEIVE_MESSAGE(msg)
-    if string.find(msg:lower():gsub(".*:", ""), "bunny") and ((tick - 60) > lastTick) then
-        sounds["minecraft:block.note_block.pling"]:pos(player:getPos()):play()
-    end
-    
-    lastTick = tick
-end

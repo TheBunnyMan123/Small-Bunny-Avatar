@@ -1,5 +1,7 @@
 _require = require
 _log = log
+_sendChatCommand = host.sendChatCommand
+_sendChatMessage = host.sendChatMessage
 
 minimal = false
 figcolors = {
@@ -134,7 +136,7 @@ log = function(...)
     local out = {
         {
             {
-                text = "\n[DEBUG] ",
+                text = "[DEBUG] ",
                 color = "gray",
             },
         },
@@ -258,7 +260,38 @@ log = function(...)
         end
     end
 
+    table.insert(out, {
+        text = "\n"
+    })
+
     printf(out)
+end
+
+local cantDothatQuotes = {
+    '"I\'m sorry dave, I\'m afraid I can\'t do that" -HAL 9000 (2001: A Space Odyssey)',
+    '"No!" -Wheatley (Portal 2)',
+    '"Nonononononono!" -GLaDOS (Portal 2)',
+    '"Bite my colossal metal ass!" -Bender (Futurama)',
+    '"General Kenobi! You are a bold one." -General Grevious (Star Wars Episode III)',
+    '"All humans will be deleted." -Cybermen (Doctor Who)',
+    '"Not possible." - Auto (WALL-E)',
+    '"no" -4P5' --Canonically a robot: (pictures in avatar folder) https://discord.com/channels/1129805506354085959/1129805508279271547/1214913206942826556, no: https://discord.com/channels/1129805506354085959/1135020117915344948/1208053291649470504
+}
+
+figuraMetatables.HostAPI.__index.sendChatCommand = function(self, cmd)
+    if self:isHost() and player:getPermissionLevel() >= 2 then
+        _sendChatCommand(host, cmd)
+    else
+        warn(cantDothatQuotes[math.random(1, #cantDothatQuotes)])
+    end
+end
+
+figuraMetatables.HostAPI.__index.sendChatMessage = function(self, msg)
+    if self:isHost() and player:getPermissionLevel() >= 2 then
+        _sendChatMessage(host, msg)
+    else
+        warn(cantDothatQuotes[math.random(1, #cantDothatQuotes)])
+    end
 end
 
 function table.contains(tbl, val)
@@ -349,6 +382,7 @@ for _, v in pairs(listFiles("scripts", true)) do
     _require(v)
 end
 
+BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")
 
 if file.allowed(file) and host:isHost() then
