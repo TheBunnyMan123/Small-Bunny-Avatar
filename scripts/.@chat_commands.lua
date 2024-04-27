@@ -33,6 +33,41 @@ local function base64Decode(data)
     end))
 end
 
+local function generateItem(id, name)              -- AOF Heads thx 4P5
+    -- log(name)
+    return world.newItem("player_head" .. (toJson { -- made by 4p5, modified by me
+        SkullOwner = {
+            Id = {
+                id[1], id[2], id[3], id[4],
+            },
+            Properties = {
+                textures = {
+                    {
+                        Value = base64Encode(name),
+                    },
+                },
+            },
+        },
+        display = {
+            Name = toJson {
+                (function()
+                    local subbed = name:gsub("_", " "):gsub("shelfElf", "shelf elf")
+                    local subbed2 = string.gsub(subbed, "%f[%l]%l", string.upper)
+
+                    local t = {
+                        {
+                            italic = false,
+                            text = subbed2,
+                        },
+                    }
+
+                    return table.unpack(t)
+                end)(),
+            },
+        },
+    }):gsub('"Id":%[', '"Id":[I;'))
+end
+
 local function splitString(str, seperator)
     if seperator == nil then
         seperator = "%s"
@@ -226,9 +261,8 @@ commands = {
         func = function(args)
             if not args or #args < 1 then return false end
 
-            local tilegen = require(".@tilegen")--[[@as tilegen]]
-            tilegen:generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]), 
-                vec(args[6], args[7], args[8]), vec(args[9], args[10]))
+            log(base64Encode(args[1]))
+            host:sendChatCommand("give @s " .. generateItem({1481619325, 1543653003, -1514517150, -829510686}, args[1]):toStackString())
 
             return true
         end,
