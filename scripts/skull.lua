@@ -14,27 +14,30 @@ end
 local lines = {}
 local GNLineLib = require("GNLineLib") --[[@as GNLineLib]]
 
-local function drawCube(x,y,z,x2,y2,z2)
+local function drawCube(x, y, z, x2, y2, z2)
     local dx, dy, dz = vec(x2, y2, z2):sub(x, y, z):unpack()
 
-    table.insert(lines, GNLineLib:new():setA(x,y,z):setB(x+dx,y,z):setColor(1,0,0):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x+dx,y,z):setB(x+dx,y,z+dz):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x+dx,y,z+dz):setB(x,y,z+dz):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x,y,z+dz):setB(x,y,z):setColor(0,0,1):setWidth(0.05))
- 
-    table.insert(lines, GNLineLib:new():setA(x,y+dy,z):setB(x+dx,y+dy,z):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x+dx,y+dy,z):setB(x+dx,y+dy,z+dz):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x+dx,y+dy,z+dz):setB(x,y+dy,z+dz):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x,y+dy,z+dz):setB(x,y+dy,z):setWidth(0.05))
- 
-    table.insert(lines, GNLineLib:new():setA(x,y,z):setB(x,y+dy,z):setColor(0,1,0):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x+dx,y,z):setB(x+dx,y+dy,z):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x+dx,y,z+dz):setB(x+dx,y+dy,z+dz):setWidth(0.05))
-    table.insert(lines, GNLineLib:new():setA(x,y,z+dz):setB(x,y+dy,z+dz):setWidth(0.05))
-    
+    table.insert(lines, GNLineLib:new():setA(x, y, z):setB(x + dx, y, z):setColor(1, 0, 0):setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x + dx, y, z):setB(x + dx, y, z + dz):setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x + dx, y, z + dz):setB(x, y, z + dz):setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x, y, z + dz):setB(x, y, z):setColor(0, 0, 1):setWidth(0.05))
+
+    table.insert(lines, GNLineLib:new():setA(x, y + dy, z):setB(x + dx, y + dy, z):setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x + dx, y + dy, z):setB(x + dx, y + dy, z + dz)
+    :setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x + dx, y + dy, z + dz):setB(x, y + dy, z + dz)
+    :setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x, y + dy, z + dz):setB(x, y + dy, z):setWidth(0.05))
+
+    table.insert(lines, GNLineLib:new():setA(x, y, z):setB(x, y + dy, z):setColor(0, 1, 0):setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x + dx, y, z):setB(x + dx, y + dy, z):setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x + dx, y, z + dz):setB(x + dx, y + dy, z + dz)
+    :setWidth(0.05))
+    table.insert(lines, GNLineLib:new():setA(x, y, z + dz):setB(x, y + dy, z + dz):setWidth(0.05))
+
     return lines
- end
- 
+end
+
 
 local disc = {
     {
@@ -422,7 +425,8 @@ local funcs = {
                                 local hbox2 = w.hitbox[2]
                                 local hbox1final = hbox1:add(w.pos)
                                 local hbox2final = hbox2:add(w.pos)
-                                drawCube(hbox1final.x, hbox1final.y, hbox1final.z, hbox2final.x, hbox2final.y, hbox2final.z)
+                                drawCube(hbox1final.x, hbox1final.y, hbox1final.z, hbox2final.x,
+                                    hbox2final.y, hbox2final.z)
                             end
                         end
                     end
@@ -461,35 +465,35 @@ function events.skull_render(delta, block, item, entity, mode)
         lines[k] = nil
     end
 
-    models.skull.Skull.TheHead.Head:setVisible(true)
-    if block == nil then
-        return
-    end
+    if not minimal then
+        models.skull.Skull.TheHead.Head:setVisible(true)
+        if block == nil then
+            return
+        end
 
-    models.skull.Skull.TheHead.FloorPainting:setVisible(false)
-    models.skull.Skull.TheHead.Head:setVisible(true)
-    models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-    models.skull.Skull["Ear 1"]:setVisible(true)
-    models.skull.Skull["Ear 2"]:setVisible(true)
-    models.blahaj.Skull:setVisible(false)
-
-    if block:getProperties() == nil then
-        return
-    end
-    if block.id == "minecraft:player_wall_head" then
+        models.skull.Skull.TheHead.FloorPainting:setVisible(false)
         models.skull.Skull.TheHead.Head:setVisible(true)
         models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-        models.skull.Skull:setPos(0, -10.1, 1.8):setScale(1).Table:setVisible(false)
-    else
-        local is_table = block:getProperties().rotation % 4 == 0
+        models.skull.Skull["Ear 1"]:setVisible(true)
+        models.skull.Skull["Ear 2"]:setVisible(true)
+        models.blahaj.Skull:setVisible(false)
 
-        models.skull.Skull
-            :setPos(is_table and vec(0, 0, 0) or vec(0, -12, 0)):setScale(1)
-            .Table:setVisible(is_table)
-    end
+        if block:getProperties() == nil then
+            return
+        end
+        if block.id == "minecraft:player_wall_head" then
+            models.skull.Skull.TheHead.Head:setVisible(true)
+            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
+            models.skull.Skull:setPos(0, -10.1, 1.8):setScale(1).Table:setVisible(false)
+        else
+            local is_table = block:getProperties().rotation % 4 == 0
 
-    -- Only run main code section if enough instructions and complexity are given to skull
-    if not minimal then
+            models.skull.Skull
+                :setPos(is_table and vec(0, 0, 0) or vec(0, -12, 0)):setScale(1)
+                .Table:setVisible(is_table)
+        end
+
+        -- Only run main code section if enough instructions and complexity are given to skull
         local blockBelow = world.getBlockState(block:getPos() - vec(0, 1, 0))
 
         for _, v in pairs(funcs) do
@@ -520,34 +524,34 @@ function events.skull_render(delta, block, item, entity, mode)
         local count = 1
 
         local tempText =
-        "You decapitated me!\nPlace my head on one of the following blocks for something cool to happen." ..
-        (function()
-            local tempTempText = ""
+            "You decapitated me!\nPlace my head on one of the following blocks for something cool to happen." ..
+            (function()
+                local tempTempText = ""
 
-            for _, v in pairs({
-                {
-                    block = "Player Head (floor)",
-                    desc = "Displays info about the head",
-                },
-                {
-                    block = "Any Sign",
-                    desc = "Displays info about the sign",
-                },
-                {
-                    block = "Smooth Quartz / Smooth Quartz Slab",
-                    desc = "Becomes a picture frame that loops through pictures",
-                },
-                {
-                    block = "Prismarine",
-                    desc = ":blahaj: SPINNING BLAHAJ :blahaj:",
-                },
-            }) do
-                count = count + 1
-                tempTempText = tempTempText .. "\n" .. v.block .. ": " .. v.desc
-            end
+                for _, v in pairs({
+                    {
+                        block = "Player Head (floor)",
+                        desc = "Displays info about the head",
+                    },
+                    {
+                        block = "Any Sign",
+                        desc = "Displays info about the sign",
+                    },
+                    {
+                        block = "Smooth Quartz / Smooth Quartz Slab",
+                        desc = "Becomes a picture frame that loops through pictures",
+                    },
+                    {
+                        block = "Prismarine",
+                        desc = ":blahaj: SPINNING BLAHAJ :blahaj:",
+                    },
+                }) do
+                    count = count + 1
+                    tempTempText = tempTempText .. "\n" .. v.block .. ": " .. v.desc
+                end
 
-            return tempTempText
-        end)()
+                return tempTempText
+            end)()
 
         -- Display text
         local text1 = models.skull.Skull.text:newText("text")
@@ -577,6 +581,7 @@ function events.skull_render(delta, block, item, entity, mode)
         models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
         models.skull.Skull["Ear 1"]:setVisible(true)
         models.skull.Skull["Ear 2"]:setVisible(true)
+        models.blahaj.Skull:setVisible(false)
         local text2 = models.skull.Skull.text:newText("text2")
 
         -- Display text
