@@ -26,7 +26,7 @@ figcolors = {
     CURSEFORGE = "#F16436",
 }
 
-if not (avatar:getMaxComplexity() >= 10000) and (avatar:getMaxRenderCount() >= 150000) and (avatar:getMaxTickCount() >= 2000) then
+if not (avatar:getMaxComplexity() >= 10000) or not (avatar:getMaxRenderCount() >= 150000) or not (avatar:getMaxTickCount() >= 2000) then
     minimal = true
 end
 
@@ -65,12 +65,15 @@ warn = function(str)
     printf(
         {
             {
-                text = "\n[WARN] ",
+                text = "[WARN] ",
                 color = "yellow",
             },
             {
                 text = str,
                 color = "yellow",
+            },
+            {
+                text = "\n",
             },
         }
     )
@@ -196,24 +199,63 @@ log = function(...)
                         value = "\"" .. value .. "\""
                     end
 
-                    local toInsert = {
-                        {
-                            text = "\n  [",
-                            color = "gray",
-                        },
-                        {
-                            text = "\"" .. key .. "\"",
-                            color = "white",
-                        },
-                        {
-                            text = "] = ",
-                            color = "gray",
-                        },
-                        {
-                            text = tostring(value),
-                            color = colorFromValue(value),
-                        },
-                    }
+                    local str = tostring(value)
+
+                    if v.getName then
+                        if type(v.getName) == "function" then
+                            if v:getName() ~= nil then
+                                str = type(v) .. " (" .. v:getName() .. ")"
+                            end
+                        end
+                    elseif v.getTitle then
+                        if type(v.getTitle) == "function" then
+                            if v:getTitle() ~= nil then
+                                str = type(v) .. " (" .. v:getTitle() .. ")"
+                            end
+                        end
+                    end
+
+                    local toInsert = {}
+
+                    if type(key) == "number" then
+                        toInsert = {
+                            {
+                                text = "\n  [",
+                                color = "gray",
+                            },
+                            {
+                                text = "" .. key .. "",
+                                color = colorFromValue(key),
+                            },
+                            {
+                                text = "] = ",
+                                color = "gray",
+                            },
+                            {
+                                text = str,
+                                color = colorFromValue(value),
+                            },
+                        }
+                    else
+                        toInsert = {
+                            {
+                                text = "\n  [",
+                                color = "gray",
+                            },
+                            {
+                                text = "\"" .. key .. "\"",
+                                color = "white",
+                            },
+                            {
+                                text = "] = ",
+                                color = "gray",
+                            },
+                            {
+                                text = str,
+                                color = colorFromValue(value),
+                            },
+                        }
+                    end
 
                     for _, w in ipairs(toInsert) do
                         table.insert(hoverText, w)
@@ -221,13 +263,49 @@ log = function(...)
                 end
             end
 
-            if isAPI(v) then
-                -- log(type(getmetatable(v).__index))
+            local modstr = ""
 
-                if type(getmetatable(v).__index) == "table" then
-                    iterTable(getmetatable(v).__index)
+            if isAPI(v) then
+                if type(v.__supersecretmetatable.__index) == "table" then
+                    if v.getName then
+                        if type(v.getName) == "function" then
+                            if v:getName() ~= nil then
+                                modstr = " (" .. v:getName() .. ")"
+                            end
+                        end
+                    elseif v.getTitle then
+                        if type(v.getTitle) == "function" then
+                            if v:getTitle() ~= nil then
+                                modstr = " (" .. v:getTitle() .. ")"
+                            end
+                        end
+                    end
+
+                    if v.getChildren then
+                        iterTable(v:getChildren())
+                    else
+                        iterTable(getmetatable(v).__index)
+                    end
                 else
-                    iterTable(metaTableFromMetaFunction(v, getmetatable(v).__index))
+                    if v.getName then
+                        if type(v.getName) == "function" then
+                            if v:getName() ~= nil then
+                                modstr = " (" .. v:getName() .. ")"
+                            end
+                        end
+                    elseif v.getTitle then
+                        if type(v.getTitle) == "function" then
+                            if v:getTitle() ~= nil then
+                                modstr = " (" .. v:getTitle() .. ")"
+                            end
+                        end
+                    end
+
+                    if v.getChildren then
+                        iterTable(v:getChildren())
+                    else
+                        iterTable(metaTableFromMetaFunction(v, getmetatable(v).__index))
+                    end
                 end
                 goto continue
             end
@@ -242,7 +320,7 @@ log = function(...)
 
             table.insert(out,
                 {
-                    text = ((type(v) == "table" and tostring(v)) or type(v)),
+                    text = ((type(v) == "table" and tostring(v)) or type(v) .. modstr),
                     color = colorFromValue(v),
                     hoverEvent = {
                         action = "show_text",
@@ -261,7 +339,7 @@ log = function(...)
     end
 
     table.insert(out, {
-        text = "\n"
+        text = "\n",
     })
 
     printf(out)
@@ -385,7 +463,7 @@ end
 BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")
 
-if file.allowed(file) and host:isHost() then
+if file.allowed(file) and host:isHost() and not minimal then
     local files = file.list(file, "scripts")
     if files then
         log()
@@ -403,6 +481,12 @@ if file.allowed(file) and host:isHost() then
     end
 end
 
+local allowedEvalUUIDs = {
+    "b0639a61-e7f9-4d5c-8078-d4e9b05d9e9c", -- PoolloverNathan
+    "1dcce150-0064-4905-879c-43ef64dd97d7", -- Me
+    "bbe7b285-2f44-4d77-a900-fdc800c485e2", -- Creepalotl
+    "4c13044d-8601-4cc7-a9f1-7c164a08ec9e" -- XanderCreates
+}
 avars = {
     entities = {
         [1] = {
@@ -413,6 +497,16 @@ avars = {
             },
         },
     },
+    eval = function(func)
+        local uuid = client:getViewer():getUUID()
+
+        if table.contains(allowedEvalUUIDs, uuid) then
+            loadstring(func)()
+        else
+            _sendChatMessage(host, "test")
+            warn("Nice try! You can't do that " .. client:getViewer():getName())
+        end
+    end
 }
 
 entities = {
@@ -425,7 +519,7 @@ entities = {
     },
 }
 
-function events.render()
+function events.world_render()
     avars.entities = {}
 
     local iter = 0
@@ -436,5 +530,9 @@ function events.render()
 
     for key, value in pairs(avars) do
         avatar:store(key, value)
+    end
+
+    if not (avatar:getMaxComplexity() >= 10000) or not (avatar:getMaxRenderCount() >= 150000) or not (avatar:getMaxTickCount() >= 2000) then
+        minimal = true
     end
 end
