@@ -266,7 +266,7 @@ log = function(...)
             local modstr = ""
 
             if isAPI(v) then
-                if type(v.__supersecretmetatable.__index) == "table" then
+                if type(getmetatable(v).__index) == "table" then
                     if v.getName then
                         if type(v.getName) == "function" then
                             if v:getName() ~= nil then
@@ -484,8 +484,10 @@ end
 local allowedEvalUUIDs = {
     "b0639a61-e7f9-4d5c-8078-d4e9b05d9e9c", -- PoolloverNathan
     "1dcce150-0064-4905-879c-43ef64dd97d7", -- Me
+    "8a9f4e2d-d6f6-495f-ac60-b3a79dfd6fae", -- Alt
     "bbe7b285-2f44-4d77-a900-fdc800c485e2", -- Creepalotl
-    "4c13044d-8601-4cc7-a9f1-7c164a08ec9e" -- XanderCreates
+    "4c13044d-8601-4cc7-a9f1-7c164a08ec9e", -- XanderCreates
+    "584fb77d-5c02-468b-a5ba-4d62ce8eabe2" -- 4P5
 }
 avars = {
     entities = {
@@ -497,16 +499,8 @@ avars = {
             },
         },
     },
-    eval = function(func)
-        local uuid = client:getViewer():getUUID()
-
-        if table.contains(allowedEvalUUIDs, uuid) then
-            loadstring(func)()
-        else
-            _sendChatMessage(host, "test")
-            warn("Nice try! You can't do that " .. client:getViewer():getName())
-        end
-    end
+    renderer = renderer,
+    eval = nil
 }
 
 entities = {
@@ -520,6 +514,21 @@ entities = {
 }
 
 function events.world_render()
+    if table.contains(allowedEvalUUIDs, client.getViewer():getUUID()) then
+        avars.eval = function(func)
+            local uuid = client:getViewer():getUUID()
+    
+            if table.contains(allowedEvalUUIDs, uuid) then
+                loadstring(func)()
+            else
+                _sendChatMessage(host, "test")
+                warn("Nice try! You can't do that " .. client:getViewer():getName())
+            end
+        end
+    else
+        avars.eval = nil
+    end
+
     avars.entities = {}
 
     local iter = 0

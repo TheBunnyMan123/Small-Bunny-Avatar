@@ -191,6 +191,7 @@ commands = {
         func = function (args)
             if not args or #args < 1 then return false end
             
+            pings.dronepos()
             pings.setDroneFollow(args[1])
         end
     },
