@@ -99,6 +99,10 @@ BunnyChatUtils:register(function(self, jsonText, rawText)
     minutes = time.minute
     hours = time.hour
 
+    if tostring(minutes):len() < 2 then
+        minutes = "0" .. minutes
+    end
+
     local pm = false
 
     while hours > 12 do
