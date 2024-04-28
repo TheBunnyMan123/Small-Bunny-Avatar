@@ -24,10 +24,6 @@ function track(delta)
     local toReturn = { { text = "Tracking: ", color = "white" } }
     local iter = 1
 
-    for _, v in pairs(lines) do
-        v:free()
-    end
-
     for _, v in pairs(world:getPlayers()) do
         if v:isLoaded() then
             if v:getUUID() == player:getUUID() then
@@ -79,6 +75,11 @@ end
 bypassHealth = false
 function events.render(delta)
     if not host:isHost() then return end
+
+    for _, v in pairs(lines) do
+        v:free()
+    end
+
     local size = client:getScaledWindowSize()
 
     ::health::

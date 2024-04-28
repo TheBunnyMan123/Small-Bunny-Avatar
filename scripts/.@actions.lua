@@ -371,7 +371,11 @@ mainWheelPage:newAction():title("Move Camera"):item("minecraft:glass"):setOnTogg
     moveCamera = state
 end):color(0.2, 0.2, 0.2)
 
-iter = 3
+mainWheelPage:newAction():title("Control Drone"):item("minecraft:redstone_block"):setOnToggle(function(state)
+    controlDrone = state
+end):color(0.2, 0.2, 0.2)
+
+iter = 4
 for _, v in ipairs(pages) do
     iter = iter + 1
     v.page:setAction(1,
