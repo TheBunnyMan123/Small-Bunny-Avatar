@@ -236,6 +236,21 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
 
             local msg = chatJson.with[2]
 
+            if type(plr) == "table" then
+                chatJson = {
+                    plr,
+                    {
+                        text = " >> ",
+                        color = "gray",
+                        bold = true
+                    },
+                    {
+                        text = msg,
+                        color = "white",
+                        bold = false
+                    }
+                } --[[@as TextJsonComponent]]
+            else
             chatJson = {
                 {
                     text = plr,
@@ -253,6 +268,7 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
                     bold = false
                 }
             } --[[@as TextJsonComponent]]
+        end
         end
 
         goto done
