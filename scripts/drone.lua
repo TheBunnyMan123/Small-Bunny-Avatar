@@ -19,6 +19,15 @@ local forwardKeybind = keybinds:newKeybind("droneForward", "key.keyboard.up")
 local boostKeybind = keybinds:newKeybind("droneBoost", "key.keyboard.page.down")
 local backKeybind = keybinds:newKeybind("droneBackwards", "key.keyboard.down")
 
+local forceRenderPart = models:newPart("ForceRender", "LeftArm"):scale(1,1,1)
+
+function setParentType(model, type)
+    model:setParentType(type)
+    for k, v in pairs(model:getChildren()) do
+        setParentType(v, type)
+        model:getChildren()[k]:setParentType(type)
+    end
+end
 
 function pings.dronepos(pos)
     if not pos then customTarget = nil end
@@ -59,7 +68,7 @@ end
 local tick = 0
 local oldTick = -1
 
-function events.tick()
+function events.world_tick()
     tick = tick + 1
 
     for _, v in pairs(lines) do
@@ -115,7 +124,7 @@ function events.tick()
     end
 end
 
-function events.render(delta, context, matrix)
+function events.world_render(delta)
     if not currentPos or not posDelta or not rotAngle or not rotAngleOld then return end
     -- drone:setVisible(not context:find("GUI") and not controlDrone)
     if controlDrone then
@@ -138,6 +147,14 @@ function events.render(delta, context, matrix)
     }
 
     if controlDrone then
+        if renderer:isFirstPerson() then
+            vanilla_model.PLAYER:setVisible(true):setScale(0.7)
+            models.model:setPos(player:getPos(delta) * 16):setParentType("World"):setRot(0, player:getBodyYaw(delta) * -1 + 180, 0)
+        else
+            vanilla_model.PLAYER:setVisible(false):setScale()
+            models.model:setPos():setParentType("Model"):setRot()
+        end
+
         renderer:setCameraPivot(drone:getTruePos() / 16)
 
         -- if not table.contains({"minecraft:air", "minecraft:water", "minecraft:lava"}, world.getBlockState(nextPos / 16):getID()) then
@@ -166,6 +183,7 @@ function events.render(delta, context, matrix)
             oldTick = tick
         end
     else
+        vanilla_model.PLAYER:setVisible(false):setScale()
         renderer:setCameraPivot()
         if tick % 5 == 0 and oldTick ~= tick then
             pings.dronepos(nil)
@@ -173,6 +191,8 @@ function events.render(delta, context, matrix)
         elseif oldTick ~= tick then
             oldTick = tick
         end
+
+        models.model:setPos():setParentType("Model"):setRot()
     end
     
     -- drone:setVisible(true)

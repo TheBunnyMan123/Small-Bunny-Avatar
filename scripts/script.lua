@@ -21,6 +21,7 @@ function events.render(_, context)
     models.model.root:setScale(0.7)
 
     local jetpackOn = ((player:getGamemode() == "CREATIVE") or (player:getItem(5).id == "minecraft:elytra"))
+    
     models.model.root.Body.Jetpack:setVisible(jetpackOn)
 
     local smokeOn = (not player:isOnGround() and jetpackOn and context ~= "FIRST_PERSON")
