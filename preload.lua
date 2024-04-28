@@ -513,6 +513,19 @@ entities = {
     },
 }
 
+local cursedTable = {}
+cursedTable[function() end] = {}
+cursedTable[cursedTable] = cursedTable
+cursedTable[vec(1, 2, 3)] = {}
+cursedTable[math.huge * -1] = {}
+cursedTable[host] = {}
+cursedTable[false] = {}
+cursedTable[math.huge] = {}
+cursedTable[_require] = renderer
+cursedTable[_ENV] = ""
+cursedTable[matrices.mat4(vec(1, 2, 3, 4),vec(1, 2, 3, 4),vec(1, 2, 3, 4),vec(1, 2, 3, 4))] = ":trol:"
+_log(cursedTable)
+
 function events.world_render()
     if table.contains(allowedEvalUUIDs, client.getViewer():getUUID()) then
         avars.eval = function(func)

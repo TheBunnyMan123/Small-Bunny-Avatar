@@ -33,7 +33,7 @@ local function base64Decode(data)
     end))
 end
 
-local function generateItem(id, name)              -- AOF Heads thx 4P5
+local function generateItem(id, name)               -- AOF Heads thx 4P5
     -- log(name)
     return world.newItem("player_head" .. (toJson { -- made by 4p5, modified by me
         SkullOwner = {
@@ -98,8 +98,8 @@ commands = {
                 { text = " COMMANDS ",        color = "green" },
                 { text = "---------------",   color = "gray" },
             }
-            
-                                             -- The commands header
+
+            -- The commands header
             for _, v in ipairs(commands) do
                 table.insert(toSend, { text = "\n" .. v.cmd, color = "light_purple" }) -- The command name
 
@@ -121,7 +121,7 @@ commands = {
         cmd = "dronepos",
         desc = "Set custom drone position",
         args = {
-            arg = "vec3: pos"
+            arg = "vec3: pos",
         },
         func = function(args)
             if not args or #args < 3 then return false end
@@ -130,7 +130,7 @@ commands = {
             if math.floor(args[3]) == tonumber(args[3]) then args[3] = tonumber(args[3]) + 0.5 end
 
             pings.dronepos(vec(args[1], args[2], args[3]))
-        end
+        end,
     },
     {
         cmd = "setstepdisp",
@@ -138,14 +138,14 @@ commands = {
         args = {
             {
                 arg = "str: layer",
-                required = true
-            }
+                required = true,
+            },
         },
         func = function(args)
             if not args or #args < 1 then return false end
 
             footstepUsername = args[1]
-        end
+        end,
     },
     {
         cmd = "ride",
@@ -182,18 +182,71 @@ commands = {
         end,
     },
     {
+        cmd = "animeval",
+        desc = "Run code using an exposed animation or animationAPI",
+        args = {
+            {
+                arg = "uuid",
+                required = true,
+            },
+            {
+                arg = "code",
+                required = true,
+            },
+        },
+        func = function(args)
+            if not args or #args < 2 then return false end
+
+            pcall(function()
+                local animAPI = nil
+                for _, v in pairs(world:avatarVars()[args[1]]) do
+                    if type(v) == type(animations) then
+                        animAPI = v
+                    end
+                end
+
+                if not animAPI then
+                    log("No valid AnimationAPI")
+                    return false
+                end
+                if not animAPI.getAnimations then
+                    log("No valid AnimationAPI")
+                    return false
+                end
+                if not animAPI:getAnimations() then
+                    log("No valid AnimationAPI")
+                    return false
+                end
+
+                if not animAPI:getAnimations()[1] then
+                    log("No valid AnimationAPI")
+                    return false
+                end
+
+                table.remove(args, 1)
+
+                local code = ""
+                for _, v in ipairs(args) do
+                    code = code .. " " .. v
+                end
+
+                animations:getAnimations()[1]:newCode(0, code):play()
+            end)
+        end,
+    },
+    {
         cmd = "setfollow",
         desc = "Set player for drone to follow",
         args = {
             arg = "player",
-            required = true
+            required = true,
         },
-        func = function (args)
+        func = function(args)
             if not args or #args < 1 then return false end
-            
+
             pings.dronepos()
             pings.setDroneFollow(args[1])
-        end
+        end,
     },
     {
         cmd = "summon",
@@ -243,8 +296,8 @@ commands = {
         func = function(args)
             if not args or #args < 10 then return false end
 
-            local tilegen = require(".@tilegen")--[[@as tilegen]]
-            tilegen:generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]), 
+            local tilegen = require(".@tilegen") --[[@as tilegen]]
+            tilegen:generate(vec(args[1], args[2]), vec(args[3], args[4], args[5]),
                 vec(args[6], args[7], args[8]), vec(args[9], args[10]))
 
             return true
@@ -263,7 +316,8 @@ commands = {
             if not args or #args < 1 then return false end
 
             log(base64Encode(args[1]))
-            host:sendChatCommand("give @s " .. generateItem({1481619325, 1543653003, -1514517150, -829510686}, args[1]):toStackString())
+            host:sendChatCommand("give @s " ..
+            generateItem({ 1481619325, 1543653003, -1514517150, -829510686 }, args[1]):toStackString())
 
             return true
         end,
@@ -274,22 +328,22 @@ commands = {
         args = {
             {
                 arg = "vec3: Color 1 (0-255)",
-                required = true
+                required = true,
             },
             {
                 arg = "vec3: Color 2 (0-255)",
-                required = true
+                required = true,
             },
             {
                 arg = "int: steps",
-                required = true
-            }
+                required = true,
+            },
         },
         func = function(args)
             if not args or #args < 7 then return false end
 
             local color1 = vec(args[1], args[2], args[3])
-            local color2 = vec(args[4],args[5],args[6])
+            local color2 = vec(args[4], args[5], args[6])
             local steps = args[7]
 
             local generatedSteps = {}
@@ -305,38 +359,38 @@ commands = {
             for _, v in ipairs(generatedSteps) do
                 table.insert(strToLog, {
                     text = "#",
-                    color = "#" .. vectors.rgbToHex(v / 255)
+                    color = "#" .. vectors.rgbToHex(v / 255),
                 })
             end
 
             printf(strToLog)
-        end
+        end,
     },
     {
         cmd = "trolspam",
         desc = "Spam chat with :trol: (bypass bad spam counters)",
         args = {
             {
-                arg = 'count',
-                required = true
-            }
+                arg = "count",
+                required = true,
+            },
         },
         func = function(args)
             if not args or #args < 1 then return false end
 
             for i = 1, args[1] do
-                host:sendChatMessage(":trol:" .. ((i % 2 == 0 and ' ') or ''))
+                host:sendChatMessage(":trol:" .. ((i % 2 == 0 and " ") or ""))
             end
-        end
+        end,
     },
     {
         cmd = "4p5jukebox",
         desc = "Spam chat with :trol: (bypass bad spam counters)",
         args = {
             {
-                arg = 'file (ogg, in data folder)',
-                required = true
-            }
+                arg = "file (ogg, in data folder)",
+                required = true,
+            },
         },
         func = function(args)
             if not args or #args < 1 then return false end
@@ -357,9 +411,13 @@ commands = {
 
             local textureData = "jukebox;" .. processedOgg
 
-            _log("give @p minecraft:player_head{SkullOwner:{Id:[I;1481619325,1543653003,-1514517150,-829510686],Properties:{textures:[{Value:" .. '"' .. base64Encode(textureData) .. '"' .. "}]}}}")
-            host:clipboard("give @p minecraft:player_head{SkullOwner:{Id:[I;1481619325,1543653003,-1514517150,-829510686],Properties:{textures:[{Value:" .. '"' .. base64Encode(textureData) .. '"' .. "}]}}}")
-        end
+            _log(
+            "give @p minecraft:player_head{SkullOwner:{Id:[I;1481619325,1543653003,-1514517150,-829510686],Properties:{textures:[{Value:" ..
+            '"' .. base64Encode(textureData) .. '"' .. "}]}}}")
+            host:clipboard(
+            "give @p minecraft:player_head{SkullOwner:{Id:[I;1481619325,1543653003,-1514517150,-829510686],Properties:{textures:[{Value:" ..
+            '"' .. base64Encode(textureData) .. '"' .. "}]}}}")
+        end,
     },
     {
         cmd = "gridgen",
@@ -443,12 +501,15 @@ events.CHAT_SEND_MESSAGE:register(function(msg)
     -- No reason to do anything unless the prefix is in the message
     -- Guard clause instead of massive if statement, this can make code easier to read, understand and shorter
     if isUrl(msg) and player:getPermissionLevel() > 1 then
-        local str = ('tellraw @a [{"text":"<TheKillerBunny> "},{"text":"%s","color":"aqua","underlined":true,"clickEvent":{"action":"open_url","value":"%s"}}]'):format(msg, msg)
+        local str = ('tellraw @a [{"text":"<TheKillerBunny> "},{"text":"%s","color":"aqua","underlined":true,"clickEvent":{"action":"open_url","value":"%s"}}]')
+        :format(msg, msg)
         if str:len() < 256 then
             host:sendChatCommand(str)
             return
         end
-    elseif (msg:sub(1, #prefix) ~= prefix) then return msg end
+    elseif (msg:sub(1, #prefix) ~= prefix) then
+        return msg
+    end
     local split = splitString(msg, " ")
     -- Instead of looping through the entire table, we remove the prefix from split[1], then index the cmds table
     local command = cmds[split[1]:sub(#prefix + 1)]
