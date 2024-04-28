@@ -182,59 +182,6 @@ commands = {
         end,
     },
     {
-        cmd = "animeval",
-        desc = "Run code using an exposed animation or animationAPI",
-        args = {
-            {
-                arg = "uuid",
-                required = true,
-            },
-            {
-                arg = "code",
-                required = true,
-            },
-        },
-        func = function(args)
-            if not args or #args < 2 then return false end
-
-            pcall(function()
-                local animAPI = nil
-                for _, v in pairs(world:avatarVars()[args[1]]) do
-                    if type(v) == type(animations) then
-                        animAPI = v
-                    end
-                end
-
-                if not animAPI then
-                    log("No valid AnimationAPI")
-                    return false
-                end
-                if not animAPI.getAnimations then
-                    log("No valid AnimationAPI")
-                    return false
-                end
-                if not animAPI:getAnimations() then
-                    log("No valid AnimationAPI")
-                    return false
-                end
-
-                if not animAPI:getAnimations()[1] then
-                    log("No valid AnimationAPI")
-                    return false
-                end
-
-                table.remove(args, 1)
-
-                local code = ""
-                for _, v in ipairs(args) do
-                    code = code .. " " .. v
-                end
-
-                animations:getAnimations()[1]:newCode(0, code):play()
-            end)
-        end,
-    },
-    {
         cmd = "setfollow",
         desc = "Set player for drone to follow",
         args = {
