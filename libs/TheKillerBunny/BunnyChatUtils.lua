@@ -281,6 +281,103 @@ end, 'BUILTIN.USERNAMEFORMAT', 1)
 
 BunnyChatUtils:register(function (_, chatJson, rawText)
     if chatJson.translate then
+        if chatJson.translate == "chat.type.team.sent" then
+            log(chatJson.with[1].with[1])
+            local dispName = chatJson.with[1].with
+
+            local plr = chatJson.with[2]
+
+            local msg = chatJson.with[3]
+
+            dispName[1].hoverEvent = {
+                action = "show_text",
+                value = {
+                    {
+                        text = "Message ",
+                        color = "gray"
+                    },
+                    {
+                        text = "team",
+                        color = "aqua"
+                    },
+                    {
+                        text = "?",
+                        color = "gray"
+                    }
+                }
+            }
+
+            dispName[1].clickEvent = {
+                action = "suggest_command",
+                value = "/teammsg "
+            }
+
+            if type(plr) == "table" then
+                chatJson = {
+                    {
+                        text = "",
+                        color = "white",
+                        bold = false
+                    },
+                    {
+                        text = "[",
+                        color = "gray",
+                        bold = false
+                    },
+                    dispName,
+                    {
+                        text = "]",
+                        color = "gray",
+                        bold = false
+                    },
+                    {
+                        text = " >> ",
+                        color = "gray",
+                        bold = true
+                    },
+                    plr,
+                    {
+                        text = " >> ",
+                        color = "gray",
+                        bold = true
+                    },
+                    {
+                        text = msg,
+                        color = "white",
+                        bold = false
+                    }
+                } --[[@as TextJsonComponent]]
+            else
+            chatJson = {
+                {
+                    text = plr,
+                    color = "white",
+                    bold = false
+                },
+                {
+                    text = " >> ",
+                    color = "gray",
+                    bold = true
+                },
+                {
+                    text = msg,
+                    color = "white",
+                    bold = false
+                }
+            } --[[@as TextJsonComponent]]
+        end
+        end
+
+        goto done
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.TEAMUSERNAMEFORMAT', 1)
+
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
         if chatJson.translate == "commands.message.display.outgoing" then
             local plrName = chatJson.with[1]
             local plr = ""
