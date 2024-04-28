@@ -172,11 +172,11 @@ function events.world_render(delta)
             drone:setPos(prevPos)
         end
 
-        if tick % 5 == 0 and oldTick ~= tick then
+        if tick % 10 == 0 and oldTick ~= tick then
             pings.dronepos(drone:getPos() / 16)
         end
 
-        if tick % 5 == 0 and oldTick ~= tick then
+        if tick % 10 == 0 and oldTick ~= tick then
             pings.dronepos(drone:getTruePos() / 16)
             oldTick = tick
         elseif oldTick ~= tick then
@@ -185,7 +185,7 @@ function events.world_render(delta)
     else
         vanilla_model.PLAYER:setVisible(false):setScale()
         renderer:setCameraPivot()
-        if tick % 5 == 0 and oldTick ~= tick then
+        if tick % 10 == 0 and oldTick ~= tick then
             pings.dronepos(nil)
             oldTick = tick
         elseif oldTick ~= tick then
