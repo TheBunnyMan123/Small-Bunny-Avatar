@@ -8,16 +8,18 @@
 
 ---@class BunnyChatUtils
 local BunnyChatUtils = {
-    ---@type BunnyChatUtils.RegistryFunction[]
-    __REGISTRY = {},
+    ---@type BunnyChatUtils.RegistryFunction[][]
+    __REGISTRY = {{},{},{},{},{}},
     __VARS = {},
 }
 
 ---@param self BunnyChatUtils
 ---@param func BunnyChatUtils.RegistryFunction
 ---@param name string
-function BunnyChatUtils.register(self, func, name)
-    self.__REGISTRY[name] = func
+function BunnyChatUtils.register(self, func, name, priority)
+    if not priority then priority = 3 end
+
+    self.__REGISTRY[math.clamp(priority, 1, 5)][name] = func
 end
 
 ---@param self BunnyChatUtils
@@ -26,13 +28,17 @@ end
 function BunnyChatUtils.process(self, rawText, jsonText)
     local newJsonText
     local newRawText
-    for _, v in pairs(self.__REGISTRY) do
-        if not newJsonText then
-            newJsonText, newRawText = v(self, jsonText, rawText)
-        else
-            newJsonText, newRawText = v(self, newJsonText, newRawText)
+   
+    for _, v in ipairs(self.__REGISTRY) do
+        for _, w in pairs(v) do
+            if not newJsonText then
+                newJsonText, newRawText = w(self, jsonText, rawText)
+            else
+                newJsonText, newRawText = w(self, newJsonText, newRawText)
+            end
         end
     end
+
     return newJsonText
 end
 
@@ -173,7 +179,216 @@ BunnyChatUtils:register(function(self, jsonText, rawText)
     return newTxt, rawText
 end, "BUILTIN.TIMESTAMPS")
 
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
+        if chatJson.translate == "multiplayer.player.left" then
+            local plr = chatJson.with[1].insertion
+
+            chatJson = {
+                {
+                    text = plr,
+                    color = "aqua"
+                },
+                {
+                    text = " left the game!",
+                    color = "gray"
+                }
+            } --[[@as TextJsonComponent]]
+        end
+
+        goto done
+    end
+
+    for _, v in pairs(chatJson) do
+---@diagnostic disable-next-line: undefined-field
+        if v.translate then
+---@diagnostic disable-next-line: undefined-field
+            if v.translate == "multiplayer.player.left" then
+                local plr = chatJson.with[1].insertion
+
+                chatJson = {
+                    {
+                        text = plr,
+                        color = "aqua"
+                    },
+                    {
+                        text = " left the game!",
+                        color = "gray"
+                    }
+                } --[[@as TextJsonComponent]]
+            end
+        end
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.LEAVE', 1)
+
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
+        if chatJson.translate == "multiplayer.player.joined" then
+            local plr = chatJson.with[1].insertion
+
+            chatJson = {
+                {
+                    text = plr,
+                    color = "aqua"
+                },
+                {
+                    text = " joined the game!",
+                    color = "gray"
+                }
+            } --[[@as TextJsonComponent]]
+        end
+
+        goto done
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.JOIN', 1)
+
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
+        if chatJson.translate == "chat.type.text" then
+            local plr = chatJson.with[1]
+
+            local msg = chatJson.with[2]
+
+            chatJson = {
+                {
+                    text = plr,
+                    color = "white",
+                    bold = false
+                },
+                {
+                    text = " >> ",
+                    color = "gray",
+                    bold = true
+                },
+                {
+                    text = msg,
+                    color = "white",
+                    bold = false
+                }
+            } --[[@as TextJsonComponent]]
+        end
+
+        goto done
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.USERNAMEFORMAT', 1)
+
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
+        if chatJson.translate == "commands.message.display.outgoing" then
+            local plrName = chatJson.with[1]
+            local plr = ""
+            for _, v in ipairs(plrName.extra) do
+                plr = plr .. v
+            end
+
+            local msg = chatJson.with[2]
+
+            if plrName.color == "white" then plrName.color = nil end
+
+            chatJson = {
+                {
+                    text = "You",
+                    color = "aqua",
+                    bold = false
+                },
+                {
+                    text = " --> ",
+                    color = "gray",
+                    bold = true
+                },
+                {
+                    text = plr,
+                    color = (not plrName.color and "yellow" or plrName.color),
+                    bold = false
+                },
+                {
+                    text = " >> ",
+                    color = "gray",
+                    bold = true
+                },
+                {
+                    text = msg,
+                    color = "white",
+                    bold = false
+                }
+            } --[[@as TextJsonComponent]]
+        end
+
+        goto done
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.MESSAGE.OUTGOING', 1)
+
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
+        if chatJson.translate == "commands.message.display.incoming" then
+            local plrName = chatJson.with[1]
+            local plr = ""
+            for _, v in ipairs(plrName.extra) do
+                plr = plr .. v
+            end
+
+            local msg = chatJson.with[2]
+
+            if plrName.color == "white" then plrName.color = nil end
+
+            chatJson = {
+                {
+                    text = plr,
+                    color = (not plrName.color and "yellow" or plrName.color),
+                    bold = false
+                },
+                {
+                    text = " --> ",
+                    color = "gray",
+                    bold = true
+                },
+                {
+                    text = "You",
+                    color = "aqua",
+                    bold = false
+                },
+                {
+                    text = " >> ",
+                    color = "gray",
+                    bold = true
+                },
+                {
+                    text = msg,
+                    color = "white",
+                    bold = false
+                }
+            } --[[@as TextJsonComponent]]
+        end
+
+        goto done
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.MESSAGE.INCOMING', 1)
+
 events.CHAT_RECEIVE_MESSAGE:register(function(rawText, jsonText)
+    -- if not rawText:find("DEBUG") then
+    --     log(jsonText)
+    -- end
+
     return toJson(BunnyChatUtils:process(rawText, parseJson(jsonText) --[[@as TextJsonComponent]]))
 end)
 
