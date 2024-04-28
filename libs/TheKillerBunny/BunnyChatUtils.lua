@@ -199,27 +199,6 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
         goto done
     end
 
-    for _, v in pairs(chatJson) do
----@diagnostic disable-next-line: undefined-field
-        if v.translate then
----@diagnostic disable-next-line: undefined-field
-            if v.translate == "multiplayer.player.left" then
-                local plr = chatJson.with[1].insertion
-
-                chatJson = {
-                    {
-                        text = plr,
-                        color = "aqua"
-                    },
-                    {
-                        text = " left the game!",
-                        color = "gray"
-                    }
-                } --[[@as TextJsonComponent]]
-            end
-        end
-    end
-
     ::done::
 
     return chatJson, rawText
