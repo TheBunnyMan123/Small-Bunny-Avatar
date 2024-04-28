@@ -166,37 +166,8 @@ BunnyChatUtils:register(function(self, jsonText, rawText)
 
     table.insert(newTxt, jsonText)
 
-    -- if jsonText.extra then
-    --     for _, v in pairs(tmstmp) do
-    --         table.insert(jsonText.extra, v)
-    --     end
-
-    --     return jsonText, rawText
-    -- elseif jsonText.with then
-    --     jsonText.extra = {}
-
-    --     for _, v in pairs(tmstmp) do
-    --         table.insert(jsonText.extra, v)
-    --     end
-
-    --     return jsonText, rawText
-    -- else
-    --     for _, v in pairs(tmstmp) do
-    --         table.insert(jsonText, v)
-    --     end
-
-    --     return jsonText, rawText
-    -- end
-
     return newTxt, rawText
 end, "BUILTIN.TIMESTAMPS")
-
-BunnyChatUtils:register(function(self, jsonText, rawText)
-    jsonText = parseJson(toJson(jsonText):gsub('"<"', '""'):gsub('"> "', '": "')) --[[@as TextJsonComponent]]
-    jsonText = parseJson(toJson(jsonText):gsub("\"<(.-)>", "\"%1:")) --[[@as TextJsonComponent]]
-
-    return jsonText, rawText
-end, "BUILTIN.PLAYERNAME_FORMAT")
 
 events.CHAT_RECEIVE_MESSAGE:register(function(rawText, jsonText)
     return toJson(BunnyChatUtils:process(rawText, parseJson(jsonText) --[[@as TextJsonComponent]]))
