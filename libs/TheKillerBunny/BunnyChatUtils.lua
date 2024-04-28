@@ -282,7 +282,6 @@ end, 'BUILTIN.USERNAMEFORMAT', 1)
 BunnyChatUtils:register(function (_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "chat.type.team.sent" then
-            log(chatJson.with[1].with[1])
             local dispName = chatJson.with[1].with
 
             local plr = chatJson.with[2]
