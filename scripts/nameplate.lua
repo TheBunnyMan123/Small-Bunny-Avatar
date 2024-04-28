@@ -61,7 +61,7 @@ function events.render()
             color = '#' .. vectors.rgbToHex(generatedSteps[tick] / 255)
         },
         {
-            text = "ᚢ",
+            text = "ᚡ",
             color = "white",
             font = "figura:badges"
         },
