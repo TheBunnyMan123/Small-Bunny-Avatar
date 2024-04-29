@@ -183,6 +183,9 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "multiplayer.player.left" then
             local plr = chatJson.with[1].insertion
+            if not plr then
+                plr = chatJson.with[1]
+            end
 
             chatJson = {
                 {
@@ -208,6 +211,9 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "multiplayer.player.joined" then
             local plr = chatJson.with[1].insertion
+            if not plr then
+                plr = chatJson.with[1]
+            end
 
             chatJson = {
                 {
