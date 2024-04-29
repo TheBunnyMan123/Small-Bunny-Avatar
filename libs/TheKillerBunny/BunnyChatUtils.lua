@@ -9,7 +9,7 @@
 ---@class BunnyChatUtils
 local BunnyChatUtils = {
     ---@type BunnyChatUtils.RegistryFunction[][]
-    __REGISTRY = {{},{},{},{},{}},
+    __REGISTRY = { {}, {}, {}, {}, {} },
     __VARS = {},
 }
 
@@ -28,7 +28,7 @@ end
 function BunnyChatUtils.process(self, rawText, jsonText)
     local newJsonText
     local newRawText
-   
+
     for _, v in ipairs(self.__REGISTRY) do
         for _, w in pairs(v) do
             if not newJsonText then
@@ -122,49 +122,49 @@ BunnyChatUtils:register(function(self, jsonText, rawText)
             color = "white",
             bold = false,
             italic = false,
-            underlined = false
+            underlined = false,
         },
         {
             text = "[",
             color = "gray",
             bold = false,
             italic = false,
-            underlined = false
+            underlined = false,
         },
         {
             text = tostring(hours),
             color = "yellow",
             bold = false,
             italic = false,
-            underlined = false
+            underlined = false,
         },
         {
             text = ":",
             color = "white",
             bold = false,
             italic = false,
-            underlined = false
+            underlined = false,
         },
         {
             text = tostring(minutes),
             color = "yellow",
             bold = false,
             italic = false,
-            underlined = false
+            underlined = false,
         },
         {
             text = " " .. ((pm and "PM") or "AM"),
             color = "light_purple",
             bold = false,
             italic = false,
-            underlined = false
+            underlined = false,
         },
         {
             text = "] ",
             color = "gray",
             bold = false,
             italic = false,
-            underlined = false
+            underlined = false,
         },
     }
 
@@ -179,7 +179,7 @@ BunnyChatUtils:register(function(self, jsonText, rawText)
     return newTxt, rawText
 end, "BUILTIN.TIMESTAMPS")
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "multiplayer.player.left" then
             local plr = chatJson.with[1].insertion
@@ -187,12 +187,12 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
             chatJson = {
                 {
                     text = plr,
-                    color = "aqua"
+                    color = "aqua",
                 },
                 {
                     text = " left the game!",
-                    color = "gray"
-                }
+                    color = "gray",
+                },
             } --[[@as TextJsonComponent]]
         end
 
@@ -202,9 +202,9 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.LEAVE', 1)
+end, "BUILTIN.LEAVE", 1)
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "multiplayer.player.joined" then
             local plr = chatJson.with[1].insertion
@@ -212,12 +212,12 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
             chatJson = {
                 {
                     text = plr,
-                    color = "aqua"
+                    color = "aqua",
                 },
                 {
                     text = " joined the game!",
-                    color = "gray"
-                }
+                    color = "gray",
+                },
             } --[[@as TextJsonComponent]]
         end
 
@@ -227,9 +227,9 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.JOIN', 1)
+end, "BUILTIN.JOIN", 1)
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "chat.type.text" then
             local plr = chatJson.with[1]
@@ -242,33 +242,33 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
                     {
                         text = " >> ",
                         color = "gray",
-                        bold = true
+                        bold = true,
                     },
                     {
                         text = msg,
                         color = "white",
-                        bold = false
-                    }
+                        bold = false,
+                    },
                 } --[[@as TextJsonComponent]]
             else
-            chatJson = {
-                {
-                    text = plr,
-                    color = "white",
-                    bold = false
-                },
-                {
-                    text = " >> ",
-                    color = "gray",
-                    bold = true
-                },
-                {
-                    text = msg,
-                    color = "white",
-                    bold = false
-                }
-            } --[[@as TextJsonComponent]]
-        end
+                chatJson = {
+                    {
+                        text = plr,
+                        color = "white",
+                        bold = false,
+                    },
+                    {
+                        text = " >> ",
+                        color = "gray",
+                        bold = true,
+                    },
+                    {
+                        text = msg,
+                        color = "white",
+                        bold = false,
+                    },
+                } --[[@as TextJsonComponent]]
+            end
         end
 
         goto done
@@ -277,9 +277,9 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.USERNAMEFORMAT', 1)
+end, "BUILTIN.USERNAMEFORMAT", 1)
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "chat.type.team.sent" then
             local dispName = chatJson.with[1].with
@@ -293,22 +293,22 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
                 value = {
                     {
                         text = "Message ",
-                        color = "gray"
+                        color = "gray",
                     },
                     {
                         text = "team",
-                        color = "aqua"
+                        color = "aqua",
                     },
                     {
                         text = "?",
-                        color = "gray"
-                    }
-                }
+                        color = "gray",
+                    },
+                },
             }
 
             dispName[1].clickEvent = {
                 action = "suggest_command",
-                value = "/teammsg "
+                value = "/teammsg ",
             }
 
             if type(plr) == "table" then
@@ -316,55 +316,55 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
                     {
                         text = "",
                         color = "white",
-                        bold = false
+                        bold = false,
                     },
                     {
                         text = "[",
                         color = "gray",
-                        bold = false
+                        bold = false,
                     },
                     dispName,
                     {
                         text = "]",
                         color = "gray",
-                        bold = false
+                        bold = false,
                     },
                     {
                         text = " >> ",
                         color = "gray",
-                        bold = true
+                        bold = true,
                     },
                     plr,
                     {
                         text = " >> ",
                         color = "gray",
-                        bold = true
+                        bold = true,
                     },
                     {
                         text = msg,
                         color = "white",
-                        bold = false
-                    }
+                        bold = false,
+                    },
                 } --[[@as TextJsonComponent]]
             else
-            chatJson = {
-                {
-                    text = plr,
-                    color = "white",
-                    bold = false
-                },
-                {
-                    text = " >> ",
-                    color = "gray",
-                    bold = true
-                },
-                {
-                    text = msg,
-                    color = "white",
-                    bold = false
-                }
-            } --[[@as TextJsonComponent]]
-        end
+                chatJson = {
+                    {
+                        text = plr,
+                        color = "white",
+                        bold = false,
+                    },
+                    {
+                        text = " >> ",
+                        color = "gray",
+                        bold = true,
+                    },
+                    {
+                        text = msg,
+                        color = "white",
+                        bold = false,
+                    },
+                } --[[@as TextJsonComponent]]
+            end
         end
 
         goto done
@@ -373,9 +373,9 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.TEAMUSERNAMEFORMAT', 1)
+end, "BUILTIN.TEAMUSERNAMEFORMAT", 1)
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "commands.message.display.outgoing" then
             local plrName = chatJson.with[1]
@@ -392,28 +392,28 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
                 {
                     text = "You",
                     color = "aqua",
-                    bold = false
+                    bold = false,
                 },
                 {
                     text = " --> ",
                     color = "gray",
-                    bold = true
+                    bold = true,
                 },
                 {
                     text = plr,
                     color = (not plrName.color and "yellow" or plrName.color),
-                    bold = false
+                    bold = false,
                 },
                 {
                     text = " >> ",
                     color = "gray",
-                    bold = true
+                    bold = true,
                 },
                 {
                     text = msg,
                     color = "white",
-                    bold = false
-                }
+                    bold = false,
+                },
             } --[[@as TextJsonComponent]]
         end
 
@@ -423,9 +423,9 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.MESSAGE.OUTGOING', 1)
+end, "BUILTIN.MESSAGE.OUTGOING", 1)
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "commands.message.display.incoming" then
             local plrName = chatJson.with[1]
@@ -442,28 +442,28 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
                 {
                     text = plr,
                     color = (not plrName.color and "yellow" or plrName.color),
-                    bold = false
+                    bold = false,
                 },
                 {
                     text = " --> ",
                     color = "gray",
-                    bold = true
+                    bold = true,
                 },
                 {
                     text = "You",
                     color = "aqua",
-                    bold = false
+                    bold = false,
                 },
                 {
                     text = " >> ",
                     color = "gray",
-                    bold = true
+                    bold = true,
                 },
                 {
                     text = msg,
                     color = "white",
-                    bold = false
-                }
+                    bold = false,
+                },
             } --[[@as TextJsonComponent]]
         end
 
@@ -473,36 +473,38 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.MESSAGE.INCOMING', 1)
+end, "BUILTIN.MESSAGE.INCOMING", 1)
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "chat.type.advancement.task" then
-            local plrName = chatJson.with[1]
-            local plr = ""
-            for _, v in ipairs(plrName.extra) do
-                plr = plr .. v
-            end
+            pcall(function()
+                local plrName = chatJson.with[1]
+                local plr = ""
+                for _, v in ipairs(plrName.extra) do
+                    plr = plr .. v
+                end
 
-            local task = chatJson.with[2].with[1]
-            task.color = "aqua"
-            task.bold = false
+                local task = chatJson.with[2].with[1]
+                task.color = "aqua"
+                task.bold = false
 
-            if plrName.color == "white" then plrName.color = nil end
+                if plrName.color == "white" then plrName.color = nil end
 
-            chatJson = {
-                {
-                    text = plr,
-                    color = (not plrName.color and "yellow" or plrName.color),
-                    bold = false
-                },
-                {
-                    text = " has made the advancement ",
-                    color = "gray",
-                    bold = false
-                },
-                task
-            } --[[@as TextJsonComponent]]
+                chatJson = {
+                    {
+                        text = plr,
+                        color = (not plrName.color and "yellow" or plrName.color),
+                        bold = false,
+                    },
+                    {
+                        text = " has made the advancement ",
+                        color = "gray",
+                        bold = false,
+                    },
+                    task,
+                } --[[@as TextJsonComponent]]
+            end)
         end
 
         goto done
@@ -511,9 +513,9 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.ADVANCEMENT.TASK', 1)
+end, "BUILTIN.ADVANCEMENT.TASK", 1)
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "chat.type.advancement.goal" then
             local plrName = chatJson.with[1]
@@ -532,14 +534,14 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
                 {
                     text = plr,
                     color = (not plrName.color and "yellow" or plrName.color),
-                    bold = false
+                    bold = false,
                 },
                 {
                     text = " has reached the goal ",
                     color = "gray",
-                    bold = false
+                    bold = false,
                 },
-                task
+                task,
             } --[[@as TextJsonComponent]]
         end
 
@@ -549,9 +551,9 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.ADVANCEMENT.GOAL', 1)
+end, "BUILTIN.ADVANCEMENT.GOAL", 1)
 
-BunnyChatUtils:register(function (_, chatJson, rawText)
+BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "chat.type.advancement.challenge" then
             local plrName = chatJson.with[1]
@@ -570,14 +572,14 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
                 {
                     text = plr,
                     color = (not plrName.color and "yellow" or plrName.color),
-                    bold = false
+                    bold = false,
                 },
                 {
                     text = " has completed the challenge ",
                     color = "gray",
-                    bold = false
+                    bold = false,
                 },
-                task
+                task,
             } --[[@as TextJsonComponent]]
         end
 
@@ -587,7 +589,7 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     ::done::
 
     return chatJson, rawText
-end, 'BUILTIN.ADVANCEMENT.CHALLENGE', 1)
+end, "BUILTIN.ADVANCEMENT.CHALLENGE", 1)
 
 events.CHAT_RECEIVE_MESSAGE:register(function(rawText, jsonText)
     -- if not rawText:find("DEBUG") then
