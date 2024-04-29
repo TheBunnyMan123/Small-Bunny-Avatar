@@ -491,8 +491,13 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
             pcall(function()
                 local plrName = chatJson.with[1]
                 local plr = ""
-                for _, v in ipairs(plrName.extra) do
-                    plr = plr .. v
+                
+                if plrName.extra then
+                    for _, v in ipairs(plrName.extra) do
+                        plr = plr .. v
+                    end
+                else
+                    plr = plrName.insertion
                 end
 
                 local task = chatJson.with[2].with[1]
@@ -530,8 +535,13 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
         if chatJson.translate == "chat.type.advancement.goal" then
             local plrName = chatJson.with[1]
             local plr = ""
-            for _, v in ipairs(plrName.extra) do
-                plr = plr .. v
+            
+            if plrName.extra then
+                for _, v in ipairs(plrName.extra) do
+                    plr = plr .. v
+                end
+            else
+                plr = plrName.insertion
             end
 
             local task = chatJson.with[2].with[1]
@@ -568,8 +578,13 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
         if chatJson.translate == "chat.type.advancement.challenge" then
             local plrName = chatJson.with[1]
             local plr = ""
-            for _, v in ipairs(plrName.extra) do
-                plr = plr .. v
+
+            if plrName.extra then
+                for _, v in ipairs(plrName.extra) do
+                    plr = plr .. v
+                end
+            else
+                plr = plrName.insertion
             end
 
             local task = chatJson.with[2].with[1]
