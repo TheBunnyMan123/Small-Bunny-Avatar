@@ -387,8 +387,13 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
             pcall(function()
                 local plrName = chatJson.with[1]
                 local plr = ""
-                for _, v in ipairs(plrName.extra) do
-                    plr = plr .. v
+                
+                if plrName.extra then
+                    for _, v in ipairs(plrName.extra) do
+                        plr = plr .. v
+                    end
+                else
+                    plr = plrName.insertion
                 end
 
                 local msg = chatJson.with[2]
@@ -439,8 +444,13 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
             pcall(function()
                 local plrName = chatJson.with[1]
                 local plr = ""
-                for _, v in ipairs(plrName.extra) do
-                    plr = plr .. v
+                
+                if plrName.extra then
+                    for _, v in ipairs(plrName.extra) do
+                        plr = plr .. v
+                    end
+                else
+                    plr = plrName.insertion
                 end
 
                 local msg = chatJson.with[2]
