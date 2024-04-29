@@ -475,6 +475,120 @@ BunnyChatUtils:register(function (_, chatJson, rawText)
     return chatJson, rawText
 end, 'BUILTIN.MESSAGE.INCOMING', 1)
 
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
+        if chatJson.translate == "chat.type.advancement.task" then
+            local plrName = chatJson.with[1]
+            local plr = ""
+            for _, v in ipairs(plrName.extra) do
+                plr = plr .. v
+            end
+
+            local task = chatJson.with[2].with[1]
+            task.color = "aqua"
+            task.bold = false
+
+            if plrName.color == "white" then plrName.color = nil end
+
+            chatJson = {
+                {
+                    text = plr,
+                    color = (not plrName.color and "yellow" or plrName.color),
+                    bold = false
+                },
+                {
+                    text = " has made the advancement ",
+                    color = "gray",
+                    bold = false
+                },
+                task
+            } --[[@as TextJsonComponent]]
+        end
+
+        goto done
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.ADVANCEMENT.TASK', 1)
+
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
+        if chatJson.translate == "chat.type.advancement.goal" then
+            local plrName = chatJson.with[1]
+            local plr = ""
+            for _, v in ipairs(plrName.extra) do
+                plr = plr .. v
+            end
+
+            local task = chatJson.with[2].with[1]
+            task.color = "aqua"
+            task.bold = false
+
+            if plrName.color == "white" then plrName.color = nil end
+
+            chatJson = {
+                {
+                    text = plr,
+                    color = (not plrName.color and "yellow" or plrName.color),
+                    bold = false
+                },
+                {
+                    text = " has reached the goal ",
+                    color = "gray",
+                    bold = false
+                },
+                task
+            } --[[@as TextJsonComponent]]
+        end
+
+        goto done
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.ADVANCEMENT.GOAL', 1)
+
+BunnyChatUtils:register(function (_, chatJson, rawText)
+    if chatJson.translate then
+        if chatJson.translate == "chat.type.advancement.challenge" then
+            local plrName = chatJson.with[1]
+            local plr = ""
+            for _, v in ipairs(plrName.extra) do
+                plr = plr .. v
+            end
+
+            local task = chatJson.with[2].with[1]
+            task.color = "aqua"
+            task.bold = false
+
+            if plrName.color == "white" then plrName.color = nil end
+
+            chatJson = {
+                {
+                    text = plr,
+                    color = (not plrName.color and "yellow" or plrName.color),
+                    bold = false
+                },
+                {
+                    text = " has completed the challenge ",
+                    color = "gray",
+                    bold = false
+                },
+                task
+            } --[[@as TextJsonComponent]]
+        end
+
+        goto done
+    end
+
+    ::done::
+
+    return chatJson, rawText
+end, 'BUILTIN.ADVANCEMENT.CHALLENGE', 1)
+
 events.CHAT_RECEIVE_MESSAGE:register(function(rawText, jsonText)
     -- if not rawText:find("DEBUG") then
     --     log(jsonText)
