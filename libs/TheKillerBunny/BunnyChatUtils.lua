@@ -378,43 +378,45 @@ end, "BUILTIN.TEAMUSERNAMEFORMAT", 1)
 BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "commands.message.display.outgoing" then
-            local plrName = chatJson.with[1]
-            local plr = ""
-            for _, v in ipairs(plrName.extra) do
-                plr = plr .. v
-            end
+            pcall(function()
+                local plrName = chatJson.with[1]
+                local plr = ""
+                for _, v in ipairs(plrName.extra) do
+                    plr = plr .. v
+                end
 
-            local msg = chatJson.with[2]
+                local msg = chatJson.with[2]
 
-            if plrName.color == "white" then plrName.color = nil end
+                if plrName.color == "white" then plrName.color = nil end
 
-            chatJson = {
-                {
-                    text = "You",
-                    color = "aqua",
-                    bold = false,
-                },
-                {
-                    text = " --> ",
-                    color = "gray",
-                    bold = true,
-                },
-                {
-                    text = plr,
-                    color = (not plrName.color and "yellow" or plrName.color),
-                    bold = false,
-                },
-                {
-                    text = " >> ",
-                    color = "gray",
-                    bold = true,
-                },
-                {
-                    text = msg,
-                    color = "white",
-                    bold = false,
-                },
-            } --[[@as TextJsonComponent]]
+                chatJson = {
+                    {
+                        text = "You",
+                        color = "aqua",
+                        bold = false,
+                    },
+                    {
+                        text = " --> ",
+                        color = "gray",
+                        bold = true,
+                    },
+                    {
+                        text = plr,
+                        color = (not plrName.color and "yellow" or plrName.color),
+                        bold = false,
+                    },
+                    {
+                        text = " >> ",
+                        color = "gray",
+                        bold = true,
+                    },
+                    {
+                        text = msg,
+                        color = "white",
+                        bold = false,
+                    },
+                } --[[@as TextJsonComponent]]
+            end)
         end
 
         goto done
@@ -428,43 +430,45 @@ end, "BUILTIN.MESSAGE.OUTGOING", 1)
 BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "commands.message.display.incoming" then
-            local plrName = chatJson.with[1]
-            local plr = ""
-            for _, v in ipairs(plrName.extra) do
-                plr = plr .. v
-            end
+            pcall(function()
+                local plrName = chatJson.with[1]
+                local plr = ""
+                for _, v in ipairs(plrName.extra) do
+                    plr = plr .. v
+                end
 
-            local msg = chatJson.with[2]
+                local msg = chatJson.with[2]
 
-            if plrName.color == "white" then plrName.color = nil end
+                if plrName.color == "white" then plrName.color = nil end
 
-            chatJson = {
-                {
-                    text = plr,
-                    color = (not plrName.color and "yellow" or plrName.color),
-                    bold = false,
-                },
-                {
-                    text = " --> ",
-                    color = "gray",
-                    bold = true,
-                },
-                {
-                    text = "You",
-                    color = "aqua",
-                    bold = false,
-                },
-                {
-                    text = " >> ",
-                    color = "gray",
-                    bold = true,
-                },
-                {
-                    text = msg,
-                    color = "white",
-                    bold = false,
-                },
-            } --[[@as TextJsonComponent]]
+                chatJson = {
+                    {
+                        text = plr,
+                        color = (not plrName.color and "yellow" or plrName.color),
+                        bold = false,
+                    },
+                    {
+                        text = " --> ",
+                        color = "gray",
+                        bold = true,
+                    },
+                    {
+                        text = "You",
+                        color = "aqua",
+                        bold = false,
+                    },
+                    {
+                        text = " >> ",
+                        color = "gray",
+                        bold = true,
+                    },
+                    {
+                        text = msg,
+                        color = "white",
+                        bold = false,
+                    },
+                } --[[@as TextJsonComponent]]
+            end)
         end
 
         goto done
