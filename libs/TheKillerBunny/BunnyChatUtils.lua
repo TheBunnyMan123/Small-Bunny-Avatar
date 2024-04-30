@@ -23,8 +23,30 @@ function BunnyChatUtils.register(self, func, name, priority)
 end
 
 function BunnyChatUtils.formatMarkdown(s)
-    local msg = s
+    local msg = s:gsub("%\\%*", "§asterisk§"):gsub("%\\%~", "§tilde§"):gsub("%\\%_", "§underscore§")
     local iter = 0
+    local astercount = 0
+    local undercount = 0
+    local tildecount = 0
+
+    for match in string.gmatch(msg, ".?%*") do
+        if not match:find("^%\\") then
+            astercount = astercount + 1
+        end
+    end
+
+    for match in string.gmatch(msg, ".?%_%_") do
+        if not match:find("^%\\") then
+            undercount = undercount + 1
+        end
+    end
+
+    for match in string.gmatch(msg, ".?%~%~") do
+        if not match:find("^%\\") then
+            tildecount = tildecount + 1
+        end
+    end
+
     local boldInitialized = false
     local function boldMarkdown(str)
         if not boldInitialized then
@@ -89,11 +111,20 @@ function BunnyChatUtils.formatMarkdown(s)
         end
     end
 
+
     ---@diagnostic disable-next-line: param-type-mismatch
-    msg = string.gsub(msg, "%*%*", boldMarkdown)
-    msg = msg:gsub("%*", italicMarkdown)
-    msg = string.gsub(msg, "%~%~", ulineMarkdown)
-    msg = msg:gsub("%_%_", sthroughMarkdown)
+    if astercount % 2 == 0 then
+        msg = string.gsub(msg, "%*%*", boldMarkdown)
+        msg = string.gsub(msg, "%*", italicMarkdown)
+    end
+
+    if tildecount % 2 == 0 then
+        msg = string.gsub(msg, "%~%~", ulineMarkdown)
+    end
+
+    if undercount % 2 == 0 then
+        msg = string.gsub(msg, "%_%_", sthroughMarkdown)
+    end
 
     local bold, italic, uline, sthrough = false, false, false, false
 
@@ -183,6 +214,8 @@ function BunnyChatUtils.formatMarkdown(s)
     for st in string.gmatch(msg, "§[%+%-][a-z]-§") do
         markdownStuff(msg, st)
     end
+
+    return msg:gsub("§asterisk§", "*"):gsub("§tilde§", "~"):gsub("§underscore§", "_")
 end
 
 ---@param self BunnyChatUtils
