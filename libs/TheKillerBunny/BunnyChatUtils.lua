@@ -242,6 +242,166 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
 
             local msg = chatJson.with[2]
 
+            local iter = 0
+            local boldInitialized = false
+            local function boldMarkdown(str)
+                if not boldInitialized then
+                    iter = 0
+                    boldInitialized = true
+                end
+
+                iter = iter + 1
+
+                if iter % 2 ~= 0 then
+                    return "§+bold§"
+                else
+                    return "§-bold§"
+                end
+            end
+
+            local italicInitialized = false
+            local function italicMarkdown(str)
+                if not italicInitialized then
+                    iter = 0
+                    italicInitialized = true
+                end
+
+                iter = iter + 1
+
+                if iter % 2 ~= 0 then
+                    return "§+italic§"
+                else
+                    return "§-italic§"
+                end
+            end
+
+            local ulineInitialized = false
+            local function ulineMarkdown(str)
+                if not ulineInitialized then
+                    iter = 0
+                    ulineInitialized = true
+                end
+
+                iter = iter + 1
+
+                if iter % 2 ~= 0 then
+                    return "§+uline§"
+                else
+                    return "§-uline§"
+                end
+            end
+
+            local sthroughInitialized = false
+            local function sthroughMarkdown(str)
+                if not sthroughInitialized then
+                    iter = 0
+                    sthroughInitialized = true
+                end
+
+                iter = iter + 1
+
+                if iter % 2 ~= 0 then
+                    return "§+sthrough§"
+                else
+                    return "§-sthrough§"
+                end
+            end
+
+            ---@diagnostic disable-next-line: param-type-mismatch
+            msg = string.gsub(msg, "%*%*", boldMarkdown)
+            msg = msg:gsub("%*", italicMarkdown)
+            msg = string.gsub(msg, "%~%~", ulineMarkdown)
+            msg = msg:gsub("%_%_", sthroughMarkdown)
+
+            local bold, italic, uline, sthrough = false, false, false, false
+
+            local function markdownStuff(s1, s2)
+                local formatKey = s2:gsub("§", "")
+                local add = s2:match("%+")
+                formatKey = formatKey:gsub('[+-]', '')
+
+                local toPrepend = ""
+
+                if formatKey == "bold" then
+                    if add then
+                        bold = true
+                    else
+                        bold = false
+                    end
+
+                    if add then
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%+bold§", "§l" .. toPrepend, 1)
+                    else
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%-bold§", "§r" .. toPrepend, 1)
+                    end
+                elseif formatKey == "italic" then
+                    if add then
+                        italic = true
+                    else
+                        italic = false
+                    end
+
+                    if add then
+                        if bold then toPrepend = toPrepend .. "§l" end
+
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%+italic§", "§o" .. toPrepend, 1)
+                    else
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%-italic§", "§r" .. toPrepend, 1)
+                    end
+                elseif formatKey == "uline" then
+                    if add then
+                        uline = true
+                    else
+                        uline = false
+                    end
+
+                    if add then
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%+uline§", "§n" .. toPrepend, 1)
+                    else
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%-uline§", "§r" .. toPrepend, 1)
+                    end
+                elseif formatKey == "sthrough" then
+                    if add then
+                        sthrough = true
+                    else
+                        sthrough = false
+                    end
+
+                    if add then
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        msg = msg:gsub("§%+sthrough§", "§n" .. toPrepend, 1)
+                    else
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        msg = msg:gsub("§%-sthrough§", "§r" .. toPrepend, 1)
+                    end
+                end
+            end
+
+            for s in string.gmatch(msg, "§[%+%-][a-z]-§") do
+                markdownStuff(msg, s)
+            end
+
             if type(plr) == "table" then
                 chatJson = {
                     plr,
@@ -317,6 +477,166 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
                 value = "/teammsg ",
             }
 
+            local iter = 0
+            local boldInitialized = false
+            local function boldMarkdown(str)
+                if not boldInitialized then
+                    iter = 0
+                    boldInitialized = true
+                end
+
+                iter = iter + 1
+
+                if iter % 2 ~= 0 then
+                    return "§+bold§"
+                else
+                    return "§-bold§"
+                end
+            end
+
+            local italicInitialized = false
+            local function italicMarkdown(str)
+                if not italicInitialized then
+                    iter = 0
+                    italicInitialized = true
+                end
+
+                iter = iter + 1
+
+                if iter % 2 ~= 0 then
+                    return "§+italic§"
+                else
+                    return "§-italic§"
+                end
+            end
+
+            local ulineInitialized = false
+            local function ulineMarkdown(str)
+                if not ulineInitialized then
+                    iter = 0
+                    ulineInitialized = true
+                end
+
+                iter = iter + 1
+
+                if iter % 2 ~= 0 then
+                    return "§+uline§"
+                else
+                    return "§-uline§"
+                end
+            end
+
+            local sthroughInitialized = false
+            local function sthroughMarkdown(str)
+                if not sthroughInitialized then
+                    iter = 0
+                    sthroughInitialized = true
+                end
+
+                iter = iter + 1
+
+                if iter % 2 ~= 0 then
+                    return "§+sthrough§"
+                else
+                    return "§-sthrough§"
+                end
+            end
+
+            ---@diagnostic disable-next-line: param-type-mismatch
+            msg = string.gsub(msg, "%*%*", boldMarkdown)
+            msg = msg:gsub("%*", italicMarkdown)
+            msg = string.gsub(msg, "%~%~", ulineMarkdown)
+            msg = msg:gsub("%_%_", sthroughMarkdown)
+
+            local bold, italic, uline, sthrough = false, false, false, false
+
+            local function markdownStuff(s1, s2)
+                local formatKey = s2:gsub("§", "")
+                local add = s2:match("%+")
+                formatKey = formatKey:gsub('[+-]', '')
+
+                local toPrepend = ""
+
+                if formatKey == "bold" then
+                    if add then
+                        bold = true
+                    else
+                        bold = false
+                    end
+
+                    if add then
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%+bold§", "§l" .. toPrepend, 1)
+                    else
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%-bold§", "§r" .. toPrepend, 1)
+                    end
+                elseif formatKey == "italic" then
+                    if add then
+                        italic = true
+                    else
+                        italic = false
+                    end
+
+                    if add then
+                        if bold then toPrepend = toPrepend .. "§l" end
+
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%+italic§", "§o" .. toPrepend, 1)
+                    else
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%-italic§", "§r" .. toPrepend, 1)
+                    end
+                elseif formatKey == "uline" then
+                    if add then
+                        uline = true
+                    else
+                        uline = false
+                    end
+
+                    if add then
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%+uline§", "§n" .. toPrepend, 1)
+                    else
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if sthrough then toPrepend = toPrepend .. "§m" end
+                        msg = msg:gsub("§%-uline§", "§r" .. toPrepend, 1)
+                    end
+                elseif formatKey == "sthrough" then
+                    if add then
+                        sthrough = true
+                    else
+                        sthrough = false
+                    end
+
+                    if add then
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        msg = msg:gsub("§%+sthrough§", "§n" .. toPrepend, 1)
+                    else
+                        if bold then toPrepend = toPrepend .. "§l" end
+                        if italic then toPrepend = toPrepend .. "§o" end
+                        if uline then toPrepend = toPrepend .. "§n" end
+                        msg = msg:gsub("§%-sthrough§", "§r" .. toPrepend, 1)
+                    end
+                end
+            end
+
+            for s in string.gmatch(msg, "§[%+%-][a-z]-§") do
+                markdownStuff(msg, s)
+            end
+
             if type(plr) == "table" then
                 chatJson = {
                     {
@@ -387,7 +707,7 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
             pcall(function()
                 local plrName = chatJson.with[1]
                 local plr = ""
-                
+
                 if plrName.extra then
                     for _, v in ipairs(plrName.extra) do
                         plr = plr .. v
@@ -444,7 +764,7 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
             pcall(function()
                 local plrName = chatJson.with[1]
                 local plr = ""
-                
+
                 if plrName.extra then
                     for _, v in ipairs(plrName.extra) do
                         plr = plr .. v
@@ -501,7 +821,7 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
             pcall(function()
                 local plrName = chatJson.with[1]
                 local plr = ""
-                
+
                 if plrName.extra then
                     for _, v in ipairs(plrName.extra) do
                         plr = plr .. v
@@ -545,7 +865,7 @@ BunnyChatUtils:register(function(_, chatJson, rawText)
         if chatJson.translate == "chat.type.advancement.goal" then
             local plrName = chatJson.with[1]
             local plr = ""
-            
+
             if plrName.extra then
                 for _, v in ipairs(plrName.extra) do
                     plr = plr .. v
