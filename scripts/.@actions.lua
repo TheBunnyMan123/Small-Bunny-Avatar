@@ -13,44 +13,7 @@ local pages = {
         page = action_wheel:newPage("Creation & Destruction"),
         item = "minecraft:wooden_axe",
     },
-    {
-        page = action_wheel:newPage("General Cheats"),
-        item = "minecraft:debug_stick",
-    },
-    {
-        page = action_wheel:newPage("Hacks"),
-        item = "minecraft:barrier"
-    },
-    {
-        page = action_wheel:newPage("Nameplate Fonts"),
-        item = "minecraft:paper"
-    }
 }
-
-pages[4].page:setAction(2, action_wheel:newAction():title("Default"):setOnLeftClick(function() pings.setNameFont("default") end):color(0.2, 0.2, 0.2))
-pages[4].page:setAction(3, action_wheel:newAction():title("Alt (Enchantment Table)"):setOnLeftClick(function() pings.setNameFont("alt") end):color(0.2, 0.2, 0.2))
-pages[4].page:setAction(4, action_wheel:newAction():title("Uniform (Unicode Font)"):setOnLeftClick(function() pings.setNameFont("uniform") end):color(0.2, 0.2, 0.2))
-pages[4].page:setAction(5, action_wheel:newAction():title("Illager Alt (Unused)"):setOnLeftClick(function() pings.setNameFont("illageralt") end):color(0.2, 0.2, 0.2))
-
-local iter = 5
-while iter % 8 ~= 0 do
-    pages[4].page:newAction():hoverColor(0, 0, 0)
-    iter = iter + 1
-end
-
-pages[3].page:setAction(2, action_wheel:newAction():title("Player Tracking"):item("minecraft:glass"):setOnToggle(function (state)
-    enableTracking = state
-end):color(0.2, 0.2, 0.2))
-
-pages[3].page:setAction(3, action_wheel:newAction():title("Player Footsteps"):item("minecraft:cocoa_beans"):setOnToggle(function (state)
-    enableFootsteps = state
-end):color(0.2, 0.2, 0.2))
-
-iter = 3
-while iter % 8 ~= 0 do
-    pages[3].page:newAction():hoverColor(0, 0, 0)
-    iter = iter + 1
-end
 
 local creationDestructionActions = {
     {
@@ -98,168 +61,17 @@ local creationDestructionActions = {
     },
 }
 
-iter = 0
+local iter = 0
 for i, v in pairs(creationDestructionActions) do
     iter = iter + 1
-    pages[1].page:newAction(i + 1):title(v.title):setItem(v.item):setOnLeftClick(v.func):color(0.2,
-        0.2, 0.2)
+    pages[1].page:newAction(i + 1):title(v.title):setItem(v.item):setOnLeftClick(v.func):color((iter % 2 ~= 0 and vec(0.5, 0.5, 0.5) or vec(1, 1, 1)))
 end
 while iter % 8 ~= 0 do
     pages[1].page:newAction():hoverColor(0, 0, 0)
     iter = iter + 1
 end
 
-local difficultyActions = {
-    {
-        difficulty = "peaceful",
-        item = "minecraft:lime_wool",
-    },
-    {
-        difficulty = "easy",
-        item = "minecraft:yellow_wool",
-    },
-    {
-        difficulty = "normal",
-        item = "minecraft:orange_wool",
-    },
-    {
-        difficulty = "hard",
-        item = "minecraft:red_wool",
-    },
-}
-
-iter = 0
-difficultyPage = action_wheel:newPage("Difficulties")
-for i, v in pairs(difficultyActions) do
-    iter = iter + 1
-    difficultyPage:newAction(i + 1):title(v.difficulty:gsub("^.", string.upper)):item(v.item)
-        :setOnLeftClick(function()
-            host:sendChatCommand("difficulty " .. v.difficulty)
-        end):color(0.2, 0.2, 0.2)
-end
-difficultyPage:newAction(1):title("§lBack§r"):setOnLeftClick(function()
-    action_wheel:setPage(pages[2].page)
-end):item("minecraft:arrow"):color(0.8, 0.8, 0.8)
-while iter % 8 ~= 0 do
-    difficultyPage:newAction():hoverColor(0, 0, 0)
-    iter = iter + 1
-end
-
-local gamemodeActions = {
-    {
-        gamemode = "adventure",
-        item = "minecraft:barrier",
-    },
-    {
-        gamemode = "creative",
-        item = "minecraft:totem_of_undying",
-    },
-    {
-        gamemode = "survival",
-        item = "minecraft:diamond_sword",
-    },
-    {
-        gamemode = "spectator",
-        item = "minecraft:glass",
-    },
-}
-
-iter = 0
-gamemodePage = action_wheel:newPage("Gamemodes")
-gamemodePage:newAction(1):title("§lBack§r"):setOnLeftClick(function()
-    action_wheel:setPage(pages[2].page)
-end):item("minecraft:arrow"):color(0.8, 0.8, 0.8)
-for i, v in pairs(gamemodeActions) do
-    iter = iter + 1
-    gamemodePage:newAction(i + 1):title(v.gamemode:gsub("^.", string.upper)):item(v.item)
-        :setOnLeftClick(function()
-            host:sendChatCommand("difficulty " .. v.difficulty)
-        end):color(0.2, 0.2, 0.2)
-end
-while iter % 8 ~= 0 do
-    gamemodePage:newAction():hoverColor(0, 0, 0)
-    iter = iter + 1
-end
-
-local cheats = {
-    {
-        title = "Difficulties",
-        item = "minecraft:zombie_spawn_egg",
-        func = function()
-            action_wheel:setPage(difficultyPage)
-        end,
-    },
-    {
-        title = "Gamemodes",
-        item = "minecraft:enchanted_golden_apple",
-        func = function()
-            action_wheel:setPage(gamemodePage)
-        end,
-    },
-    {
-        title = "OP Items",
-        item = "minecraft:netherite_sword{Enchantments:[{id:\"minecraft:sharpness\",lvl:255}]}",
-        func = function()
-            host:sendChatCommand(
-            '/give @s minecraft:netherite_sword{Enchantments:[{id:"minecraft:sharpness",lvl:255},{id:"minecraft:fire_aspect",lvl:255},{id:"minecraft:sweeping",lvl:255},{id:"minecraft:looting",lvl:10}],Unbreakable:1b}')
-            host:sendChatCommand(
-            '/give @s minecraft:bow{Enchantments:[{id:"minecraft:power",lvl:255},{id:"minecraft:infinity",lvl:255},{id:"minecraft:flame",lvl:255}],Unbreakable:1b}')
-            host:sendChatCommand(
-            '/give @s netherite_pickaxe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:fortune",lvl:10}],display:{Name:\'{"text":"Fortune Pickaxe","italic":false}\'}}')
-            host:sendChatCommand(
-            '/give @s netherite_pickaxe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:silk_touch",lvl:1}],display:{Name:\'{"text":"Silk Touch Pickaxe","italic":false}\'}}')
-            host:sendChatCommand(
-            '/give @s netherite_axe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:fortune",lvl:10}],display:{Name:\'{"text":"Fortune Axe","italic":false}\'}}')
-            host:sendChatCommand(
-            '/give @s netherite_axe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:silk_touch",lvl:1}],display:{Name:\'{"text":"Silk Touch Axe","italic":false}\'}}')
-            host:sendChatCommand(
-            '/give @s netherite_shovel{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255},{id:"minecraft:silk_touch",lvl:1}]}')
-            host:sendChatCommand(
-            '/give @s shears{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255}]}')
-            host:sendChatCommand(
-            '/give @s netherite_hoe{Unbreakable:1b,Enchantments:[{id:"minecraft:efficiency",lvl:255}]}')
-            host:sendChatCommand(
-            '/give @p tipped_arrow{display:{Name:\'{"text":"Harming Arrow","italic":false}\'},custom_potion_effects:[{id:"minecraft:instant_damage",amplifier:127b,duration:1}],CustomPotionColor:10027008} 256')
-            host:sendChatCommand(
-            '/give @s minecraft:netherite_helmet{Trim:{material:gold,pattern:shaper},Enchantments:[{id:"minecraft:aqua_affinity",lvl:1},{id:"minecraft:respiration",lvl:255},{id:"minecraft:protection",lvl:255},{id:"minecraft:thorns",lvl:255}],Unbreakable:1b}')
-            host:sendChatCommand(
-            '/give @s minecraft:netherite_chestplate{Trim:{material:gold,pattern:dune},Enchantments:[{id:"minecraft:protection",lvl:255},{id:"minecraft:thorns",lvl:255}],Unbreakable:1b}')
-            host:sendChatCommand(
-            '/give @s minecraft:netherite_leggings{Trim:{material:gold,pattern:eye},Enchantments:[{id:"minecraft:protection",lvl:255},{id:"minecraft:thorns",lvl:255},{id:"minecraft:swift_sneak",lvl:10}],Unbreakable:1b}')
-            host:sendChatCommand(
-            '/give @s minecraft:netherite_boots{Trim:{material:gold,pattern:eye},Enchantments:[{id:"minecraft:protection",lvl:255},{id:"minecraft:feather_falling",lvl:255},{id:"minecraft:depth_strider",lvl:10},{id:"minecraft:soul_speed",lvl:10}],Unbreakable:1b}')
-        end,
-    },
-    {
-        title = "Keep Inventory",
-        item = "minecraft:totem_of_undying",
-        func = function()
-            host:sendChatCommand("gamerule keepInventory true")
-        end,
-    },
-    {
-        title = "OP Effects",
-        item = "minecraft:potion",
-        func = function()
-            host:sendChatCommand("effect give @s saturation infinite 127 true")
-            host:sendChatCommand("effect give @s resistance infinite 127 true")
-            host:sendChatCommand("effect give @s fire_resistance infinite 127 true")
-        end,
-    },
-}
-
-iter = 0
-for i, v in ipairs(cheats) do
-    iter = iter + 1
-    pages[2].page:newAction(i + 1):title(v.title):item(v.item):setOnLeftClick(v.func):color(0.2, 0.2,
-        0.2)
-end
-while iter % 8 ~= 0 do
-    pages[2].page:newAction():hoverColor(0, 0, 0)
-    iter = iter + 1
-end
-
-mainWheelPage:setAction(-1, autoanims:color(0.2, 0.2, 0.2))
+mainWheelPage:setAction(-1, autoanims:color(1, 1, 1))
 
 local heads = {
     {
@@ -356,15 +168,15 @@ mainWheelPage:newAction():title("Cool Heads"):item("minecraft:player_head"):setO
         generateItem(v.id, w):toStackString())
         end
     end
-end):color(0.2, 0.2, 0.2)
+end):color(0.5, 0.5, 0.5)
 
 mainWheelPage:newAction():title("Move Camera"):item(getHeadModel("camera")):setOnToggle(function(state)
     moveCamera = state
-end):color(0.2, 0.2, 0.2)
+end):color(1, 1, 1)
 
 mainWheelPage:newAction():title("Control Drone"):item(getHeadModel("drone")):setOnToggle(function(state)
     controlDrone = state
-end):color(0.2, 0.2, 0.2)
+end):color(0.5, 0.5, 0.5)
 
 iter = 4
 for _, v in ipairs(pages) do
@@ -376,7 +188,7 @@ for _, v in ipairs(pages) do
 
     mainWheelPage:newAction():title(v.page:getTitle()):setItem(v.item):onLeftClick(function()
         action_wheel:setPage(v.page)
-    end):color(0.2, 0.2, 0.2)
+    end):color((iter % 2 ~= 0 and vec(1, 1, 1) or vec(0.5, 0.5, 0.5)))
 end
 while iter % 8 ~= 0 do
     mainWheelPage:newAction():hoverColor(0, 0, 0)

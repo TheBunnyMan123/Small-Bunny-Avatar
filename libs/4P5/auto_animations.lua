@@ -21,7 +21,7 @@ local function back()
 end
 
 page:newAction():title("§lBack§r"):item("arrow"):color(0.8,0.8,0.8):onLeftClick(back)
-
+local iter = 0
 local n_actions = 1
 for _, data in pairs(avatar:getNBT().animations or {}) do
     local action_type, title, item_name = data.name:match('([^/]+)/([^/]+)/([^/]+)')
@@ -29,7 +29,8 @@ for _, data in pairs(avatar:getNBT().animations or {}) do
         n_actions = n_actions + 1
         local valid_item, item = pcall(world.newItem, item_name)
         local action = page:newAction():title(title):item(valid_item and item or "stone")
-        action:color(0.2,0.2,0.2)
+        iter = iter + 1
+        action:color((iter % 2 == 0 and vec(1, 1, 1) or vec(0.5, 0.5, 0.5)))
         if action_type == "action" then
             action:onLeftClick(function() pings.animation(data.mdl, data.name) end)
         elseif action_type == "toggle" then

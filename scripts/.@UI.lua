@@ -10,8 +10,6 @@ local oldPositions = {
 }
 playerColors = {}
 
-enableTracking = false
-
 local oldTick = 0
 local tick = 0
 function events.tick()
@@ -19,58 +17,6 @@ function events.tick()
         oldPositions["TheKillerBunny"] = player:getPos()
     end
     tick = tick + 1
-end
-
-function track(delta)
-    local toReturn = { { text = "Tracking: ", color = "white" } }
-    local iter = 1
-
-    for _, v in pairs(world:getPlayers()) do
-        if v:isLoaded() then
-            if v:getUUID() == player:getUUID() then
-                goto continue
-            end
-
-            iter = iter + 1
-            -- log(oldPositions[v:getUUID()])
-            if not oldPositions[v:getUUID()] then oldPositions[v:getUUID()] = v:getPos() end
-            if not playerColors[v:getUUID()] then playerColors[v:getUUID()] = vec(
-                math.random(50, 255) / 255, math.random(50, 255) / 255, math.random(50, 255) / 255) end
-
-            -- log(delta, math.lerp(oldPositions[v:getUUID()] + vec(0, 1, 0), v:getPos() + vec(0, 1, 0),
-            -- delta), oldPositions[v:getUUID()], v:getPos() + vec(0, 1, 0))
-
-            -- if oldPositions[v:getUUID()] == v:getPos() then log("BAD") end
-
-            if enableTracking then
-                lines[iter] = GNLineLib:new():setA( --[[math.lerp(
-                    oldPositions["TheKillerBunny"] + vec(0, 1, 0),]]
-                        player:getPos() + vec(0, 1, 0), delta) --)
-                    :setB(
-                    --[[math.lerp(oldPositions[v:getUUID()] + vec(0, 1, 0), ]] v:getPos() +
-                    vec(0, 1, 0) --[[,
-                            delta)]])
-                    :setColor(playerColors[v:getUUID()])
-                    :setWidth(0.1)
-            end
-            table.insert(toReturn,
-                { text = "\n" .. v:getName() .. " - " .. tostring(v:getPos():floor()), color = "#" ..
-                tostring(vectors.rgbToHex(playerColors[v:getUUID()])) })
-
-            if oldTick < tick then
-                -- log(oldPositions[player:getName()],player:getPos())
-                -- log(oldPositions[player:getName()]:floor(), player:getPos():floor())
-                --
-                oldPositions["TheKillerBunny"] = player:getPos()
-                -- log(oldPositions[player:getName()]:floor(), player:getPos():floor())
-                oldPositions[v:getUUID()] = v:getPos()
-                oldTick = tick
-            end
-        end
-        ::continue::
-    end
-
-    return toReturn
 end
 
 bypassHealth = false
@@ -292,13 +238,6 @@ function events.render(delta)
         { text = tostring(math.round(player:getMaxHealth())), color = "#FFD700" },
     })):pos(vec((size.x / 2) + 50, size.y - 52, 0) * -1):alignment("CENTER"):setBackground(true)
         :setBackgroundColor(0, 0, 0, 0.5)
-
-    if enableTracking then
-        UI:newText("Tracking"):text(toJson(track(delta))):pos(vec(50, 30, -10000) * -1):light(15)
-            :setBackgroundColor(0, 0, 0, 0.5)
-    else
-        UI:newText("Tracking")
-    end
 
     UI:newText("Air"):text(toJson({
         { text = "Air", color = "aqua" },
