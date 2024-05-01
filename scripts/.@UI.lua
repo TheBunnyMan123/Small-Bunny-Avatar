@@ -1,3 +1,4 @@
+---@diagnostic disable: discard-returns, param-type-mismatch
 local UI = models:newPart("UI", "HUD")
 local healthGradient = gradient(vec(255, 85, 85), vec(85, 255, 85), 100)
 
@@ -130,6 +131,7 @@ function events.render(delta)
         })):pos(vec((size.x / 2) - 50, size.y - 40, 0) * -1):alignment("CENTER"):setBackground(true)
             :setBackgroundColor(0, 0, 0, 0.5)
     else
+---@diagnostic disable-next-line: undefined-field
         if not player:getVehicle().getMaxHealth or not player:getVehicle().getHealth then
             bypassHealth = true
             goto health
@@ -179,6 +181,7 @@ function events.render(delta)
         UI:newText("Health"):text(toJson({ { text = "Health", color = "#D2691E" },
             { text = ": ",     color = "gray" },
             {
+---@diagnostic disable-next-line: undefined-field
                 text = tostring(math.round(player:getVehicle():getHealth() +
                     player:getAbsorptionAmount())),
                 color = (function()
@@ -197,6 +200,7 @@ function events.render(delta)
                 end)(),
             },
             { text = " / ",                                                    color = "gray" },
+---@diagnostic disable-next-line: undefined-field
             { text = tostring(math.round(player:getVehicle():getMaxHealth())), color = "#D2691E" },
         })):pos(vec((size.x / 2) - 50, size.y - 40, 0) * -1):alignment("CENTER"):setBackground(true)
             :setBackgroundColor(0, 0, 0, 0.5)

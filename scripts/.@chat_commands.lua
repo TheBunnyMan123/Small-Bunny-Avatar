@@ -1,37 +1,4 @@
-local base64 =
-"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-local b = base64
 
--- encoding
-
-local function base64Encode(data)
-    return ((data:gsub(".", function(x)
-        ---@diagnostic disable-next-line: unused-local
-        local r, b = "", x:byte()
-        for i = 8, 1, -1 do r = r .. (b % 2 ^ i - b % 2 ^ (i - 1) > 0 and "1" or "0") end
-        return r;
-    end) .. "0000"):gsub("%d%d%d?%d?%d?%d?", function(x)
-        if (#x < 6) then return "" end
-        local c = 0
-        for i = 1, 6 do c = c + (x:sub(i, i) == "1" and 2 ^ (6 - i) or 0) end
-        return b:sub(c + 1, c + 1)
-    end) .. ({ "", "==", "=" })[#data % 3 + 1])
-end
-
-local function base64Decode(data)
-    data = string.gsub(data, "[^" .. base64 .. "=]", "")
-    return (data:gsub(".", function(x)
-        if (x == "=") then return "" end
-        local r, f = "", (base64:find(x) - 1)
-        for i = 6, 1, -1 do r = r .. (f % 2 ^ i - f % 2 ^ (i - 1) > 0 and "1" or "0") end
-        return r;
-    end):gsub("%d%d%d?%d?%d?%d?%d?%d?", function(x)
-        if (#x ~= 8) then return "" end
-        local c = 0
-        for i = 1, 8 do c = c + (x:sub(i, i) == "1" and 2 ^ (8 - i) or 0) end
-        return string.char(c)
-    end))
-end
 
 local function generateItem(id, name)               -- AOF Heads thx 4P5
     -- log(name)
@@ -43,7 +10,7 @@ local function generateItem(id, name)               -- AOF Heads thx 4P5
             Properties = {
                 textures = {
                     {
-                        Value = base64Encode(name),
+                        Value = base64.encode(name),
                     },
                 },
             },
@@ -262,7 +229,7 @@ commands = {
         func = function(args)
             if not args or #args < 1 then return false end
 
-            log(base64Encode(args[1]))
+            log(base64.encode(args[1]))
             host:sendChatCommand("give @s " ..
             generateItem({ 1481619325, 1543653003, -1514517150, -829510686 }, args[1]):toStackString())
 
@@ -360,10 +327,10 @@ commands = {
 
             _log(
             "give @p minecraft:player_head{SkullOwner:{Id:[I;1481619325,1543653003,-1514517150,-829510686],Properties:{textures:[{Value:" ..
-            '"' .. base64Encode(textureData) .. '"' .. "}]}}}")
+            '"' .. base64.encode(textureData) .. '"' .. "}]}}}")
             host:clipboard(
             "give @p minecraft:player_head{SkullOwner:{Id:[I;1481619325,1543653003,-1514517150,-829510686],Properties:{textures:[{Value:" ..
-            '"' .. base64Encode(textureData) .. '"' .. "}]}}}")
+            '"' .. base64.encode(textureData) .. '"' .. "}]}}}")
         end,
     },
     {

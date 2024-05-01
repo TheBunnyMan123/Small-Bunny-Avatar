@@ -1,25 +1,5 @@
 moveCamera = false
 
-local base64 =
-"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-local b = base64
-
--- encoding
-
-local function base64Encode(data)
-    return ((data:gsub(".", function(x)
-        ---@diagnostic disable-next-line: unused-local
-        local r, b = "", x:byte()
-        for i = 8, 1, -1 do r = r .. (b % 2 ^ i - b % 2 ^ (i - 1) > 0 and "1" or "0") end
-        return r;
-    end) .. "0000"):gsub("%d%d%d?%d?%d?%d?", function(x)
-        if (#x < 6) then return "" end
-        local c = 0
-        for i = 1, 6 do c = c + (x:sub(i, i) == "1" and 2 ^ (6 - i) or 0) end
-        return b:sub(c + 1, c + 1)
-    end) .. ({ "", "==", "=" })[#data % 3 + 1])
-end
-
 function fill(x1, y1, z1, x2, y2, z2, block)
     local fillCommand = "fill %s %s %s %s %s %s %s"
 
@@ -66,7 +46,7 @@ pages[3].page:setAction(3, action_wheel:newAction():title("Player Footsteps"):it
     enableFootsteps = state
 end):color(0.2, 0.2, 0.2))
 
-local iter = 3
+iter = 3
 while iter % 8 ~= 0 do
     pages[3].page:newAction():hoverColor(0, 0, 0)
     iter = iter + 1
@@ -118,7 +98,7 @@ local creationDestructionActions = {
     },
 }
 
-local iter = 0
+iter = 0
 for i, v in pairs(creationDestructionActions) do
     iter = iter + 1
     pages[1].page:newAction(i + 1):title(v.title):setItem(v.item):setOnLeftClick(v.func):color(0.2,
@@ -343,7 +323,7 @@ local function generateItem(id, name)              -- AOF Heads thx 4P5
             Properties = {
                 textures = {
                     {
-                        Value = base64Encode(name),
+                        Value = base64.encode(name),
                     },
                 },
             },
@@ -378,11 +358,11 @@ mainWheelPage:newAction():title("Cool Heads"):item("minecraft:player_head"):setO
     end
 end):color(0.2, 0.2, 0.2)
 
-mainWheelPage:newAction():title("Move Camera"):item("minecraft:glass"):setOnToggle(function(state)
+mainWheelPage:newAction():title("Move Camera"):item(getHeadModel("camera")):setOnToggle(function(state)
     moveCamera = state
 end):color(0.2, 0.2, 0.2)
 
-mainWheelPage:newAction():title("Control Drone"):item("minecraft:redstone_block"):setOnToggle(function(state)
+mainWheelPage:newAction():title("Control Drone"):item(getHeadModel("drone")):setOnToggle(function(state)
     controlDrone = state
 end):color(0.2, 0.2, 0.2)
 

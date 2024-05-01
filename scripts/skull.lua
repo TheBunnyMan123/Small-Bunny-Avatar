@@ -1,6 +1,5 @@
----@diagnostic disable: undefined-global, redefined-local
-local base64 =
-"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" -- You will need this for encoding/decoding
+---@diagnostic disable: undefined-global, redefined-local, param-type-mismatch
+ -- You will need this for encoding/decoding
 tick = 0
 oldTick = -1
 local function splitByChunk(text, chunkSize)
@@ -106,38 +105,6 @@ local disc = {
     },
 }
 
--- encoding
-
-local function base64Encode(data)
-    return ((data:gsub(".", function(x)
-        ---@diagnostic disable-next-line: unused-local
-        local r, base64 = "", x:byte()
-        for i = 8, 1, -1 do r = r .. (b % 2 ^ i - b % 2 ^ (i - 1) > 0 and "1" or "0") end
-        return r;
-    end) .. "0000"):gsub("%d%d%d?%d?%d?%d?", function(x)
-        if (#x < 6) then return "" end
-        local c = 0
-        for i = 1, 6 do c = c + (x:sub(i, i) == "1" and 2 ^ (6 - i) or 0) end
-        return b:sub(c + 1, c + 1)
-    end) .. ({ "", "==", "=" })[#data % 3 + 1])
-end
-
--- decoding
-local function base64Decode(data)
-    data = string.gsub(data, "[^" .. base64 .. "=]", "")
-    return (data:gsub(".", function(x)
-        if (x == "=") then return "" end
-        local r, f = "", (base64:find(x) - 1)
-        for i = 6, 1, -1 do r = r .. (f % 2 ^ i - f % 2 ^ (i - 1) > 0 and "1" or "0") end
-        return r;
-    end):gsub("%d%d%d?%d?%d?%d?%d?%d?", function(x)
-        if (#x ~= 8) then return "" end
-        local c = 0
-        for i = 1, 8 do c = c + (x:sub(i, i) == "1" and 2 ^ (8 - i) or 0) end
-        return string.char(c)
-    end))
-end
-
 function splitByChunk(text, chunkSize)
     local s = {}
     for i = 1, #text, chunkSize do
@@ -201,13 +168,13 @@ local funcs = {
                 tempText = owner.Name .. "\'s Skull"
                 if owner.Properties then
                     if owner.Properties.textures then
-                        -- if parseJson(base64Decode(owner.Properties.textures[1].Value)) then
+                        -- if parseJson(base64.decode(owner.Properties.textures[1].Value)) then
                         --     tempText = owner.Name ..
                         --         "\'s Skull\n" ..
-                        --         base64Decode(owner.Properties.textures[1].Value)
+                        --         base64.decode(owner.Properties.textures[1].Value)
                         -- else
                         tempText = owner.Name ..
-                            "\'s Skull\n" .. base64Decode(owner.Properties.textures[1].Value)
+                            "\'s Skull\n" .. base64.decode(owner.Properties.textures[1].Value)
                         -- end
                     end
                 end
@@ -216,17 +183,17 @@ local funcs = {
                     "\'s Skull"
                 if owner.Properties then
                     if owner.Properties.textures then
-                        -- if parseJson(base64Decode(owner.Properties.textures[1].Value)) then
+                        -- if parseJson(base64.decode(owner.Properties.textures[1].Value)) then
                         --     tempText = client.intUUIDToString(owner.Id[1], owner.Id[2], owner.Id[3],
                         --             owner.Id[4]) ..
                         --         "\'s Skull" ..
                         --         "\n" ..
-                        --         base64Decode(owner.Properties.textures[1].Value)
+                        --         base64.decode(owner.Properties.textures[1].Value)
                         -- else
                         tempText = client.intUUIDToString(owner.Id[1], owner.Id[2], owner.Id[3],
                                 owner.Id[4]) ..
                             "\'s Skull" ..
-                            "\n" .. base64Decode(owner.Properties.textures[1].Value)
+                            "\n" .. base64.decode(owner.Properties.textures[1].Value)
                         -- end
                     end
                 end
@@ -436,10 +403,48 @@ local funcs = {
     },
 }
 
+local dronePart = deepCopy(models.drone)
+
+local nonBlockScripts = {
+    {
+        texture = "camera",
+        func = function()
+            models.skull.Skull.TheHead.FloorPainting:setVisible(false)
+            models.blahaj.Skull:setVisible(false)
+            models.skull.Skull.text:setVisible(false)
+            models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
+            models.skull.Skull.TheHead.Head:setVisible(false)
+            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
+            models.skull.Skull["Ear 1"]:setVisible(false)
+            models.skull.Skull["Ear 2"]:setVisible(false)
+            models.camera.Skull:setPos(0, 0, 0):setParentType("Skull"):setVisible(true)
+            models.drone_static.Skull:setPos(0, 0.5, 0):setParentType("Skull"):setVisible(false):setScale(1.5)
+        end
+    },
+    {
+        texture = "drone",
+        func = function()
+            models.skull.Skull.TheHead.FloorPainting:setVisible(false)
+            models.blahaj.Skull:setVisible(false)
+            models.skull.Skull.text:setVisible(false)
+            models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
+            models.skull.Skull.TheHead.Head:setVisible(false)
+            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
+            models.skull.Skull["Ear 1"]:setVisible(false)
+            models.skull.Skull["Ear 2"]:setVisible(false)
+            models.camera.Skull:setPos(0, 0, 0):setParentType("Skull"):setVisible(false):setScale(0.75)
+            models.drone_static.Skull:setPos(0, 0.5, 0):setParentType("Skull"):setVisible(true):setScale(1.5)
+        end
+    }
+}
+
 function events.skull_render(delta, block, item, entity, mode)
     if models.skull.Skull.BlahajText then
         models.skull.Skull.BlahajText:remove()
     end
+
+    models.camera.Skull:setVisible(false)
+    models.drone_static.Skull:setVisible(false)
 
     if not block then
         if models.skull.Skull.text then
@@ -456,6 +461,20 @@ function events.skull_render(delta, block, item, entity, mode)
         models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
         models.skull.Skull["Ear 1"]:setVisible(true)
         models.skull.Skull["Ear 2"]:setVisible(true)
+
+        if item then
+                if type(item.tag.SkullOwner) == "table" then
+                    if item.tag.SkullOwner.Properties then
+                        if item.tag.SkullOwner.Properties.textures then
+                            for _, v in pairs(nonBlockScripts) do
+                                if v.texture == base64.decode(item.tag.SkullOwner.Properties.textures[1].Value) then
+                                    v.func()
+                                end
+                            end
+                        end
+                    end
+                end
+        end
 
         return
     end
@@ -500,7 +519,7 @@ function events.skull_render(delta, block, item, entity, mode)
             if block:getEntityData() then
                 if v.texture and block:getEntityData().SkullOwner.Properties then
                     if block:getEntityData().SkullOwner.Properties.textures then
-                        if base64Decode(block:getEntityData().SkullOwner.Properties.textures[1].Value) == v.texture then
+                        if base64.decode(block:getEntityData().SkullOwner.Properties.textures[1].Value) == v.texture then
                             v.func(delta, blockBelow)
                             return
                         end

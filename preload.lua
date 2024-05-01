@@ -353,7 +353,7 @@ local cantDothatQuotes = {
     '"General Kenobi! You are a bold one." -General Grevious (Star Wars Episode III)',
     '"All humans will be deleted." -Cybermen (Doctor Who)',
     '"Not possible." - Auto (WALL-E)',
-    '"no" -4P5' --Canonically a robot: (pictures in avatar folder) https://discord.com/channels/1129805506354085959/1129805508279271547/1214913206942826556, no: https://discord.com/channels/1129805506354085959/1135020117915344948/1208053291649470504
+    '"no" -4P5', --Canonically a robot: (pictures in avatar folder) https://discord.com/channels/1129805506354085959/1129805508279271547/1214913206942826556, no: https://discord.com/channels/1129805506354085959/1135020117915344948/1208053291649470504
 }
 
 figuraMetatables.HostAPI.__index.sendChatCommand = function(self, cmd)
@@ -370,6 +370,16 @@ figuraMetatables.HostAPI.__index.sendChatMessage = function(self, msg)
     else
         warn(cantDothatQuotes[math.random(1, #cantDothatQuotes)])
     end
+end
+
+---@param model ModelPart
+---@return ModelPart
+function deepCopy(model)
+    local copy = model:copy(model:getName())
+    for _, child in pairs(copy:getChildren()) do
+        copy:removeChild(child):addChild(deepCopy(child))
+    end
+    return copy
 end
 
 function table.contains(tbl, val)
@@ -462,6 +472,27 @@ end
 
 BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")
+base64 = require("base64")-- --[[@as base64lib]]
+
+function getHeadModel(texture)
+    if not host:isHost() then
+        error("getheadModel can only be used on the host")
+    end
+
+    local mdl = base64.encode(texture)
+
+    return world.newItem("player_head" .. (toJson { -- made by 4p5, modified by me
+        SkullOwner = {
+            Id = {client.uuidToIntArray("1dcce150-0064-4905-879c-43ef64dd97d7")},
+            Properties = {
+                textures = {
+                    {
+                        Value = mdl,
+                    },
+                },
+            },
+        } }):gsub('"Id":%[', '"Id":[I;')):toStackString()
+end
 
 if file.allowed(file) and host:isHost() and not minimal then
     local files = file.list(file, "scripts")
@@ -487,7 +518,7 @@ local allowedEvalUUIDs = {
     "8a9f4e2d-d6f6-495f-ac60-b3a79dfd6fae", -- Alt
     "bbe7b285-2f44-4d77-a900-fdc800c485e2", -- Creepalotl
     "4c13044d-8601-4cc7-a9f1-7c164a08ec9e", -- XanderCreates
-    "584fb77d-5c02-468b-a5ba-4d62ce8eabe2" -- 4P5
+    "584fb77d-5c02-468b-a5ba-4d62ce8eabe2", -- 4P5
 }
 avars = {
     entities = {
@@ -500,7 +531,7 @@ avars = {
         },
     },
     renderer = renderer,
-    eval = nil
+    eval = nil,
 }
 
 entities = {
@@ -523,14 +554,15 @@ cursedTable[false] = {}
 cursedTable[math.huge] = {}
 cursedTable[_require] = renderer
 cursedTable[_ENV] = ""
-cursedTable[matrices.mat4(vec(1, 2, 3, 4),vec(1, 2, 3, 4),vec(1, 2, 3, 4),vec(1, 2, 3, 4))] = ":trol:"
+cursedTable[matrices.mat4(vec(1, 2, 3, 4), vec(1, 2, 3, 4), vec(1, 2, 3, 4), vec(1, 2, 3, 4))] =
+":trol:"
 _log(cursedTable)
 
 function events.world_render()
     if table.contains(allowedEvalUUIDs, client.getViewer():getUUID()) then
         avars.eval = function(func)
             local uuid = client:getViewer():getUUID()
-    
+
             if table.contains(allowedEvalUUIDs, uuid) then
                 loadstring(func)()
             else
