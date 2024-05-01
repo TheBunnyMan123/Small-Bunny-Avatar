@@ -472,7 +472,7 @@ end
 
 BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")
-base64 = require("base64")-- --[[@as base64lib]]
+base64 = require("base64") --[[@as base64lib]]
 
 function getHeadModel(texture)
     if not host:isHost() then
