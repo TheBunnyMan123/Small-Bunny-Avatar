@@ -389,7 +389,7 @@ BunnyChatUtils:register(function(self, chatJson, rawText)
                     v.obfuscated = false
                 end
                 v = filterObfuscation(v)
-            elseif k == "text" and type(v) == "string" then
+            elseif (k == "text" or type(k) == "number") and type(v) == "string" then
                 v = v:gsub("§k.-§r", function(s)
                     return s:gsub("§k", "<OBF>"):gsub("§r", "</OBF>§r")
                 end)
