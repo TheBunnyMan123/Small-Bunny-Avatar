@@ -375,6 +375,37 @@ BunnyChatUtils:register(function(self, jsonText, rawText)
     return newTxt, rawText
 end, "BUILTIN.TIMESTAMPS")
 
+BunnyChatUtils:register(function(self, chatJson, rawText)
+    local function filterObfuscation(jsonTable)
+        for k, v in pairs(jsonTable) do
+            if type(v) == "table" then
+                if v.text or v.translate then
+                    if v.obfuscated then
+                        if v.text then
+                            v.text = "<OBF>" .. v.text .. "</OBF>"
+                        end
+                    end
+
+                    v.obfuscated = false
+                end
+                v = filterObfuscation(v)
+            elseif k == "text" and type(v) == "string" then
+                v = v:gsub("§k.-§r", function(s)
+                    return s:gsub("§k", "<OBF>"):gsub("§r", "</OBF>§r")
+                end)
+            end
+
+            jsonTable[k] = v
+        end
+
+        return jsonTable
+    end
+
+    chatJson = filterObfuscation(chatJson)
+
+    return chatJson, rawText
+end, "BUILTIN.")
+
 BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
         if chatJson.translate == "multiplayer.player.left" then
