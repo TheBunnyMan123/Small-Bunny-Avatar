@@ -404,7 +404,7 @@ BunnyChatUtils:register(function(self, chatJson, rawText)
     chatJson = filterObfuscation(chatJson)
 
     return chatJson, rawText
-end, "BUILTIN.")
+end, "BUILTIN.OBFUSCATIONFILTER")
 
 BunnyChatUtils:register(function(_, chatJson, rawText)
     if chatJson.translate then
