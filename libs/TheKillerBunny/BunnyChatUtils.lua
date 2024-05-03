@@ -23,7 +23,36 @@ function BunnyChatUtils.register(self, func, name, priority)
 end
 
 function BunnyChatUtils.formatMarkdown(s)
-    local msg = s:gsub("%\\%*", "§asterisk§"):gsub("%\\%~", "§tilde§"):gsub("%\\%_", "§underscore§")
+    local msg = ""
+
+    if type(s) == "string" then
+        msg = s:gsub("%\\%*", "§asterisk§"):gsub("%\\%~", "§tilde§"):gsub("%\\%_", "§underscore§")
+    else
+        msg = s
+
+        local function iter(internalStr)
+            for k, v in pairs(internalStr) do
+                if type(v) == "string" then
+                v = BunnyChatUtils.formatMarkdown(v)
+                elseif type(v) == "table" then
+                    v = iter(v)
+                end
+
+                msg[k] = v
+            end
+
+            return internalStr
+        end
+
+        if msg.extra then
+            msg = iter(msg.extra)
+        else
+            msg = iter(msg)
+        end
+
+        return msg
+    end
+
     local iter = 0
     local astercount = 0
     local undercount = 0
@@ -294,7 +323,7 @@ BunnyChatUtils:register(function(self, jsonText, rawText)
     self.__VARS["prevText"] = rawText
     self.__VARS["messageCount"] = 1
     return jsonText, rawText
-end, "BUILTIN.FILTER_SPAM")
+end, "BUILTIN.FILTER_SPAM", 5)
 
 BunnyChatUtils:register(function(self, jsonText, rawText)
     local time = client.getDate()
@@ -403,6 +432,10 @@ BunnyChatUtils:register(function(self, chatJson, rawText)
 
     chatJson = filterObfuscation(chatJson)
 
+    rawText = rawText:gsub("§k.-§r", function(s)
+        return s:gsub("§k", "<OBF>"):gsub("§r", "</OBF>§r")
+    end)
+
     return chatJson, rawText
 end, "BUILTIN.OBFUSCATIONFILTER")
 
@@ -477,11 +510,12 @@ BunnyChatUtils:register(function(self, chatJson, rawText)
                         color = "gray",
                         bold = true,
                     },
+                    ((type(msg) == "table" and msg) or 
                     {
                         text = msg,
                         color = "white",
                         bold = false,
-                    },
+                    } or msg)
                 } --[[@as TextJsonComponent]]
             else
                 chatJson = {
@@ -495,11 +529,12 @@ BunnyChatUtils:register(function(self, chatJson, rawText)
                         color = "gray",
                         bold = true,
                     },
+                    ((type(msg) == "table" and msg) or 
                     {
                         text = msg,
                         color = "white",
                         bold = false,
-                    },
+                    } or msg)
                 } --[[@as TextJsonComponent]]
             end
         end

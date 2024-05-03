@@ -334,6 +334,14 @@ commands = {
         end,
     },
     {
+        cmd = "rmfilter",
+        desc = "Removes obfuscation filter",
+        args = {},
+        func = function()
+            BunnyChatUtils.__REGISTRY[3]["BUILTIN.OBFUSCATIONFILTER"] = nil
+        end
+    },
+    {
         cmd = "gridgen",
         desc = "Generate a grid",
         args = {
