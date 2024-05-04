@@ -433,7 +433,7 @@ local nonBlockScripts = {
             models.skull.Skull["Ear 1"]:setVisible(false)
             models.skull.Skull["Ear 2"]:setVisible(false)
             models.camera.Skull:setPos(0, 0, 0):setParentType("Skull"):setVisible(false):setScale(0.75)
-            models.drone_static.Skull:setPos(0, 0.5, 0):setParentType("Skull"):setVisible(true):setScale(1.5)
+            models.drone_static.Skull:setPos(0, 3, 0):setParentType("Skull"):setVisible(true):setScale(1.5)
         end
     }
 }
