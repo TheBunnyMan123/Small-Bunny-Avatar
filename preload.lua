@@ -30,6 +30,8 @@ if not (avatar:getMaxComplexity() >= 10000) or not (avatar:getMaxRenderCount() >
     minimal = true
 end
 
+---@alias moduleArray {author: string, script: string}
+---@type moduleArray[]
 local modules = {
     -- {
     -- author = "",
