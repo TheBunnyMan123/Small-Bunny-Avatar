@@ -26,6 +26,10 @@ figcolors = {
     CURSEFORGE = "#F16436",
 }
 
+function calcMatrix(part)
+    return part and (calcMatrix(part:getParent()) * part:getPositionMatrix()) or matrices.mat4()
+end
+
 if not (avatar:getMaxComplexity() >= 10000) or not (avatar:getMaxRenderCount() >= 150000) or not (avatar:getMaxTickCount() >= 2000) then
     minimal = true
 end
@@ -466,6 +470,8 @@ for _, v in pairs(listFiles("libs", true)) do
         script = name,
     })
 end
+
+require("KattDynamicCrosshair")
 
 BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")

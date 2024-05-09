@@ -219,12 +219,19 @@ local function badPose()
 end
 
 events.render:register(function(delta, context, matrix)
-    if moveCamera and player:getPose() == "SITTING" then
-        renderer:setOffsetCameraPivot(vec(0, -0.3, 0))
-        renderer:setEyeOffset(vec(0, -0.3, 0))
-    elseif moveCamera and not badPose() then
-        renderer:setOffsetCameraPivot(vec(0, -0.5, 0))
-        renderer:setEyeOffset(vec(0, -0.5, 0))
+    if moveCamera then
+        local head = models.model.root.Head
+        -- renderer:setOffsetCameraPivot(calcMatrix(head):translate(0,-1.7,0):apply(head:getPivot()) / 16)
+        --renderer:setEyeOffset(renderer:getCameraPivot())
+local piv = calcMatrix(head):apply(head:getPivot()) / 16 + player:getPos(delta) + vec(0, head:getScale().y / 2 / 16, 0)
+        renderer:setCameraPivot(piv)
+        renderer:setEyeOffset(0, piv.y - player:getPos(delta).y, 0)
+    -- if moveCamera and player:getPose() == "SITTING" then
+    --     renderer:setOffsetCameraPivot(vec(0, -0.3, 0))
+    --     renderer:setEyeOffset(vec(0, -0.3, 0))
+    -- elseif moveCamera and not badPose() then
+    --     renderer:setOffsetCameraPivot(vec(0, -0.5, 0))
+    --     renderer:setEyeOffset(vec(0, -0.5, 0))
     else
         renderer:setOffsetCameraPivot(nil)
     end
