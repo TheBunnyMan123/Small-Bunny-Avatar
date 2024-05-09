@@ -467,14 +467,10 @@ for _, v in pairs(listFiles("libs", true)) do
     })
 end
 
-for _, v in pairs(listFiles("scripts", true)) do
-    log("Loading " .. v)
-    _require(v)
-end
-
 BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")
 base64 = require("base64") --[[@as base64lib]]
+
 
 function getHeadModel(texture)
     if not host:isHost() then
@@ -494,6 +490,11 @@ function getHeadModel(texture)
                 },
             },
         } }):gsub('"Id":%[', '"Id":[I;')):toStackString()
+end
+
+for _, v in pairs(listFiles("scripts", true)) do
+    log("Loading " .. v)
+    _require(v)
 end
 
 if file.allowed(file) and host:isHost() and not minimal then

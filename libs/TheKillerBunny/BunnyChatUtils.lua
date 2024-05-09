@@ -6,6 +6,8 @@
 ---@alias TextJsonComponent { with?: TextJsonComponent[], text?: string, translate?: string, extra?: TextJsonComponent[], color?: color, font?: string, bold?: boolean, italic?: boolean, underlined?: boolean, strikethrough?: boolean, obfuscated?: boolean, insertion?: string, clickEvent?: TextComponentClickEvent, hoverEvent?: TextComponentHoverEvent }
 ---@alias BunnyChatUtils.RegistryFunction fun(self: BunnyChatUtils, chatJson: TextJsonComponent, rawText: string): TextJsonComponent, string
 
+local chatMessageList = {}
+
 ---@class BunnyChatUtils
 local BunnyChatUtils = {
     ---@type BunnyChatUtils.RegistryFunction[][]
@@ -502,6 +504,11 @@ BunnyChatUtils:register(function(self, chatJson, rawText)
 
             local msg = self.formatMarkdown(chatJson.with[2])
 
+            chatMessageList[plr.insertion] = {
+                message = rawText:gsub("^%<[%w%_% ]-%> ", ""),
+                timestamp = client:getSystemTime()
+            }
+
             if type(plr) == "table" then
                 chatJson = {
                     plr,
@@ -895,5 +902,25 @@ events.CHAT_RECEIVE_MESSAGE:register(function(rawText, jsonText)
 
     return toJson(BunnyChatUtils:process(rawText, parseJson(jsonText) --[[@as TextJsonComponent]]))
 end)
+
+
+function events.world_render(delta)
+    players = world:getPlayers()
+
+    for k, v in pairs(chatMessageList) do
+        if not players[k] then
+            chatMessageList[k] = nil
+---@diagnostic disable-next-line: discard-returns
+            models.model.World:newText(k)
+        end
+        
+        if not (v.timestamp + (4*1000) <= client:getSystemTime()) then
+            models.model.World:newText(k):text(v.message):setPos((players[k]:getPos(delta) + vec(0, 2.5, 0)) * 16):setAlignment("CENTER"):scale(0.3):setRot(client:getCameraRot() - 180):setBackgroundColor()
+        else
+---@diagnostic disable-next-line: discard-returns
+            models.model.World:newText(k)
+        end
+    end
+end
 
 return BunnyChatUtils
