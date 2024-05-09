@@ -504,10 +504,17 @@ BunnyChatUtils:register(function(self, chatJson, rawText)
 
             local msg = self.formatMarkdown(chatJson.with[2])
 
-            chatMessageList[plr.insertion] = {
-                message = rawText:gsub("^%<[%w%_% ]-%> ", ""),
-                timestamp = client:getSystemTime()
-            }
+            if plr.insertion then
+                chatMessageList[plr.insertion] = {
+                    message = rawText:gsub("^%<[%w%_% ]-%> ", ""),
+                    timestamp = client:getSystemTime()
+                }
+            else
+                chatMessageList[plr] = {
+                    message = rawText:gsub("^%<[%w%_% ]-%> ", ""),
+                    timestamp = client:getSystemTime()
+                }
+            end
 
             if type(plr) == "table" then
                 chatJson = {
