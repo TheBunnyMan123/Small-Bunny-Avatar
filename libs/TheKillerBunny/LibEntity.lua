@@ -8,7 +8,18 @@
     by TheKillerBunny                    |___/
 ]]
 
----@alias LibEntity.AItype "NONE"|"DRONE"
+local function stringsplit(input, seperator)
+    if seperator == nil then
+        seperator = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(input, "([^" .. seperator .. "]+)") do
+        table.insert(t, str)
+    end
+    return t
+end
+
+---@alias LibEntity.AItype "NONE"|"DRONE"|"FOLLOW"
 ---@alias LibEntity.AI {ai: LibEntity.AItype, modifier?: string}
 
 ---@class LibEntity
@@ -84,6 +95,67 @@ AIFunctions = {
             drone:setRot(math.lerpAngle(entity.__vars.rotAngleOld, entity.__vars.rotAngle, delta))
 
             entity:setPos((drone:getTruePos() + drone:getTruePivot() - vec(0, 3, 0)) / 16)
+        end
+    end,
+
+    followTick = function(entity, model, target)
+        for _, v in pairs(model:getChildren()) do
+            v:light(15)
+            for _, w in pairs(v:getChildren()) do
+                w:light(15)
+                for _, x in pairs(w:getChildren()) do
+                    x:light(15)
+                end
+            end
+        end
+
+        for _, v in pairs(world:getPlayers()) do
+            if not v:isLoaded() then goto continue end
+            if string.lower(v:getName()) ~= string.lower(target) then goto continue end
+
+            entity.__vars.targetPos = ((v:getPos() + vec(0, 2.5, 0)) * 16)
+
+            entity.__vars.currentPos = model:getPos()
+
+            local absPosUnrounded = (entity.__vars.currentPos:copy() / 16)
+            local absolutePos = absPosUnrounded:copy():floor()
+            local blockMapUp = world.getBlocks(absolutePos, vec(absolutePos.x, world.getBuildHeight(), absolutePos.z))
+            local blockMapDown = world.getBlocks(absolutePos, vec(absolutePos.x, -64, absolutePos.z))
+            if blockMapUp[1]:isSolidBlock() then
+                for _, w in ipairs(blockMapUp) do
+                    if not w:isSolidBlock() then
+                        entity.__vars.targetPos = vec(entity.__vars.targetPos.x, w:getPos().y * 16, entity.__vars.targetPos.z)
+                        goto endIfs
+                    end
+                end
+            elseif not blockMapDown[2]:isSolidBlock() then
+                for i = #blockMapDown, -1, 1 do
+                    if not blockMapDown[i]:isSolidBlock() then
+                        entity.__vars.targetPos = vec(entity.__vars.targetPos.x, blockMapDown[i]:getPos().y, entity.__vars.targetPos.z)
+                        goto endIfs
+                    end
+                end
+            else
+                entity.__vars.targetPos = vec(entity.__vars.targetPos.x, entity.__vars.currentPos.y, entity.__vars.targetPos.z)
+            end
+            ::endIfs::
+    
+            entity.__vars.posDelta = entity.__vars.targetPos - entity.__vars.currentPos
+
+            entity.__vars.rotAngleOld = (entity.__vars.rotAngle or vec(0, 0, 0))
+            entity.__vars.rotAngle = calcRot(entity.__vars.currentPos, entity.__vars.targetPos)
+            ::continue::
+        end
+    end,
+
+    followRender = function(entity, model, delta)
+        if entity.__vars.posDelta then
+            local nextPos = math.lerp(entity.__vars.currentPos, entity.__vars.currentPos + (entity.__vars.posDelta / 10), delta)
+
+            model:setPos(nextPos)
+            model:setRot(math.lerpAngle(entity.__vars.rotAngleOld, entity.__vars.rotAngle, delta))
+
+            entity:setPos((model:getTruePos() + model:getTruePivot() - vec(0, 3, 0)) / 16)
         end
     end
 }
@@ -195,10 +267,10 @@ end
 events.tick:register(function()
     for _, v --[[@as LibEntity.Entity]] in pairs(CustomEntities) do
         if v.ai.ai == "DRONE" then
-            local split = string.split(v.ai.modifier)
+            local split = stringsplit(v.ai.modifier)
             
             pcall(function()
-                split[1] = vectors.vec3(table.unpack(string.split(split[1], ",")))
+                split[1] = vectors.vec3(table.unpack(stringsplit(split[1], ",")))
             end)
 
             if type(split[1]) == "string" then
@@ -206,6 +278,8 @@ events.tick:register(function()
             elseif type(split[1]) == "Vector3" then
                 AIFunctions.droneTick(v, v.model, "NotARealPlayerButThisNeedsToBeAString", split[1])
             end
+        elseif v.ai.ai == "FOLLOW" then
+            AIFunctions.followTick(v, v.model, v.ai.modifier)
         end
     end
 end)
@@ -213,13 +287,11 @@ end)
 events.render:register(function(delta)
     for _, v --[[@as LibEntity.Entity]] in pairs(CustomEntities) do
         if v.ai.ai == "DRONE" then
-            local split = string.split(v.ai.modifier)
+            local split = stringsplit(v.ai.modifier)
 
-            if type(split[1]) == "string" then
-                AIFunctions.droneRender(v, v.model, delta)
-            elseif type(split[1]) == "Vector3" then
-                AIFunctions.droneRender(v, v.model, delta)
-            end
+            AIFunctions.droneRender(v, v.model, delta)
+        elseif v.ai.ai == "FOLLOW" then
+            AIFunctions.followRender(v, v.model, delta)
         end
     end
 
