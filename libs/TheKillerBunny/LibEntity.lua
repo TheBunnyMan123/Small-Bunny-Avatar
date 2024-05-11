@@ -8,13 +8,92 @@
     by TheKillerBunny                    |___/
 ]]
 
+---@alias LibEntity.AItype "NONE"|"DRONE"
+---@alias LibEntity.AI {ai: LibEntity.AItype, modifier?: string}
+
 ---@class LibEntity
 local LibEntityFuncs = {}
 local CustomEntities = {}
 
+local function calcRot(entityPos, targetPos)
+    -- Calculate the direction vector from drone to player
+    local dirVec = targetPos - entityPos
+
+    -- Check for near-zero x-component
+    if math.abs(dirVec.x) < 0.01 then
+        -- If x is near zero, use a small positive value to avoid division by zero
+        dirVec.x = 0.01
+    end
+
+    -- Flatten the direction vector to the horizontal plane (y = 0)
+    dirVec.y = 0
+
+    -- Calculate the angle in degrees between the positive z-axis and the direction vector
+    local angle = math.atan2(dirVec.x, dirVec.z) * (180 / math.pi)
+
+    -- Convert the angle to a vector suitable for setRot
+    local rotVec = vec(0, angle - 180, 0)
+
+    -- Return the rotation vector
+    return rotVec
+end
+
+local AIFunctions = {}
+AIFunctions = {
+    ---@param entity LibEntity.Entity
+    ---@param drone ModelPart
+    ---@param target string
+    ---@param customTarget Vector3?
+    droneTick = function(entity, drone, target, customTarget)
+        drone:light(15)
+        for _, v in pairs(drone:getChildren()) do
+            v:light(15)
+            for _, w in pairs(v:getChildren()) do
+                w:light(15)
+                for _, x in pairs(w:getChildren()) do
+                    x:light(15)
+                end
+            end
+        end
+
+        for _, v in pairs(world:getPlayers()) do
+            if not v:isLoaded() then goto continue end
+
+            if customTarget then
+                entity.__vars.targetPos = customTarget * 16
+            else
+                if string.lower(v:getName()) ~= string.lower(target) then goto continue end
+                entity.__vars.targetPos = (v:getPos() + vec(0, 2.5, 0)) * 16
+            end
+
+            entity.__vars.currentPos = drone:getPos()
+    
+            entity.__vars.posDelta = entity.__vars.targetPos - entity.__vars.currentPos
+
+            entity.__vars.rotAngleOld = (entity.__vars.rotAngle or vec(0, 0, 0))
+            entity.__vars.rotAngle = calcRot(entity.__vars.currentPos, entity.__vars.targetPos)
+            ::continue::
+        end
+    end,
+
+    droneRender = function(entity, drone, delta)
+        if entity.__vars.posDelta then
+            local prevPos = drone:getPos()
+            local nextPos = math.lerp(entity.__vars.currentPos, entity.__vars.currentPos + (entity.__vars.posDelta / 10), delta)
+            drone:setPos(nextPos)
+            drone:setRot(math.lerpAngle(entity.__vars.rotAngleOld, entity.__vars.rotAngle, delta))
+
+            entity:setPos((drone:getTruePos() + drone:getTruePivot() - vec(0, 3, 0)) / 16)
+        end
+    end
+}
+
 ---@class LibEntity.Entity
 ---@field name string
 ---@field position Vector3
+---@field ai LibEntity.AI
+---@field model ModelPart
+---@field __vars table
 ---@field hitbox [Vector3, Vector3]
 local customEntity = {}
 customEntity.__index = customEntity
@@ -30,6 +109,8 @@ function LibEntityFuncs.new(name, position, hitbox)
     entity.name = name
     entity.position = (position or vec(0, 0, 0))
     entity.hitbox = (hitbox or {vec(0, 0, 0), vec(0, 0, 0)})
+    entity.ai = {ai = "NONE"}
+    entity.__vars = {}
 
     CustomEntities[entity.name] = entity
 
@@ -59,6 +140,25 @@ function customEntity.setHitbox(self, hitbox)
     return self
 end
 
+---Give a custom entity a pre set AI
+---@param self LibEntity.Entity
+---@param ai LibEntity.AItype
+---@param model ModelPart
+---@param modifier string
+function customEntity.setAI(self, ai, model, modifier)
+    self.ai = {ai = ai, modifier = modifier}
+    self.model = model
+end
+
+---Get an entity's pre-set AI
+---@param self LibEntity.Entity
+---@return LibEntity.AItype, string?
+function customEntity.getAI(self)
+    local ai = self.ai
+    
+    return ai.ai, ai.modifier
+end
+
 ---Get an entity's position
 ---@param self LibEntity.Entity
 ---@return Vector3
@@ -81,7 +181,6 @@ function LibEntityFuncs.getEntities()
     for _, v in pairs(world.avatarVars()) do
         if v.entities then
             for _, w in ipairs(v.entities) do
-                -- log(w, w.hitbox)
                 table.insert(entities, setmetatable({
                     position = w.pos,
                     hitbox = w.hitbox
@@ -93,7 +192,37 @@ function LibEntityFuncs.getEntities()
     return entities
 end
 
-events.render:register(function()
+events.tick:register(function()
+    for _, v --[[@as LibEntity.Entity]] in pairs(CustomEntities) do
+        if v.ai.ai == "DRONE" then
+            local split = string.split(v.ai.modifier)
+            
+            pcall(function()
+                split[1] = vectors.vec3(table.unpack(string.split(split[1], ",")))
+            end)
+
+            if type(split[1]) == "string" then
+                AIFunctions.droneTick(v, v.model, split[1])
+            elseif type(split[1]) == "Vector3" then
+                AIFunctions.droneTick(v, v.model, "NotARealPlayerButThisNeedsToBeAString", split[1])
+            end
+        end
+    end
+end)
+
+events.render:register(function(delta)
+    for _, v --[[@as LibEntity.Entity]] in pairs(CustomEntities) do
+        if v.ai.ai == "DRONE" then
+            local split = string.split(v.ai.modifier)
+
+            if type(split[1]) == "string" then
+                AIFunctions.droneRender(v, v.model, delta)
+            elseif type(split[1]) == "Vector3" then
+                AIFunctions.droneRender(v, v.model, delta)
+            end
+        end
+    end
+
     local entities = {}
 
     for _, v --[[@as LibEntity.Entity]] in pairs(CustomEntities) do
