@@ -151,13 +151,13 @@ local funcs = {
         block = "minecraft:player_head",
         func = function(delta, blockBelow)
             -- Hide main head and show projector
-            models.skull.Skull.text:setVisible(true)
-            models.skull.Skull:setPos(vec(0, -12 - 8, 0)):setScale(1):setVisible(true).Table
+            models["💀"].Skull.text:setVisible(true)
+            models["💀"].Skull:setPos(vec(0, -12 - 8, 0)):setScale(1):setVisible(true).Table
                 :setVisible(false)
-            models.skull.Skull.TheHead.Head:setVisible(false)
-            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(true)
-            models.skull.Skull["Ear 1"]:setVisible(false)
-            models.skull.Skull["Ear 2"]:setVisible(false)
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(true)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
 
             -- Set variables
             local owner = blockBelow:getEntityData().SkullOwner
@@ -214,14 +214,14 @@ local funcs = {
             end
 
             -- Display text
-            models.skull.Skull.text:newText("text")
+            models["💀"].Skull.text:newText("text")
                 :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
                 :setText(tempText)
                 :setScale(0.3)
                 :setAlignment("LEFT")
                 :setShadow(true)
                 :setWrap(true)
-            models.skull.Skull.text:newText("text2")
+            models["💀"].Skull.text:newText("text2")
                 :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
                 :setText(tempText)
                 :setScale(0.3)
@@ -236,13 +236,13 @@ local funcs = {
         block = "_sign",
         func = function(delta, blockBelow)
             -- Hide main head and show projector
-            models.skull.Skull.text:setVisible(true)
-            models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table
+            models["💀"].Skull.text:setVisible(true)
+            models["💀"].Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table
                 :setVisible(false)
-            models.skull.Skull.TheHead.Head:setVisible(false)
-            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(true)
-            models.skull.Skull["Ear 1"]:setVisible(false)
-            models.skull.Skull["Ear 2"]:setVisible(false)
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(true)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
 
             local tempText = ""
             local properties = blockBelow.getEntityData(blockBelow)
@@ -268,14 +268,14 @@ local funcs = {
                 "\nFront Text: \n\n" .. front_text .. "\nBack Text: \n\n" .. back_text
 
             -- Display text
-            local text1 = models.skull.Skull.text:newText("text")
+            local text1 = models["💀"].Skull.text:newText("text")
                 :setPos(vec(0, 15 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
                 :setText(tempText)
                 :setScale(0.3)
                 :setShadow(true)
                 :setWrap(true)
                 :setAlignment("CENTER")
-            local text2 = models.skull.Skull.text:newText("text2")
+            local text2 = models["💀"].Skull.text:newText("text2")
                 :setPos(vec(0, 15 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
                 :setText(tempText)
                 :setScale(0.3)
@@ -289,12 +289,12 @@ local funcs = {
         exact = false,
         block = "minecraft:smooth_quartz",
         func = function(delta, blockBelow)
-            models.skull.Skull:setPos(vec(0, 0, 0))
-            models.skull.Skull.TheHead.Head:setVisible(false)
-            models.skull.Skull["Ear 1"]:setVisible(false)
-            models.skull.Skull["Ear 2"]:setVisible(false)
-            models.skull.Skull.Table:setVisible(false)
-            models.skull.Skull.TheHead.FloorPainting:setVisible(true)
+            models["💀"].Skull:setPos(vec(0, 0, 0))
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
+            models["💀"].Skull.Table:setVisible(false)
+            models["💀"].Skull.TheHead.FloorPainting:setVisible(true)
 
             local picIndex = {
                 "MyselfPicture",
@@ -305,7 +305,7 @@ local funcs = {
 
             for i = #picIndex, 1, -1 do
                 if tick % (40 * i) == 0 then
-                    models.skull.Skull.TheHead.FloorPainting.Picture:setPrimaryTexture("CUSTOM",
+                    models["💀"].Skull.TheHead.FloorPainting.Picture:setPrimaryTexture("CUSTOM",
                         textures[picIndex[i]])
                     goto done
                 end
@@ -319,19 +319,19 @@ local funcs = {
         texture = "blahaj",
         func = function(delta, blockBelow)
             models.blahaj.Skull:setVisible(true)
-            models.skull.Skull:setPos(vec(0, 0, 0))
-            models.skull.Skull.TheHead.Head:setVisible(false)
-            models.skull.Skull["Ear 1"]:setVisible(false)
-            models.skull.Skull["Ear 2"]:setVisible(false)
-            models.skull.Skull.Table:setVisible(false)
-            models.skull.Skull.TheHead.FloorPainting:setVisible(false)
-            models.skull.Skull.text:setVisible(false)
+            models["💀"].Skull:setPos(vec(0, 0, 0))
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
+            models["💀"].Skull.Table:setVisible(false)
+            models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
+            models["💀"].Skull.text:setVisible(false)
 
             models.blahaj.Skull:setRot(
                 0, math.lerp(oldTick * 3, tick * 3, delta), 0
             )
 
-            local facecamera = models.skull.Skull
+            local facecamera = models["💀"].Skull
                 :setPos(vec(0, 15, 0))
                 :setPivot(0, 0, 0)
                 :newPart("BlahajText")
@@ -358,13 +358,13 @@ local funcs = {
         texture = "ESP",
         func = function(delta, blockBelow)
             models.blahaj.Skull:setVisible(false)
-            models.skull.Skull:setPos(vec(0, -12, 0))
-            models.skull.Skull.TheHead.Head:setVisible(true)
-            models.skull.Skull["Ear 1"]:setVisible(true)
-            models.skull.Skull["Ear 2"]:setVisible(true)
-            models.skull.Skull.Table:setVisible(false)
-            models.skull.Skull.TheHead.FloorPainting:setVisible(false)
-            models.skull.Skull.text:setVisible(false)
+            models["💀"].Skull:setPos(vec(0, -12, 0))
+            models["💀"].Skull.TheHead.Head:setVisible(true)
+            models["💀"].Skull["Ear 1"]:setVisible(true)
+            models["💀"].Skull["Ear 2"]:setVisible(true)
+            models["💀"].Skull.Table:setVisible(false)
+            models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
+            models["💀"].Skull.text:setVisible(false)
 
             local iter = 1
 
@@ -409,14 +409,14 @@ local nonBlockScripts = {
     {
         texture = "camera",
         func = function()
-            models.skull.Skull.TheHead.FloorPainting:setVisible(false)
+            models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
             models.blahaj.Skull:setVisible(false)
-            models.skull.Skull.text:setVisible(false)
-            models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
-            models.skull.Skull.TheHead.Head:setVisible(false)
-            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-            models.skull.Skull["Ear 1"]:setVisible(false)
-            models.skull.Skull["Ear 2"]:setVisible(false)
+            models["💀"].Skull.text:setVisible(false)
+            models["💀"].Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(false)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
             models.camera.Skull:setPos(0, 0, 0):setParentType("Skull"):setVisible(true)
             models.drone_static.Skull:setPos(0, 0.5, 0):setParentType("Skull"):setVisible(false):setScale(1.5)
         end
@@ -424,14 +424,14 @@ local nonBlockScripts = {
     {
         texture = "drone",
         func = function()
-            models.skull.Skull.TheHead.FloorPainting:setVisible(false)
+            models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
             models.blahaj.Skull:setVisible(false)
-            models.skull.Skull.text:setVisible(false)
-            models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
-            models.skull.Skull.TheHead.Head:setVisible(false)
-            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-            models.skull.Skull["Ear 1"]:setVisible(false)
-            models.skull.Skull["Ear 2"]:setVisible(false)
+            models["💀"].Skull.text:setVisible(false)
+            models["💀"].Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(false)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
             models.camera.Skull:setPos(0, 0, 0):setParentType("Skull"):setVisible(false):setScale(0.75)
             models.drone_static.Skull:setPos(0, 3, 0):setParentType("Skull"):setVisible(true):setScale(1.5)
         end
@@ -439,28 +439,28 @@ local nonBlockScripts = {
 }
 
 function events.skull_render(delta, block, item, entity, mode)
-    if models.skull.Skull.BlahajText then
-        models.skull.Skull.BlahajText:remove()
+    if models["💀"].Skull.BlahajText then
+        models["💀"].Skull.BlahajText:remove()
     end
 
     models.camera.Skull:setVisible(false)
     models.drone_static.Skull:setVisible(false)
 
     if not block then
-        if models.skull.Skull.text then
-            models.skull.Skull.text:setVisible(false)
+        if models["💀"].Skull.text then
+            models["💀"].Skull.text:setVisible(false)
         end
-        if models.skull.Skull.text then
-            models.skull.Skull.text:setVisible(false)
+        if models["💀"].Skull.text then
+            models["💀"].Skull.text:setVisible(false)
         end
-        models.skull.Skull.TheHead.FloorPainting:setVisible(false)
+        models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
         models.blahaj.Skull:setVisible(false)
-        models.skull.Skull.text:setVisible(false)
-        models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
-        models.skull.Skull.TheHead.Head:setVisible(true)
-        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-        models.skull.Skull["Ear 1"]:setVisible(true)
-        models.skull.Skull["Ear 2"]:setVisible(true)
+        models["💀"].Skull.text:setVisible(false)
+        models["💀"].Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
+        models["💀"].Skull.TheHead.Head:setVisible(true)
+        models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(false)
+        models["💀"].Skull["Ear 1"]:setVisible(true)
+        models["💀"].Skull["Ear 2"]:setVisible(true)
 
         if item then
                 if type(item.tag.SkullOwner) == "table" then
@@ -485,29 +485,29 @@ function events.skull_render(delta, block, item, entity, mode)
     end
 
     if not minimal then
-        models.skull.Skull.TheHead.Head:setVisible(true)
+        models["💀"].Skull.TheHead.Head:setVisible(true)
         if block == nil then
             return
         end
 
-        models.skull.Skull.TheHead.FloorPainting:setVisible(false)
-        models.skull.Skull.TheHead.Head:setVisible(true)
-        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-        models.skull.Skull["Ear 1"]:setVisible(true)
-        models.skull.Skull["Ear 2"]:setVisible(true)
+        models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
+        models["💀"].Skull.TheHead.Head:setVisible(true)
+        models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(false)
+        models["💀"].Skull["Ear 1"]:setVisible(true)
+        models["💀"].Skull["Ear 2"]:setVisible(true)
         models.blahaj.Skull:setVisible(false)
 
         if block:getProperties() == nil then
             return
         end
         if block.id == "minecraft:player_wall_head" then
-            models.skull.Skull.TheHead.Head:setVisible(true)
-            models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-            models.skull.Skull:setPos(0, -10.1, 1.8):setScale(1).Table:setVisible(false)
+            models["💀"].Skull.TheHead.Head:setVisible(true)
+            models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(false)
+            models["💀"].Skull:setPos(0, -10.1, 1.8):setScale(1).Table:setVisible(false)
         else
             local is_table = block:getProperties().rotation % 4 == 0
 
-            models.skull.Skull
+            models["💀"].Skull
                 :setPos(is_table and vec(0, 0, 0) or vec(0, -12, 0)):setScale(1)
                 .Table:setVisible(is_table)
         end
@@ -533,12 +533,12 @@ function events.skull_render(delta, block, item, entity, mode)
             end
         end
 
-        models.skull.Skull.text:setVisible(true)
-        models.skull.Skull:setVisible(true)
-        models.skull.Skull.TheHead.Head:setVisible(true)
-        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-        models.skull.Skull["Ear 1"]:setVisible(true)
-        models.skull.Skull["Ear 2"]:setVisible(true)
+        models["💀"].Skull.text:setVisible(true)
+        models["💀"].Skull:setVisible(true)
+        models["💀"].Skull.TheHead.Head:setVisible(true)
+        models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(false)
+        models["💀"].Skull["Ear 1"]:setVisible(true)
+        models["💀"].Skull["Ear 2"]:setVisible(true)
 
         local count = 1
 
@@ -573,7 +573,7 @@ function events.skull_render(delta, block, item, entity, mode)
             end)()
 
         -- Display text
-        local text1 = models.skull.Skull.text:newText("text")
+        local text1 = models["💀"].Skull.text:newText("text")
             :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
             :setText(tempText)
             :setScale(0.3)
@@ -581,7 +581,7 @@ function events.skull_render(delta, block, item, entity, mode)
             :setShadow(true)
             :setWrap(true)
             :setAlignment("CENTER")
-        local text2 = models.skull.Skull.text:newText("text2")
+        local text2 = models["💀"].Skull.text:newText("text2")
             :setPos(vec(0, 25 + (count * 3), 0)) -- Raise position by 25 + (3 times count)
             :setText(tempText)
             :setScale(0.3)
@@ -594,26 +594,26 @@ function events.skull_render(delta, block, item, entity, mode)
         -- If not enough instructions and complexity are given to skull, display text requesting higher permissions
 
         -- Hide projector and show main head
-        models.skull.Skull.text:setVisible(true)
-        models.skull.Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
-        models.skull.Skull.TheHead.Head:setVisible(true)
-        models.skull.Skull.TheHead.CommandBlockProjector:setVisible(false)
-        models.skull.Skull["Ear 1"]:setVisible(true)
-        models.skull.Skull["Ear 2"]:setVisible(true)
+        models["💀"].Skull.text:setVisible(true)
+        models["💀"].Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
+        models["💀"].Skull.TheHead.Head:setVisible(true)
+        models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(false)
+        models["💀"].Skull["Ear 1"]:setVisible(true)
+        models["💀"].Skull["Ear 2"]:setVisible(true)
         models.blahaj.Skull:setVisible(false)
-        local text2 = models.skull.Skull.text:newText("text2")
+        local text2 = models["💀"].Skull.text:newText("text2")
 
         -- Display text
         local txt =
         "This skull requires a helluva\n lot of render instructions,\n please raise my permissions!"
-        models.skull.Skull.text:newText("text")
+        models["💀"].Skull.text:newText("text")
             :setPos(vec(0, 30 + (3 * 5), 0))
             :setText(txt)
             :setScale(0.5)
             :setAlignment("CENTER")
             :setShadow(true)
             :setWrap(true)
-        models.skull.Skull.text:newText("text2")
+        models["💀"].Skull.text:newText("text2")
             :setPos(vec(0, 30 + (3 * 5), 0))
             :setText(txt)
             :setScale(0.5)
