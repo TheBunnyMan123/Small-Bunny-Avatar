@@ -1,4 +1,8 @@
-local FSMPBase = vec(207, 104, -1251)
+local tpLocations = {
+    FSMPBase = vec(207, 104, -1251),
+    PORTALRoom = vec(-23923206, 14, -23687122)
+}
+
 local crosshairModels = models:newPart("BunnyCrosshair", "GUI")
 crosshairModels:addChild(models.crosshair)
 models:removeChild(models.crosshair)
