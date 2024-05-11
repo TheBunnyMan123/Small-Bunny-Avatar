@@ -477,6 +477,14 @@ BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")
 base64 = require("base64") --[[@as base64lib]]
 
+for _, v in pairs(models.models:getChildren()) do
+    models:addChild(v)
+    models.models:removeChild(v)
+end
+
+function getTexture(name)
+    return textures["textures." .. name]
+end
 
 function getHeadModel(texture)
     if not host:isHost() then

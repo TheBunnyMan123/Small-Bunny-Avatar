@@ -306,7 +306,7 @@ local funcs = {
             for i = #picIndex, 1, -1 do
                 if tick % (40 * i) == 0 then
                     models["💀"].Skull.TheHead.FloorPainting.Picture:setPrimaryTexture("CUSTOM",
-                        textures[picIndex[i]])
+                        getTexture(picIndex[i]))
                     goto done
                 end
             end
