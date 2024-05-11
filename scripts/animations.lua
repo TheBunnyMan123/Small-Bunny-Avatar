@@ -2,12 +2,12 @@ invOpen = false
 chestBlock = "chest"
 
 function pings.openChest()
-    animations.model.chest_open:play()
+    anims["chest_open"]:play()
 end
 
 function pings.closeChest()
-    animations.model.chest_open:stop()
-    animations.model.chest_close:play()
+    anims["chest_open"]:stop()
+    anims["chest_close"]:play()
 end
 
 function events.tick()

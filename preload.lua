@@ -43,6 +43,12 @@ local modules = {
     -- }
 }
 
+anims = {nil, animations:getAnimations()[1]}
+
+for _, v in pairs(animations:getAnimations()) do
+    anims[v:getName()] = v
+end
+
 printf = function(arg)
     if type(arg) == "string" then
         logJson(arg)
