@@ -471,7 +471,7 @@ for _, v in pairs(listFiles("libs", true)) do
     })
 end
 
-require("KattDynamicCrosshair")
+-- require("KattDynamicCrosshair")
 
 BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")

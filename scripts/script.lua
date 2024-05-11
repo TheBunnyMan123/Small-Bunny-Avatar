@@ -1,3 +1,8 @@
+local FSMPBase = vec(207, 104, -1251)
+local crosshairModels = models:newPart("BunnyCrosshair", "GUI")
+crosshairModels:addChild(models.crosshair)
+models:removeChild(models.crosshair)
+
 --hide vanilla models
 vanilla_model.PLAYER:setVisible(false)
 vanilla_model.CAPE:setVisible(false)
@@ -17,7 +22,84 @@ local tick = 0
 local oldTick = -1
 -- customization
 local frame = 0
-function events.render(_, context)
+local lines = {}
+function events.render(delta, context)
+    do
+        local windowSize = client:getScaledWindowSize()
+
+        local block, blockPosReal, face = player:getTargetedBlock(true, host:getReachDistance())
+        local entity = player:getTargetedEntity(host:getReachDistance())
+
+        local pos = nil
+
+        if entity then
+            local yOff = entity:getBoundingBox().y / 2
+
+            pos = entity:getPos(delta):copy():add(0, yOff, 0)
+        elseif not block:isAir() then
+            pos = block:getPos():copy():add(0.5, 0.5, 0.5)
+            -- log(block:getOutlineShape()[1][2])
+            local blockPosOffset = vec(0, 0, 0)
+            local maxSize = vec(0, 0, 0)
+            local minSize = vec(1, 1, 1)
+            local totalSize = vec(0, 0, 0)
+            for _, v in pairs(block:getOutlineShape()) do
+                if v[2]:length() > v[1]:length() then
+                    totalSize = totalSize:add(v[2])
+                else
+                    totalSize = totalSize:add(v[1])
+                end
+
+                if v[1].x < minSize.x then
+                    minSize.x = v[1].x
+                end
+                if v[1].y < minSize.y then
+                    minSize.y = v[1].y
+                end
+                if v[1].z < minSize.z then
+                    minSize.z = v[1].z
+                end
+
+                if v[2].x > maxSize.x then
+                    maxSize.x = v[2].x
+                end
+                if v[2].y > maxSize.y then
+                    maxSize.y = v[2].y
+                end
+                if v[2].z > maxSize.z then
+                    maxSize.z = v[2].z
+                end
+            end
+            
+            for k, v in pairs(lines) do
+                v:free()
+                table.remove(lines, k)
+            end
+
+            totalSize = ((maxSize - minSize) / 2) + minSize
+            local blockPos = block:getPos() + totalSize
+
+            if face == "north" or face == "south" then
+                pos = vec(blockPos.x, blockPos.y, blockPosReal.z)
+            elseif face == "east" or face == "west" then
+                pos = vec(blockPosReal.x, blockPos.y, blockPos.z)
+            elseif face == "up" or face == "down" then
+                pos = vec(blockPos.x, blockPosReal.y, blockPos.z)
+            end
+        else
+            pos = nil
+        end
+        
+        if pos then
+            local onScreenCoords = vectors.worldToScreenSpace(pos):copy().xy:add(1, 1):mul(client:getScaledWindowSize()):div(-2, -2)
+
+            crosshairModels:setPos(onScreenCoords:unpack()):setVisible(true):setScale(15 / vectors.worldToScreenSpace(pos).w)--:light(15)
+        else
+            -- renderer:setCrosshairOffset()
+            crosshairModels:setVisible(false)
+        end
+    end
+
     models.model.root:setScale(0.7)
 
     local jetpackOn = ((player:getGamemode() == "CREATIVE") or (player:getItem(5).id == "minecraft:elytra"))
