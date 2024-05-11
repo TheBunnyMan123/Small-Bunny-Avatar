@@ -383,14 +383,17 @@ local funcs = {
             for _, v in pairs(LibEntity.getEntities()) do
                 table.insert(lines, GNLineLib:new()
                     :setA(blockBelow:getPos() + vec(0.5, 1.2, 0.5))
-                    :setB(w.pos)
+                    :setB(v:getPos())
                     :setColor(vec(1, 0.2, 0))
                     :setWidth(0.1))
 
-                local hbox1 = v:getHitbox()[1]
-                local hbox2 = v:getHitbox()[2]
+                -- log(v:getHitbox())
+
+                local hbox1 = v:getHitbox()[1]:copy()
+                local hbox2 = v:getHitbox()[2]:copy()
                 local hbox1final = hbox1:add(v:getPos())
                 local hbox2final = hbox2:add(v:getPos())
+                -- log(hbox1final:floor():div(16, 16, 16), hbox2final:floor(), v:getPos():floor())
                 drawCube(hbox1final.x, hbox1final.y, hbox1final.z, hbox2final.x,
                     hbox2final.y, hbox2final.z)
             end

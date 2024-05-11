@@ -7,6 +7,10 @@ local droneEntity = LibEntity.new("drone", vec(0, 0, 0), {
     (vec(5.5, 0, 5.5) * -1) / 16,
     vec(5.5, 6, 5.5) / 16,
 })
+local hitbox = {
+    (vec(5.5, 0, 5.5) * -1) / 16,
+    vec(5.5, 6, 5.5) / 16,
+}
 
 customTarget = nil
 
@@ -143,14 +147,7 @@ function events.world_render(delta)
     drone:setPos(nextPos)
     drone:setRot(math.lerpAngle(rotAngleOld, rotAngle, delta))
 
-    -- entities.drone = {
-    --     pos = ((models.drone.World:getTruePos() + models.drone.World:getTruePivot() - vec(0, 3, 0)) / 16),
-    --     hitbox = {
-    --         (vec(5.5, 0, 5.5) * -1) / 16,
-    --         vec(5.5, 6, 5.5) / 16,
-    --     },
-    -- }
-    droneEntity:setPos((models.drone.World:getTruePos() + models.drone.World:getTruePivot() - vec(0, 3, 0)) / 16)
+    droneEntity:setPos((models.drone.World:getTruePos() + models.drone.World:getTruePivot() - vec(0, 3, 0)) / 16):setHitbox(hitbox)
 
     if controlDrone then
         if renderer:isFirstPerson() then

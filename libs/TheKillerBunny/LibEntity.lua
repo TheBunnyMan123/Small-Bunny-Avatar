@@ -36,18 +36,27 @@ function LibEntityFuncs.new(name, position, hitbox)
     return entity
 end
 
+---Remove an entity from processing list
+---@param self LibEntity.Entity
+function customEntity.free(self)
+    CustomEntities[self.name] = nil
+end
+
 ---Set the position of a custom entity (should be bottom center of entity)
 ---@param self LibEntity.Entity
 ---@param position Vector3
 function customEntity.setPos(self, position)
     self.position = position
+    return self
 end
 
 ---Set an entity's hitbox
 ---@param self LibEntity.Entity
 ---@param hitbox [Vector3, Vector3]
+---@return LibEntity.Entity
 function customEntity.setHitbox(self, hitbox)
     self.hitbox = hitbox
+    return self
 end
 
 ---Get an entity's position
@@ -72,10 +81,11 @@ function LibEntityFuncs.getEntities()
     for _, v in pairs(world.avatarVars()) do
         if v.entities then
             for _, w in ipairs(v.entities) do
-                w.position = w.pos
-                w.pos = nil
-                
-                table.insert(entities, w)
+                -- log(w, w.hitbox)
+                table.insert(entities, setmetatable({
+                    position = w.pos,
+                    hitbox = w.hitbox
+                }, customEntity))
             end
         end
     end
@@ -89,7 +99,10 @@ events.render:register(function()
     for _, v --[[@as LibEntity.Entity]] in pairs(CustomEntities) do
         table.insert(entities, {
             pos = v.position,
-            hitbox = v.hitbox
+            hitbox = {
+                v.hitbox[1]:copy(),
+                v.hitbox[2]:copy()
+            }
         })
     end
 
