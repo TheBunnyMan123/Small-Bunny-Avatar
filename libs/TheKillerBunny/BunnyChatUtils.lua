@@ -919,6 +919,7 @@ function events.world_render(delta)
             chatMessageList[k] = nil
 ---@diagnostic disable-next-line: discard-returns
             models.model.World:newText(k)
+            goto continue
         end
         
         if not (v.timestamp + (4*1000) <= client:getSystemTime()) then
@@ -927,6 +928,7 @@ function events.world_render(delta)
 ---@diagnostic disable-next-line: discard-returns
             models.model.World:newText(k)
         end
+        ::continue::
     end
 end
 

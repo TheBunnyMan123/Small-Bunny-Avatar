@@ -503,7 +503,7 @@ for _, v in pairs(listFiles("scripts", true)) do
     _require(v)
 end
 
-if file.allowed(file) and host:isHost() and not minimal then
+if host:isHost() and file.allowed(file) and not minimal then
     local files = file.list(file, "scripts")
     if files then
         log()
