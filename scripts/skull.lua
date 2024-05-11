@@ -374,7 +374,7 @@ local funcs = {
 
                     table.insert(lines, GNLineLib:new()
                         :setA(blockBelow:getPos() + vec(0.5, 1.2, 0.5))
-                        :setB(v:getPos() + vec(0, 1, 0))
+                        :setB(v:getPos(delta) + vec(0, 1, 0))
                         :setColor(vec(1, 0.2, 0))
                         :setWidth(0.1))
                 end
