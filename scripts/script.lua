@@ -127,7 +127,8 @@ function events.render(delta, context)
 
         if date.month == 10 then
             jetpackOn = false
-
+            smokeOn = false
+            
             models.model.root.Body.Jetpack:setVisible(false)
 
             changeTexture(models.model.root, "skin_halloween")
