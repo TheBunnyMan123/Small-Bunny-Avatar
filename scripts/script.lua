@@ -112,6 +112,28 @@ function events.render(delta, context)
 
     local smokeOn = (not player:isOnGround() and jetpackOn and context ~= "FIRST_PERSON")
 
+    do
+        local date = client:getDate()
+        
+        ---comment
+        ---@param part ModelPart
+        local function changeTexture(part, txture)
+            for _, v in pairs(part:getChildren()) do
+                changeTexture(v, txture)
+                
+                v:setPrimaryTexture("CUSTOM", getTexture(txture))
+            end
+        end
+
+        if date.month == 10 then
+            jetpackOn = false
+
+            models.model.root.Body.Jetpack:setVisible(false)
+
+            changeTexture(models.model.root, "skin_halloween")
+        end
+    end
+    
     if smokeOn and not minimal then
         local smokePivotLeft = models.model.root.Body.Jetpack.SmokePivotLeft
         local smokePivotRight = models.model.root.Body.Jetpack.SmokePivotRight
