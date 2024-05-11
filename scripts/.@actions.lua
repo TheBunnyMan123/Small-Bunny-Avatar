@@ -174,8 +174,11 @@ mainWheelPage:newAction():title("Move Camera"):item(getHeadModel("camera")):setO
     moveCamera = state
 end):color(1, 1, 1)
 
-mainWheelPage:newAction():title("Control Drone"):item(getHeadModel("drone")):setOnToggle(function(state)
-    controlDrone = state
+mainWheelPage:newAction():title("Reset Entities"):item(getHeadModel("drone")):setOnLeftClick(function()
+    for _, v --[[@as LibEntity.Entity]] in pairs(CustomEntities) do
+        v.model:setPos(player:getPos() * 16)
+        v:setPos(player:getPos())
+    end
 end):color(0.5, 0.5, 0.5)
 
 iter = 4

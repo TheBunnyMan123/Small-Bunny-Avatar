@@ -24,7 +24,7 @@ end
 
 ---@class LibEntity
 local LibEntityFuncs = {}
-local CustomEntities = {}
+CustomEntities = {}
 
 local function calcRot(entityPos, targetPos)
     -- Calculate the direction vector from drone to player
@@ -119,6 +119,15 @@ AIFunctions = {
 
             local absPosUnrounded = (entity.__vars.currentPos:copy() / 16)
             local absolutePos = absPosUnrounded:copy():floor()
+
+            local lowestBlock = -64
+            for _, w in pairs(world.getBlocks(vec(absolutePos.x, -64, absolutePos.z), vec(absolutePos.x, world:getBuildHeight(), absolutePos.z))) do
+                if not w:isAir() then
+                    lowestBlock = w:getPos().y
+                    break
+                end
+            end
+
             local blockMapUp = world.getBlocks(absolutePos, vec(absolutePos.x, world.getBuildHeight(), absolutePos.z))
             local blockMapDown = world.getBlocks(absolutePos, vec(absolutePos.x, -64, absolutePos.z))
             if blockMapUp[1]:isSolidBlock() then
@@ -128,7 +137,7 @@ AIFunctions = {
                         goto endIfs
                     end
                 end
-            elseif not blockMapDown[2]:isSolidBlock() then
+            elseif blockMapDown[2] and not blockMapDown[2]:isSolidBlock() then
                 for i = #blockMapDown, -1, 1 do
                     if not blockMapDown[i]:isSolidBlock() then
                         entity.__vars.targetPos = vec(entity.__vars.targetPos.x, blockMapDown[i]:getPos().y, entity.__vars.targetPos.z)
