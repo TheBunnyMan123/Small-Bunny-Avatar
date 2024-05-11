@@ -482,6 +482,7 @@ end
 BunnyChatUtils = require("BunnyChatUtils")
 autoanims = require("auto_animations")
 base64 = require("base64") --[[@as base64lib]]
+LibEntity = require("LibEntity") --[[@as LibEntity]]
 
 for _, v in pairs(models.models:getChildren()) do
     models:addChild(v)
@@ -544,27 +545,7 @@ local allowedEvalUUIDs = {
     "584fb77d-5c02-468b-a5ba-4d62ce8eabe2", -- 4P5
 }
 avars = {
-    entities = {
-        [1] = {
-            pos = vec(0, 0, 0),
-            hitbox = {
-                (vec(0, 0, 0)) - vec(0.4, 0.3, 0.4),
-                (vec(0, 0, 0)) + vec(0.4, 0.3, 0.4),
-            },
-        },
-    },
-    renderer = renderer,
     eval = nil,
-}
-
-entities = {
-    drone = {
-        pos = vec(0, 0, 0),
-        hitbox = {
-            (vec(0, 0, 0)) - vec(0.4, 0.3, 0.4),
-            (vec(0, 0, 0)) + vec(0.4, 0.3, 0.4),
-        },
-    },
 }
 
 local cursedTable = {}
@@ -595,14 +576,6 @@ function events.world_render()
         end
     else
         avars.eval = nil
-    end
-
-    avars.entities = {}
-
-    local iter = 0
-    for _, v in pairs(entities) do
-        iter = iter + 1
-        avars.entities[iter] = v
     end
 
     for key, value in pairs(avars) do

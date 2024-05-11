@@ -3,6 +3,11 @@ drone = models.drone.World
 local GNLineLib = require("GNLineLib") --[[@as GNLineLib]]
 local lines = {}
 
+local droneEntity = LibEntity.new("drone", vec(0, 0, 0), {
+    (vec(5.5, 0, 5.5) * -1) / 16,
+    vec(5.5, 6, 5.5) / 16,
+})
+
 customTarget = nil
 
 local targetPos
@@ -138,13 +143,14 @@ function events.world_render(delta)
     drone:setPos(nextPos)
     drone:setRot(math.lerpAngle(rotAngleOld, rotAngle, delta))
 
-    entities.drone = {
-        pos = ((models.drone.World:getTruePos() + models.drone.World:getTruePivot() - vec(0, 3, 0)) / 16),
-        hitbox = {
-            (vec(5.5, 0, 5.5) * -1) / 16,
-            vec(5.5, 6, 5.5) / 16,
-        },
-    }
+    -- entities.drone = {
+    --     pos = ((models.drone.World:getTruePos() + models.drone.World:getTruePivot() - vec(0, 3, 0)) / 16),
+    --     hitbox = {
+    --         (vec(5.5, 0, 5.5) * -1) / 16,
+    --         vec(5.5, 6, 5.5) / 16,
+    --     },
+    -- }
+    droneEntity:setPos((models.drone.World:getTruePos() + models.drone.World:getTruePivot() - vec(0, 3, 0)) / 16)
 
     if controlDrone then
         if renderer:isFirstPerson() then
@@ -162,14 +168,10 @@ function events.world_render(delta)
         --     drone:setPos(prevPos)
         -- end
 
-        if not table.contains({"minecraft:air", "minecraft:water", "minecraft:lava", "minecraft:kelp_plant", "minecraft:tall_seagrass"}, world.getBlockState(entities.drone.pos + entities.drone.hitbox[1]):getID()) then
-            targetPos = prevPos
-            drone:setPos(prevPos)
-        end
-
-        if not table.contains({"minecraft:air", "minecraft:water", "minecraft:lava"}, world.getBlockState(entities.drone.pos + entities.drone.hitbox[2]):getID()) then
-            targetPos = prevPos
-            drone:setPos(prevPos)
+        local blockState = world.getBlockState(droneEntity:getPos() + droneEntity:getHitbox()[1])
+        if blockState:isSolidBlock() then
+                targetPos = prevPos
+                drone:setPos(prevPos)
         end
 
         if tick % 10 == 0 and oldTick ~= tick then
