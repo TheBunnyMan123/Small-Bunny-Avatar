@@ -377,27 +377,22 @@ local funcs = {
                         :setB(v:getPos() + vec(0, 1, 0))
                         :setColor(vec(1, 0.2, 0))
                         :setWidth(0.1))
-
-                    local avatarVars = world.avatarVars()[v:getUUID()]
-                    if avatarVars then
-                        if avatarVars.entities then
-                            for _, w in pairs(avars.entities) do
-                                table.insert(lines, GNLineLib:new()
-                                    :setA(blockBelow:getPos() + vec(0.5, 1.2, 0.5))
-                                    :setB(w.pos)
-                                    :setColor(vec(1, 0.2, 0))
-                                    :setWidth(0.1))
-
-                                local hbox1 = w.hitbox[1]
-                                local hbox2 = w.hitbox[2]
-                                local hbox1final = hbox1:add(w.pos)
-                                local hbox2final = hbox2:add(w.pos)
-                                drawCube(hbox1final.x, hbox1final.y, hbox1final.z, hbox2final.x,
-                                    hbox2final.y, hbox2final.z)
-                            end
-                        end
-                    end
                 end
+            end
+
+            for _, v in pairs(LibEntity.getEntities()) do
+                table.insert(lines, GNLineLib:new()
+                    :setA(blockBelow:getPos() + vec(0.5, 1.2, 0.5))
+                    :setB(w.pos)
+                    :setColor(vec(1, 0.2, 0))
+                    :setWidth(0.1))
+
+                local hbox1 = v:getHitbox()[1]
+                local hbox2 = v:getHitbox()[2]
+                local hbox1final = hbox1:add(v:getPos())
+                local hbox2final = hbox2:add(v:getPos())
+                drawCube(hbox1final.x, hbox1final.y, hbox1final.z, hbox2final.x,
+                    hbox2final.y, hbox2final.z)
             end
         end,
     },

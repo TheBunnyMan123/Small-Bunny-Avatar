@@ -72,6 +72,9 @@ function LibEntityFuncs.getEntities()
     for _, v in pairs(world.avatarVars()) do
         if v.entities then
             for _, w in ipairs(v.entities) do
+                w.position = w.pos
+                w.pos = nil
+                
                 table.insert(entities, w)
             end
         end
