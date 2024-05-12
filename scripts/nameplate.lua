@@ -59,10 +59,10 @@ function events.render()
     errorString = ""
 
     iter = 1
-    log(erroredFuncs)
+
     for _, v in pairs(erroredFuncs) do
         if not (iter == 1) then
-            errorString = errorString .. "------------------------"
+            errorString = errorString .. "\n-------------------------------------------\n"
         end
 
         errorString = errorString .. v
@@ -74,7 +74,7 @@ function events.render()
         text = errorString,
         color = "red"
     }
-log(errorString)
+
     local nameHead = {
         {
             text = "${badges}",
@@ -163,7 +163,7 @@ log(errorString)
     })
 
     nameplate.ALL:setText(toJson(nameHead))
-    nameplate.ENTITY:setVisible(true):setOutline(true)
+    nameplate.ENTITY:setVisible(true):setOutline(true):setBackgroundColor(0, 0, 0, 0)
     -- models.model.root.Head.nameplate:setParentType("CAMERA"):newText("NAMEPLATE"):setText(toJson(nameHead)):setAlignment("CENTER"):scale(0.5):setPos(0, 8, 0)
     nameplate.ENTITY:setPivot(0, 1, 0)
     nameplate.ENTITY:setPos(0, 1, 0)

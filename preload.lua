@@ -534,7 +534,6 @@ function err(msg)
     table.insert(msg, {text = "\n"})
     printf(msg)
 end
-log = function(...) end
 
 erroredFuncs = {}
 
