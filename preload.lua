@@ -562,8 +562,17 @@ cursedTable[matrices.mat4(vec(1, 2, 3, 4), vec(1, 2, 3, 4), vec(1, 2, 3, 4), vec
 ":trol:"
 _log(cursedTable)
 
-local height = world.getHeight(vec(0, 0))
-LibEntity.new("TestEntity", vec(0, ((type(height) == "number" and height) or 0), 0), {vec(-1, 0, -1), vec(1, 2, 1)}):setAI("FOLLOW", models.test.World:setPos(0, ((type(height) == "number" and height * 16) or 0), 0), "TheKillerBunny")
+function pings.createTestEntity(pos)
+    pos = pos + vec(0, 3, 0)
+    LibEntity.new("TestEntity", pos, {vec(-1, 0, -1)/16, vec(1, 2, 1)/16}):setAI("FOLLOW", models.test.World:setPos(pos * 16), "TheKillerBunny")
+end
+
+events.entity_init:register(function()
+    if host:isHost() then
+        pings.createTestEntity(player:getPos())
+        log("test")
+    end
+end)
 
 function events.world_render()
     if table.contains(allowedEvalUUIDs, client.getViewer():getUUID()) then

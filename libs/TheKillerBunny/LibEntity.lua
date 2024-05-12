@@ -120,16 +120,10 @@ AIFunctions = {
             local absPosUnrounded = (entity.__vars.currentPos:copy() / 16)
             local absolutePos = absPosUnrounded:copy():floor()
 
-            local lowestBlock = -64
-            for _, w in pairs(world.getBlocks(vec(absolutePos.x, -64, absolutePos.z), vec(absolutePos.x, world:getBuildHeight(), absolutePos.z))) do
-                if not w:isAir() then
-                    lowestBlock = w:getPos().y
-                    break
-                end
-            end
-
-            local blockMapUp = world.getBlocks(absolutePos, vec(absolutePos.x, world.getBuildHeight(), absolutePos.z))
-            local blockMapDown = world.getBlocks(absolutePos, vec(absolutePos.x, -64, absolutePos.z))
+            local blockMapUp = world.getBlocks(absolutePos, absolutePos + vec(0, 7, 0))
+            -- log(blockMapUp[#blockMapUp], absolutePos)
+            local blockMapDown = world.getBlocks(absolutePos - vec(0, 7, 0), absolutePos)
+            -- log(absolutePos - vec(0, 7, 0))
             if blockMapUp[1]:isSolidBlock() then
                 for _, w in ipairs(blockMapUp) do
                     if not w:isSolidBlock() then
@@ -137,13 +131,18 @@ AIFunctions = {
                         goto endIfs
                     end
                 end
-            elseif blockMapDown[2] and not blockMapDown[2]:isSolidBlock() then
-                for i = #blockMapDown, -1, 1 do
-                    if not blockMapDown[i]:isSolidBlock() then
-                        entity.__vars.targetPos = vec(entity.__vars.targetPos.x, blockMapDown[i]:getPos().y, entity.__vars.targetPos.z)
+
+                entity.__vars.targetPos = vec(entity.__vars.targetPos.x, 0, entity.__vars.targetPos.z)
+            elseif blockMapDown[#blockMapDown] and not blockMapDown[#blockMapDown]:isSolidBlock() then
+                for i = #blockMapDown, 1 , -1 do
+                    w = blockMapDown[i]
+                    if w:isSolidBlock() or i == 1 then
+                        entity.__vars.targetPos = vec(entity.__vars.targetPos.x, (w:getPos():copy().y + 1) * 16, entity.__vars.targetPos.z)
                         goto endIfs
                     end
                 end
+
+                entity.__vars.targetPos = vec(entity.__vars.targetPos.x, 0, entity.__vars.targetPos.z)
             else
                 entity.__vars.targetPos = vec(entity.__vars.targetPos.x, entity.__vars.currentPos.y, entity.__vars.targetPos.z)
             end
