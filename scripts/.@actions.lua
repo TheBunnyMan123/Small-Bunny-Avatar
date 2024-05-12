@@ -13,7 +13,52 @@ local pages = {
         page = action_wheel:newPage("Creation & Destruction"),
         item = "minecraft:wooden_axe",
     },
+    {
+        page = action_wheel:newPage("shaders"),
+        item = "minecraft:red_mushroom",
+    },
 }
+
+local shaders = {
+    "notch",
+    "fxaa",
+    "art",
+    "bumpy",
+    "blobs2",
+    "pencil",
+    "color_convolve",
+    "deconverge",
+    "flip",
+    "invert",
+    "ntsc",
+    "outline",
+    "phosphor",
+    "scan_pincushion",
+    "sobel",
+    "bits",
+    "desaturate",
+    "green",
+    "blur",
+    "wobble",
+    "blobs",
+    "antialias",
+    "creeper",
+    "spider",
+}
+
+local iter = 1
+for k, v in ipairs(shaders) do
+    iter = iter + 1
+    pages[2].page:newAction(k+1):title(v):setOnLeftClick(function()
+        disableBlur = true
+        renderer:setPostEffect(v)
+    end):color((iter % 2 ~= 0 and vec(0.5, 0.5, 0.5) or vec(1, 1, 1)))
+end
+log(iter)
+while iter % 8 ~= 0 do
+    pages[2].page:newAction():hoverColor(0, 0, 0)
+    iter = iter + 1
+end
 
 local creationDestructionActions = {
     {
@@ -30,24 +75,24 @@ local creationDestructionActions = {
 
             if block.find(block, "minecraft:arrow") then
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
-                :format(block, block, motion.x, motion.y, motion.z))
+                    :format(block, block, motion.x, motion.y, motion.z))
             elseif block.find(block, "_bucket") then
                 local liquid = string.gsub(block, "_bucket", "")
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
-                :format("minecraft:falling_block", liquid, motion.x, motion.y, motion.z))
+                    :format("minecraft:falling_block", liquid, motion.x, motion.y, motion.z))
             elseif block.find(block, "_spawn_egg") then
                 local creature = string.gsub(block, "_spawn_egg", "")
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
-                :format(creature, creature, motion.x, motion.y, motion.z))
+                    :format(creature, creature, motion.x, motion.y, motion.z))
             elseif block.find(block, "minecraft:tnt") then
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
-                :format(block, block, motion.x, motion.y, motion.z))
+                    :format(block, block, motion.x, motion.y, motion.z))
             elseif block == "minecraft:fire_charge" then
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
-                :format("minecraft:fireball", block, motion.x, motion.y, motion.z))
+                    :format("minecraft:fireball", block, motion.x, motion.y, motion.z))
             else
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
-                :format("minecraft:falling_block", block, motion.x, motion.y, motion.z))
+                    :format("minecraft:falling_block", block, motion.x, motion.y, motion.z))
             end
         end,
     },
@@ -61,7 +106,7 @@ local creationDestructionActions = {
     },
 }
 
-local iter = 0
+iter = 0
 for i, v in pairs(creationDestructionActions) do
     iter = iter + 1
     pages[1].page:newAction(i + 1):title(v.title):setItem(v.item):setOnLeftClick(v.func):color((iter % 2 ~= 0 and vec(0.5, 0.5, 0.5) or vec(1, 1, 1)))
@@ -76,9 +121,9 @@ mainWheelPage:setAction(-1, autoanims:color(1, 1, 1))
 local heads = {
     {
         name = "TheKillerBunny\\\'s Head",
-        id = {499966288,6572293,-2019802129,1692243927},
+        id = { 499966288, 6572293, -2019802129, 1692243927 },
         textures = {
-            "blahaj"
+            "blahaj",
         },
     },
     {
@@ -115,17 +160,17 @@ local heads = {
             "mirrors;prism",
             "mini_blocks;smooth_stone", --end rods redirect laser
             "mirrors;aligner",
-            "mirrors;redirector"
+            "mirrors;redirector",
         },
     },
     {
         name = "Figura Piano",
-        id = {-1808656131,1539063829,-1082155612,-209998759},
-        textures = {}
-    }
+        id = { -1808656131, 1539063829, -1082155612, -209998759 },
+        textures = {},
+    },
 }
 
-local function generateItem(id, name)              -- AOF Heads thx 4P5
+local function generateItem(id, name)               -- AOF Heads thx 4P5
     -- log(name)
     return world.newItem("player_head" .. (toJson { -- made by 4p5, modified by me
         SkullOwner = {
@@ -162,15 +207,22 @@ end
 
 mainWheelPage:newAction():title("Cool Heads"):item("minecraft:player_head"):setOnLeftClick(function()
     for _, v in ipairs(heads) do
-        host:sendChatCommand("give @s minecraft:player_head{SkullOwner:{Id:[I;" .. v.id[1] .. "," .. v.id[2] .. "," .. v.id[3] .. "," .. v.id[4] .. "]},display:{Name:\'{\"text\":\"" .. v.name .. "\",\"italic\":false}\'}}")
+        host:sendChatCommand("give @s minecraft:player_head{SkullOwner:{Id:[I;" ..
+        v.id[1] ..
+        "," ..
+        v.id[2] ..
+        "," ..
+        v.id[3] ..
+        "," .. v.id[4] .. "]},display:{Name:\'{\"text\":\"" .. v.name .. "\",\"italic\":false}\'}}")
         for _, w in ipairs(v.textures) do
             host:sendChatCommand("give @s " ..
-        generateItem(v.id, w):toStackString())
+                generateItem(v.id, w):toStackString())
         end
     end
 end):color(0.5, 0.5, 0.5)
 
-mainWheelPage:newAction():title("Move Camera"):item(getHeadModel("camera")):setOnToggle(function(state)
+mainWheelPage:newAction():title("Move Camera"):item(getHeadModel("camera")):setOnToggle(function(
+    state)
     moveCamera = state
 end):color(1, 1, 1)
 
@@ -181,7 +233,12 @@ mainWheelPage:newAction():title("Reset Entities"):item(getHeadModel("drone")):se
     end
 end):color(0.5, 0.5, 0.5)
 
-iter = 4
+mainWheelPage:newAction():title("Disable Sun Blur"):item("minecraft:shroomlight"):setOnToggle(function(
+    state)
+    disableBlur = state
+end):color(1, 1, 1)
+
+iter = 5
 for _, v in ipairs(pages) do
     iter = iter + 1
     v.page:setAction(1,
@@ -222,7 +279,8 @@ events.render:register(function(delta, context, matrix)
         local head = models.model.root.Head
         -- renderer:setOffsetCameraPivot(calcMatrix(head):translate(0,-1.7,0):apply(head:getPivot()) / 16)
         --renderer:setEyeOffset(renderer:getCameraPivot())
-        local piv = calcMatrix(head):apply(head:getPivot()) / 16 + player:getPos(delta) + vec(0, head:getScale().y / 2 / 16, 0)
+        local piv = calcMatrix(head):apply(head:getPivot()) / 16 + player:getPos(delta) +
+        vec(0, head:getScale().y / 2 / 16, 0)
         local offsetPiv = piv - (player:getPos(delta) + vec(0, 1.7, 0))
 
         renderer:setOffsetCameraPivot(offsetPiv)

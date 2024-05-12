@@ -1,3 +1,5 @@
+disableBlur = false
+
 local tick = 0
 local blinkRate = 4 * 20
 local sunTicks = 0
@@ -22,18 +24,31 @@ function getSunDir(delta)
     )
 end
 
+function lookingAtSun()
+    local lookDir = player:getLookDir()
+    local sunDir = getSunDir()
+
+    local eyePos = player:getPos():add(0, player:getEyeHeight(), 0)
+    local block, pos, side = raycast:block(eyePos, eyePos + player:getLookDir() * 10000, "VISUAL", "ANY")
+
+    if disableBlur then
+        return false
+    end
+
+    if not block:isTranslucent() then
+        return false
+    end
+    
+    return pointOnPlane(vec(-15, -15, -15), vec(15, 15, 15), ((sunDir - lookDir) * 180):floor())
+end
+
 function events.tick()
     if player:isLoaded() then
-        local lookDir = player:getLookDir()
-        local sunDir = getSunDir()
-
-        local lookingAtSun = pointOnPlane(vec(-15, -15, -15), vec(15, 15, 15), ((sunDir - lookDir) * 180):floor())
-
-        if lookingAtSun then
+        if lookingAtSun() then
             blinkRate = 1.5 * 20
             sunTicks = sunTicks + 1
-            renderer:setPostEffect("blur")
-        else
+            renderer:setPostEffect("phosphor")
+        elseif not disableBlur then
             sunTicks = 0
             blinkRate = 4 * 20
             renderer:setPostEffect()
