@@ -124,19 +124,19 @@ AIFunctions = {
             -- log(blockMapUp[#blockMapUp], absolutePos)
             local blockMapDown = world.getBlocks(absolutePos - vec(0, 7, 0), absolutePos)
             -- log(absolutePos - vec(0, 7, 0))
-            if blockMapUp[1]:isSolidBlock() then
+            if blockMapUp[1]:hasCollision() then
                 for _, w in ipairs(blockMapUp) do
-                    if not w:isSolidBlock() then
+                    if not w:hasCollision() then
                         entity.__vars.targetPos = vec(entity.__vars.targetPos.x, w:getPos().y * 16, entity.__vars.targetPos.z)
                         goto endIfs
                     end
                 end
 
                 entity.__vars.targetPos = vec(entity.__vars.targetPos.x, 0, entity.__vars.targetPos.z)
-            elseif blockMapDown[#blockMapDown] and not blockMapDown[#blockMapDown]:isSolidBlock() then
+            elseif blockMapDown[#blockMapDown] and not blockMapDown[#blockMapDown]:hasCollision() then
                 for i = #blockMapDown, 1 , -1 do
                     w = blockMapDown[i]
-                    if w:isSolidBlock() or i == 1 then
+                    if w:hasCollision() or i == 1 then
                         entity.__vars.targetPos = vec(entity.__vars.targetPos.x, (w:getPos():copy().y + 1) * 16, entity.__vars.targetPos.z)
                         goto endIfs
                     end
