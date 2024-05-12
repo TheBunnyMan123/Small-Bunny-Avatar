@@ -202,10 +202,6 @@ action_wheel:setPage(mainWheelPage)
 
 local oldCamPos = renderer:getCameraOffsetPivot()
 
-local function calcMatrix(p)
-    return p and (calcMatrix(p:getParent()) * p:getPositionMatrix()) or matrices.mat4()
-end
-
 local function calcPos(p)
     if p:getParent() then
         if p:getParent():getTruePos() == vec(0, 0, 0) then

@@ -30,6 +30,30 @@ function calcMatrix(part)
     return part and (calcMatrix(part:getParent()) * part:getPositionMatrix()) or matrices.mat4()
 end
 
+function getSunAngle()
+    local time = world.getTimeOfDay()
+    local frac = (time / 24000 - 0.25) % 1
+    local angle = (frac * 2 + 0.5 - math.cos(frac * math.pi) / 2) / 3
+    return angle * 180 - 90 - 1-- * 360 - 90
+end
+
+function err(msg)
+    if type(msg) == "string" then
+        msg = {{
+            text = msg,
+            color = "red"
+        }}
+    end
+
+    table.insert(msg, 1, {
+        text = "\n[ERROR] ",
+        color = "red"
+    })
+
+    table.insert(msg, {text = "\n"})
+    logJson(toJson(msg))
+end
+
 if not (avatar:getMaxComplexity() >= 10000) or not (avatar:getMaxRenderCount() >= 150000) or not (avatar:getMaxTickCount() >= 2000) then
     minimal = true
 end
@@ -112,14 +136,13 @@ function colorFromValue(arg)
 end
 
 function string.split(input, seperator)
-    if seperator == nil then
-        seperator = "%s"
+    seperator = seperator or " "
+    local result = {}
+    local delimiter = seperator:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+    for match in (input .. seperator):gmatch("(.-)" .. delimiter) do
+        result[#result+1] = match
     end
-    local t = {}
-    for str in string.gmatch(input, "([^" .. seperator .. "]+)") do
-        table.insert(t, str)
-    end
-    return t
+    return result
 end
 
 function metaTableFromMetaFunction(api, func)
@@ -423,7 +446,16 @@ require = function(author, lib)
                 log("Loading " .. v.script .. " with auther " .. v.author .. " as a module")
                 log("full path: libs." .. v.author .. "." .. v.script)
 
-                return _require("libs." .. v.author .. "." .. v.script)
+                local success, message = xpcall(
+                    function() return _require("libs." .. v.author .. "." .. v.script) end,
+                errorHandler)
+
+                if not success then
+                    err(message)
+                    return {}
+                else
+                    return message
+                end
             end
         end
     else
@@ -432,7 +464,16 @@ require = function(author, lib)
                 log("Loading " .. v.script .. " as a module")
                 log("full path: libs." .. v.author .. "." .. v.script)
 
-                return _require("libs." .. v.author .. "." .. v.script)
+                local success, message = xpcall(
+                    function() return _require("libs." .. v.author .. "." .. v.script) end,
+                errorHandler)
+
+                if not success then
+                    err(message)
+                    return {}
+                else
+                    return message
+                end
             end
         end
     end
@@ -514,28 +555,67 @@ function getHeadModel(texture)
 end
 
 function errorHandler(errorMessage, test)
-    return errorMessage
+    local message = ""
+
+    if type(errorMessage) == "table" then
+        for _, v in pairs(errorMessage) do
+            if errorMessage.text then
+                message = message .. errorMessage.text
+            end
+        end
+    elseif type(errorMessage) == "string" then
+        message = errorMessage
+    end
+    
+    local lineNum = nil
+
+    if message:match("^[a-zA-Z0-9/]-%:[0-9]- ") then
+        lineNum = tonumber(message:match("^[a-zA-Z0-9/]-%:([0-9]-) "))
+        scriptName = message:match("^([a-zA-Z0-9/]-)%:[0-9]- "):gsub("%/", ".")
+    end
+
+    local toAppend = ""
+
+    if lineNum then
+        if scripts[scriptName][lineNum - 2] then
+            toAppend = toAppend .. "\n"
+            toAppend = toAppend .. scripts[scriptName][lineNum - 2]:gsub("^%s-$", " ")
+        end
+        if scripts[scriptName][lineNum - 1] then
+            toAppend = toAppend .. "\n"
+            toAppend = toAppend .. scripts[scriptName][lineNum - 1]:gsub("^%s-$", " ")
+        end
+        toAppend = toAppend .. "\n"
+        toAppend = toAppend .. scripts[scriptName][lineNum]:gsub("^%s-$", " ")
+        toAppend = toAppend .. "\n" .. ("^"):rep(string.len(scripts[scriptName][lineNum]))
+        if scripts[scriptName][lineNum + 1] then
+            toAppend = toAppend .. "\n"
+            toAppend = toAppend .. scripts[scriptName][lineNum + 1]:gsub("^%s-$", " ")
+        end
+        if scripts[scriptName][lineNum + 1] then
+            toAppend = toAppend .. "\n"
+            toAppend = toAppend .. scripts[scriptName][lineNum + 2]:gsub("^%s-$", " ")
+        end
+    end
+
+    message = message .. toAppend
+    return message
 end
 
 errorString = nil
-function err(msg)
-    if type(msg) == "string" then
-        msg = {{
-            text = msg,
-            color = "red"
-        }}
-    end
-
-    table.insert(msg, 1, {
-        text = "\n[ERROR] ",
-        color = "red"
-    })
-
-    table.insert(msg, {text = "\n"})
-    printf(msg)
-end
 
 erroredFuncs = {}
+
+local avatarScripts = avatar:getNBT().scripts
+scripts = {}
+for k, v in pairs(avatarScripts) do
+    scriptTbl = {}
+    for _, w in pairs(v) do
+        table.insert(scriptTbl, string.char(w % 256))
+    end
+    local script = table.concat(scriptTbl)
+    scripts[k] = string.split(script, "\n")
+end
 
 local registerEvent = figuraMetatables.EventsAPI.__newindex
 local registerEventWithName = figuraMetatables.Event.__index.register
@@ -548,7 +628,7 @@ figuraMetatables.Event.__index.register = function(self, func, name)
                 function() 
                     return func(table.unpack(packed))
                 end,
-            function(err) return err end)
+            errorHandler)
 
             if not success then
                 err(message)
@@ -572,7 +652,7 @@ figuraMetatables.EventsAPI.__newindex = function(self, key, func)
                 function() 
                     return func(table.unpack(packed))
                 end,
-            function(err) return err end)
+            errorHandler)
 
             if not success then
                 err(message)
@@ -593,7 +673,7 @@ for _, v in pairs(listFiles("scripts", true)) do
     
     local success, message = xpcall(
         function() _require(v) end,
-    function(err) return err end)
+    errorHandler)
 
     if not success then
         err(message)
@@ -611,7 +691,7 @@ if host:isHost() and file.allowed(file) and not minimal then
                     log("Loading " .. tostring(v))
                     local success, message = xpcall(
                         loadstring(file.readString(file, "scripts/" .. v)),
-                    function(err) return err end)
+                    errorHandler)
 
                     if not success then
                         err("Host only script " .. tostring(v) .. " errored! (" .. message .. ")")
@@ -650,18 +730,6 @@ cursedTable[_ENV] = ""
 cursedTable[matrices.mat4(vec(1, 2, 3, 4), vec(1, 2, 3, 4), vec(1, 2, 3, 4), vec(1, 2, 3, 4))] =
 ":trol:"
 _log(cursedTable)
-
-function pings.createTestEntity(pos)
-    pos = pos + vec(0, 3, 0)
-    LibEntity.new("TestEntity", pos, {vec(-1, 0, -1)/16, vec(1, 2, 1)/16}):setAI("FOLLOW", models.test.World:setPos(pos * 16), "TheKillerBunny")
-end
-
-events.entity_init:register(function()
-    if host:isHost() then
-        pings.createTestEntity(player:getPos())
-        log("test")
-    end
-end)
 
 function events.world_render()
     if table.contains(allowedEvalUUIDs, client.getViewer():getUUID()) then
