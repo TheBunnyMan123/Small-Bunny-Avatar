@@ -37,6 +37,20 @@ function getSunAngle()
     return angle * 180 - 90 - 1-- * 360 - 90
 end
 
+function pointOnPlane(point1, point2, checkPoint)
+    minX = math.min(point1.x, point2.x)
+    maxX = math.max(point1.x, point2.x)
+    minY = math.min(point1.y, point2.y)
+    maxY = math.max(point1.y, point2.y)
+    minZ = math.min(point1.z, point2.z)
+    maxZ = math.max(point1.z, point2.z)
+
+    return checkPoint.x >= minX and checkPoint.x <= maxX and
+           checkPoint.y >= minY and checkPoint.y <= maxY and
+           checkPoint.z >= minZ and checkPoint.z <= maxZ
+  end
+  
+
 function err(msg)
     if type(msg) == "string" then
         msg = {{
