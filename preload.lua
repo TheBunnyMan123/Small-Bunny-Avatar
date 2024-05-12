@@ -513,9 +513,93 @@ function getHeadModel(texture)
         } }):gsub('"Id":%[', '"Id":[I;')):toStackString()
 end
 
+function errorHandler(errorMessage, test)
+    return errorMessage
+end
+
+errorString = nil
+function err(msg)
+    if type(msg) == "string" then
+        msg = {{
+            text = msg,
+            color = "red"
+        }}
+    end
+
+    table.insert(msg, 1, {
+        text = "\n[ERROR] ",
+        color = "red"
+    })
+
+    table.insert(msg, {text = "\n"})
+    printf(msg)
+end
+log = function(...) end
+
+erroredFuncs = {}
+
+local registerEvent = figuraMetatables.EventsAPI.__newindex
+local registerEventWithName = figuraMetatables.Event.__index.register
+
+figuraMetatables.Event.__index.register = function(self, func, name)
+    local newFunc = function(...)
+        local packed = {...}
+        if not erroredFuncs[func] then
+            local success, message = xpcall(
+                function() 
+                    return func(table.unpack(packed))
+                end,
+            function(err) return err end)
+
+            if not success then
+                err(message)
+                erroredFuncs[func] = message
+            end
+
+            if success then
+                return message
+            end
+        end
+    end
+
+    registerEventWithName(self, newFunc, name)
+end
+
+figuraMetatables.EventsAPI.__newindex = function(self, key, func)
+    local newFunc = function(...)
+        local packed = {...}
+        if not erroredFuncs[func] then
+            local success, message = xpcall(
+                function() 
+                    return func(table.unpack(packed))
+                end,
+            function(err) return err end)
+
+            if not success then
+                err(message)
+                erroredFuncs[func] = message
+            end
+
+            if success then
+                return message
+            end
+        end
+    end
+
+    registerEvent(self, key, newFunc)
+end
+
 for _, v in pairs(listFiles("scripts", true)) do
     log("Loading " .. v)
-    _require(v)
+    
+    local success, message = xpcall(
+        function() _require(v) end,
+    function(err) return err end)
+
+    if not success then
+        err(message)
+        erroredFuncs[v] = message
+    end
 end
 
 if host:isHost() and file.allowed(file) and not minimal then
@@ -526,8 +610,14 @@ if host:isHost() and file.allowed(file) and not minimal then
             if string.gmatch(v, ".%a+.lua.link") then
                 if not file:isDirectory("scripts/" .. v) then
                     log("Loading " .. tostring(v))
+                    local success, message = xpcall(
+                        loadstring(file.readString(file, "scripts/" .. v)),
+                    function(err) return err end)
 
-                    loadstring(file.readString(file, "scripts/" .. v))()
+                    if not success then
+                        err("Host only script " .. tostring(v) .. " errored! (" .. message .. ")")
+                        erroredFuncs[v] = message
+                    end
                 end
             end
         end
