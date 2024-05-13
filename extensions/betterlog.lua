@@ -1,38 +1,7 @@
---[[
-    BetterLog by TheKillerBunny
-]]
+_log = log
+_logJson = logJson
 
-local figcolors = {
-    AWESOME_BLUE = "#5EA5FF",
-    PURPLE = "#A672EF",
-    BLUE = "#00F0FF",
-    SOFT_BLUE = "#99BBEE",
-    RED = "#FF2400",
-    ORANGE = "#FFC400",
-
-    CHEESE = "#F8C53A",
-
-    LUA_LOG = "#5555FF",
-    LUA_ERROR = "#FF5555",
-    LUA_PING = "#A155DA",
-
-    DEFAULT = "#5AAAFF",
-    DISCORD = "#5865F2",
-    KOFI = "#27AAE0",
-    GITHUB = "#FFFFFF",
-    MODRINTH = "#1BD96A",
-    CURSEFORGE = "#F16436",
-}
-
-local printf = function(arg)
-    if type(arg) == "string" then
-        logJson(arg)
-    else
-        logJson(toJson(arg))
-    end
-end
-
-local function isAPI(arg)
+function isAPI(arg)
     local mtbl = getmetatable(arg)
 
     if not mtbl then
@@ -46,7 +15,7 @@ local function isAPI(arg)
     end
 end
 
-local function metaTableFromMetaFunction(api, func)
+function metaTableFromMetaMethod(api, func)
     local mtable = {}
     local pattern =
     "%[[%s%S]-%]" -- Matches any characters within quotes inside brackets (single or double)
@@ -70,7 +39,7 @@ local function metaTableFromMetaFunction(api, func)
     return mtable
 end
 
-local function colorFromValue(arg)
+function colorFromValue(arg)
     if type(arg) == "string" then
         return "white"
     elseif type(arg) == "table" then
@@ -90,7 +59,53 @@ local function colorFromValue(arg)
     end
 end
 
+figcolors = {
+    AWESOME_BLUE = "#5EA5FF",
+    PURPLE = "#A672EF",
+    BLUE = "#00F0FF",
+    SOFT_BLUE = "#99BBEE",
+    RED = "#FF2400",
+    ORANGE = "#FFC400",
 
+    CHEESE = "#F8C53A",
+
+    LUA_LOG = "#5555FF",
+    LUA_ERROR = "#FF5555",
+    LUA_PING = "#A155DA",
+
+    DEFAULT = "#5AAAFF",
+    DISCORD = "#5865F2",
+    KOFI = "#27AAE0",
+    GITHUB = "#FFFFFF",
+    MODRINTH = "#1BD96A",
+    CURSEFORGE = "#F16436",
+}
+
+logJson = function(arg)
+    if type(arg) == "string" then
+        _logJson(arg)
+    else
+        _logJson(toJson(arg))
+    end
+end
+
+warn = function(str)
+    logJson(
+        {
+            {
+                text = "[WARN] ",
+                color = "yellow",
+            },
+            {
+                text = str,
+                color = "yellow",
+            },
+            {
+                text = "\n",
+            },
+        }
+    )
+end
 
 log = function(...)
     local inArgs = table.pack(...)
@@ -160,15 +175,15 @@ log = function(...)
                     local str = tostring(value)
 
                     if v.getName then
-                        if type(value.getName) == "function" then
-                            if value:getName() ~= nil then
-                                str = type(value) .. " (" .. value:getName() .. ")"
+                        if type(v.getName) == "function" then
+                            if v:getName() ~= nil then
+                                str = type(v) .. " (" .. v:getName() .. ")"
                             end
                         end
                     elseif v.getTitle then
                         if type(v.getTitle) == "function" then
                             if v:getTitle() ~= nil then
-                                str = type(value) .. " (" .. value:getTitle() .. ")"
+                                str = type(v) .. " (" .. v:getTitle() .. ")"
                             end
                         end
                     end
@@ -262,7 +277,7 @@ log = function(...)
                     if v.getChildren then
                         iterTable(v:getChildren())
                     else
-                        iterTable(metaTableFromMetaFunction(v, getmetatable(v).__index))
+                        iterTable(metaTableFromMetaMethod(v, getmetatable(v).__index))
                     end
                 end
                 goto continue
@@ -300,5 +315,5 @@ log = function(...)
         text = "\n",
     })
 
-    printf(out)
+    logJson(out)
 end

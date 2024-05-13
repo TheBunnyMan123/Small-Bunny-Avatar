@@ -47,7 +47,7 @@ function deathEvent()
         }
     }
 
-    printf(msg)
+    logJson(msg)
 end
 
 events.tick:register(function ()

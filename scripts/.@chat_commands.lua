@@ -45,7 +45,7 @@ local function splitString(str, seperator)
     end
     return tbl
 end
-local function printf(tbl)
+local function logJson(tbl)
     logJson(toJson(tbl))
 end
 
@@ -81,7 +81,7 @@ commands = {
             end
             table.insert(toSend,
                 { text = "\n----------------------------------------", color = "gray" }) -- Footer
-            printf(toSend)
+            logJson(toSend)
         end,
     },
     {
@@ -276,7 +276,7 @@ commands = {
                 })
             end
 
-            printf(strToLog)
+            logJson(strToLog)
         end,
     },
     {
@@ -451,7 +451,7 @@ events.CHAT_SEND_MESSAGE:register(function(msg)
                 color = w.required and "red" or "yellow",
             }) -- Argument
         end
-        printf(toSend)
+        logJson(toSend)
     end
     host:appendChatHistory(msg)
 end, "COMMANDS.SEND_MESSAGE")

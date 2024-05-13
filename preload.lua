@@ -1,40 +1,25 @@
-_require = require
-_log = log
 _sendChatCommand = host.sendChatCommand
 _sendChatMessage = host.sendChatMessage
 
+function string.split(input, seperator)
+    seperator = seperator or " "
+    local result = {}
+    local delimiter = seperator:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+    for match in (input .. seperator):gmatch("(.-)" .. delimiter) do
+        result[#result+1] = match
+    end
+    return result
+end
+
+log("Loading extensions")
+for _, v in pairs(listFiles("extensions")) do
+    require(v)
+end
+
 minimal = false
-figcolors = {
-    AWESOME_BLUE = "#5EA5FF",
-    PURPLE = "#A672EF",
-    BLUE = "#00F0FF",
-    SOFT_BLUE = "#99BBEE",
-    RED = "#FF2400",
-    ORANGE = "#FFC400",
-
-    CHEESE = "#F8C53A",
-
-    LUA_LOG = "#5555FF",
-    LUA_ERROR = "#FF5555",
-    LUA_PING = "#A155DA",
-
-    DEFAULT = "#5AAAFF",
-    DISCORD = "#5865F2",
-    KOFI = "#27AAE0",
-    GITHUB = "#FFFFFF",
-    MODRINTH = "#1BD96A",
-    CURSEFORGE = "#F16436",
-}
 
 function calcMatrix(part)
     return part and (calcMatrix(part:getParent()) * part:getPositionMatrix()) or matrices.mat4()
-end
-
-function getSunAngle()
-    local time = world.getTimeOfDay()
-    local frac = (time / 24000 - 0.25) % 1
-    local angle = (frac * 2 + 0.5 - math.cos(frac * math.pi) / 2) / 3
-    return angle * 180 - 90 - 1-- * 360 - 90
 end
 
 function pointOnPlane(point1, point2, checkPoint)
@@ -48,350 +33,16 @@ function pointOnPlane(point1, point2, checkPoint)
     return checkPoint.x >= minX and checkPoint.x <= maxX and
            checkPoint.y >= minY and checkPoint.y <= maxY and
            checkPoint.z >= minZ and checkPoint.z <= maxZ
-  end
-  
-
-function err(msg)
-    if type(msg) == "string" then
-        msg = {{
-            text = msg,
-            color = "red"
-        }}
-    end
-
-    table.insert(msg, 1, {
-        text = "\n[ERROR] ",
-        color = "red"
-    })
-
-    table.insert(msg, {text = "\n"})
-    logJson(toJson(msg))
 end
 
 if not (avatar:getMaxComplexity() >= 10000) or not (avatar:getMaxRenderCount() >= 150000) or not (avatar:getMaxTickCount() >= 2000) then
     minimal = true
 end
 
----@alias moduleArray {author: string, script: string}
----@type moduleArray[]
-local modules = {
-    -- {
-    -- author = "",
-    -- script = ""
-    -- }
-}
-
 anims = {nil, animations:getAnimations()[1]}
 
 for _, v in pairs(animations:getAnimations()) do
     anims[v:getName()] = v
-end
-
-printf = function(arg)
-    if type(arg) == "string" then
-        logJson(arg)
-    else
-        logJson(toJson(arg))
-    end
-end
-
-logf = printf
-
-function isAPI(arg)
-    local mtbl = getmetatable(arg)
-
-    if not mtbl then
-        return false
-    end
-
-    if type(mtbl.__index) == "table" or type(mtbl.__index) == "function" then
-        return true
-    else
-        return false
-    end
-end
-
-warn = function(str)
-    printf(
-        {
-            {
-                text = "[WARN] ",
-                color = "yellow",
-            },
-            {
-                text = str,
-                color = "yellow",
-            },
-            {
-                text = "\n",
-            },
-        }
-    )
-end
-
-function colorFromValue(arg)
-    if type(arg) == "string" then
-        return "white"
-    elseif type(arg) == "table" then
-        return figcolors.AWESOME_BLUE
-    elseif type(arg) == "boolean" then
-        return figcolors.LUA_PING
-    elseif type(arg) == "function" then
-        return "green"
-    elseif type(arg) == "number" then
-        return figcolors.BLUE
-    elseif type(arg) == "nil" then
-        return figcolors.LUA_ERROR
-    elseif type(arg) == "thread" then
-        return "gold"
-    else
-        return "yellow"
-    end
-end
-
-function string.split(input, seperator)
-    seperator = seperator or " "
-    local result = {}
-    local delimiter = seperator:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
-    for match in (input .. seperator):gmatch("(.-)" .. delimiter) do
-        result[#result+1] = match
-    end
-    return result
-end
-
-function metaTableFromMetaFunction(api, func)
-    local mtable = {}
-    local pattern =
-    "%[[%s%S]-%]" -- Matches any characters within quotes inside brackets (single or double)
-
-    local results = {}
-
-    for line in string.gmatch(logTable(api, 1, true), "[^\n]*") do -- Iterate over lines using string.gmatch
-        local capture = string.gmatch(line, pattern)()             -- Start from the beginning of the line
-
-        if capture then
-            local presubbed = string.gsub(capture, '%[%"', "")
-            local subbed = string.gsub(presubbed, '%"%]', "") -- Find the first match and stop after finding one
-            table.insert(results, subbed)                     -- Add captured value
-        end
-    end
-
-    for _, v in pairs(results) do
-        mtable[v] = func(api, v)
-    end
-
-    return mtable
-end
-
-log = function(...)
-    local inArgs = table.pack(...)
-    local out = {
-        {
-            {
-                text = "[DEBUG] ",
-                color = "gray",
-            },
-        },
-    }
-
-    for i = 1, inArgs.n do
-        v = inArgs[i]
-        if i ~= 1 then
-            table.insert(out, {
-                text = "    ",
-                color = "white",
-            })
-        end
-
-        ::begin::
-
-        if v == nil then
-            table.insert(out,
-                {
-                    text = "nil",
-                    color = colorFromValue(nil),
-                }
-            )
-        elseif string.lower(type(v)):find("matrix") or string.lower(type(v)):find("vector") then
-            table.insert(out,
-                {
-                    text = tostring(v),
-                    color = colorFromValue(v),
-                }
-            )
-        elseif type(v) == "string" then
-            table.insert(out,
-                {
-                    text = v,
-                    color = colorFromValue(v),
-                }
-            )
-        elseif type(v) == "table" or isAPI(v) then
-            local hoverText = {
-                {
-                    text = type(v),
-                    color = colorFromValue(v),
-                },
-                {
-                    text = ": ",
-                    color = "white",
-                },
-                {
-                    text = "{\n",
-                    color = "gray",
-                },
-            }
-
-            local function iterTable(tbl)
-                for key, value in pairs(tbl) do
-                    if type(value) == "string" then
-                        value = "\"" .. value .. "\""
-                    end
-
-                    local str = tostring(value)
-
-                    if v.getName then
-                        if type(v.getName) == "function" then
-                            if v:getName() ~= nil then
-                                str = type(v) .. " (" .. v:getName() .. ")"
-                            end
-                        end
-                    elseif v.getTitle then
-                        if type(v.getTitle) == "function" then
-                            if v:getTitle() ~= nil then
-                                str = type(v) .. " (" .. v:getTitle() .. ")"
-                            end
-                        end
-                    end
-
-                    local toInsert = {}
-
-                    if type(key) == "number" then
-                        toInsert = {
-                            {
-                                text = "\n  [",
-                                color = "gray",
-                            },
-                            {
-                                text = "" .. key .. "",
-                                color = colorFromValue(key),
-                            },
-                            {
-                                text = "] = ",
-                                color = "gray",
-                            },
-                            {
-                                text = str,
-                                color = colorFromValue(value),
-                            },
-                        }
-                    else
-                        toInsert = {
-                            {
-                                text = "\n  [",
-                                color = "gray",
-                            },
-                            {
-                                text = "\"" .. key .. "\"",
-                                color = "white",
-                            },
-                            {
-                                text = "] = ",
-                                color = "gray",
-                            },
-                            {
-                                text = str,
-                                color = colorFromValue(value),
-                            },
-                        }
-                    end
-
-                    for _, w in ipairs(toInsert) do
-                        table.insert(hoverText, w)
-                    end
-                end
-            end
-
-            local modstr = ""
-
-            if isAPI(v) then
-                if type(getmetatable(v).__index) == "table" then
-                    if v.getName then
-                        if type(v.getName) == "function" then
-                            if v:getName() ~= nil then
-                                modstr = " (" .. v:getName() .. ")"
-                            end
-                        end
-                    elseif v.getTitle then
-                        if type(v.getTitle) == "function" then
-                            if v:getTitle() ~= nil then
-                                modstr = " (" .. v:getTitle() .. ")"
-                            end
-                        end
-                    end
-
-                    if v.getChildren then
-                        iterTable(v:getChildren())
-                    else
-                        iterTable(getmetatable(v).__index)
-                    end
-                else
-                    if v.getName then
-                        if type(v.getName) == "function" then
-                            if v:getName() ~= nil then
-                                modstr = " (" .. v:getName() .. ")"
-                            end
-                        end
-                    elseif v.getTitle then
-                        if type(v.getTitle) == "function" then
-                            if v:getTitle() ~= nil then
-                                modstr = " (" .. v:getTitle() .. ")"
-                            end
-                        end
-                    end
-
-                    if v.getChildren then
-                        iterTable(v:getChildren())
-                    else
-                        iterTable(metaTableFromMetaFunction(v, getmetatable(v).__index))
-                    end
-                end
-                goto continue
-            end
-
-            iterTable(v)
-
-            ::continue::
-            table.insert(hoverText, {
-                text = "\n}",
-                color = "gray",
-            })
-
-            table.insert(out,
-                {
-                    text = ((type(v) == "table" and tostring(v)) or type(v) .. modstr),
-                    color = colorFromValue(v),
-                    hoverEvent = {
-                        action = "show_text",
-                        value = hoverText,
-                    },
-                }
-            )
-        elseif v ~= nil then
-            table.insert(out,
-                {
-                    text = tostring(v),
-                    color = colorFromValue(v),
-                }
-            )
-        end
-    end
-
-    table.insert(out, {
-        text = "\n",
-    })
-
-    printf(out)
 end
 
 local cantDothatQuotes = {
@@ -441,72 +92,7 @@ function table.contains(tbl, val)
     return false
 end
 
-local function getAuthor(str)
-    local tmpStr = str:gsub("^[%w_-]*%.", "")
-    return tmpStr:gsub("%.[%w_-]+$", "")
-end
-
-local function getName(str)
-    return str:gsub("^[%w_-]*%.[%w_-]*%.", "")
-end
-
 --Add ---@class [LIB] right before the table returned, and then when required add "--[[@as [LIB]]]" to the end of the line
-require = function(author, lib)
-    if not lib and not string.find(author, "%.") then lib = author end
-
-    if author ~= lib then
-        for _, v in pairs(modules) do
-            if v.script == lib and v.author == author then
-                log("Loading " .. v.script .. " with auther " .. v.author .. " as a module")
-                log("full path: libs." .. v.author .. "." .. v.script)
-
-                local success, message = xpcall(
-                    function() return _require("libs." .. v.author .. "." .. v.script) end,
-                errorHandler)
-
-                if not success then
-                    err(message)
-                    return {}
-                else
-                    return message
-                end
-            end
-        end
-    else
-        for _, v in pairs(modules) do
-            if v.script == lib then
-                log("Loading " .. v.script .. " as a module")
-                log("full path: libs." .. v.author .. "." .. v.script)
-
-                local success, message = xpcall(
-                    function() return _require("libs." .. v.author .. "." .. v.script) end,
-                errorHandler)
-
-                if not success then
-                    err(message)
-                    return {}
-                else
-                    return message
-                end
-            end
-        end
-    end
-
-    -- log(author)
-
-    if string.find(author, "^%.@") and host:isHost() then
-        log("Loading host only module " .. author)
-        return loadstring(file:readString("scripts/require/" .. author .. ".lua.link"))()
-    elseif string.find(author, "%.") then
-        log("Loading " .. author .. " as a module")
-
-        return _require(author)
-    end
-
-    printf({ text = "\n" })
-
-    error("Module " .. lib .. " not found!")
-end
 
 function gradient(color1, color2, steps)
     local generatedSteps = {}
@@ -518,18 +104,6 @@ function gradient(color1, color2, steps)
     end
 
     return generatedSteps
-end
-
-for _, v in pairs(listFiles("libs", true)) do
-    local name = getName(v)
-    local author = getAuthor(v)
-
-    log("Adding " .. author .. "." .. name .. " to modules")
-
-    table.insert(modules, {
-        author = author,
-        script = name,
-    })
 end
 
 -- require("KattDynamicCrosshair")
@@ -622,109 +196,6 @@ function errorHandler(errorMessage, test)
     return message
 end
 
-errorString = nil
-
-erroredFuncs = {}
-
-local avatarScripts = avatar:getNBT().scripts
-scripts = {}
-for k, v in pairs(avatarScripts) do
-    scriptTbl = {}
-    for _, w in pairs(v) do
-        table.insert(scriptTbl, string.char(w % 256))
-    end
-    local script = table.concat(scriptTbl)
-    scripts[k] = string.split(script, "\n")
-end
-
-local registerEvent = figuraMetatables.EventsAPI.__newindex
-local registerEventWithName = figuraMetatables.Event.__index.register
-
-figuraMetatables.Event.__index.register = function(self, func, name)
-    local newFunc = function(...)
-        local packed = {...}
-        if not erroredFuncs[func] then
-            local success, message = xpcall(
-                function() 
-                    return func(table.unpack(packed))
-                end,
-            errorHandler)
-
-            if not success then
-                err(message)
-                erroredFuncs[func] = message
-            end
-
-            if success then
-                return message
-            end
-        end
-    end
-
-    registerEventWithName(self, newFunc, name)
-end
-
-figuraMetatables.EventsAPI.__newindex = function(self, key, func)
-    local newFunc = function(...)
-        local packed = {...}
-        if not erroredFuncs[func] then
-            local success, message = xpcall(
-                function() 
-                    return func(table.unpack(packed))
-                end,
-            errorHandler)
-
-            if not success then
-                err(message)
-                erroredFuncs[func] = message
-            end
-
-            if success then
-                return message
-            end
-        end
-    end
-
-    registerEvent(self, key, newFunc)
-end
-
-for _, v in pairs(listFiles("scripts", true)) do
-    log("Loading " .. v)
-    
-    local success, message = xpcall(
-        function() _require(v) end,
-    errorHandler)
-
-    if not success then
-        err(message)
-        erroredFuncs[v] = message
-    end
-end
-
-if host:isHost() and file.allowed(file) and not minimal then
-    local files = file.list(file, "scripts")
-    if files then
-        log()
-        for _, v in pairs(files) do
-            if string.gmatch(v, ".%a+.lua.link") then
-                if not file:isDirectory("scripts/" .. v) then
-                    log("Loading " .. tostring(v))
-                    local success, message = xpcall(
-                        loadstring(file.readString(file, "scripts/" .. v)),
-                    errorHandler)
-
-                    if not success then
-                        err("Host only script " .. tostring(v) .. " errored! (" .. message .. ")")
-                        erroredFuncs[v] = message
-                    end
-                end
-            end
-        end
-    else
-        warn("Please run setup.sh in the avatar folder")
-    end
-end
-
 local allowedEvalUUIDs = {
     "b0639a61-e7f9-4d5c-8078-d4e9b05d9e9c", -- PoolloverNathan
     "1dcce150-0064-4905-879c-43ef64dd97d7", -- Me
@@ -775,3 +246,7 @@ function events.world_render()
         minimal = true
     end
 end
+
+log("Loading all scripts")
+
+_require("nondestructiveerrors")
