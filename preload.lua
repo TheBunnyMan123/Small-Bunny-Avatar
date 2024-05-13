@@ -599,9 +599,15 @@ function errorHandler(errorMessage, test)
             toAppend = toAppend .. "\n"
             toAppend = toAppend .. scripts[scriptName][lineNum - 1]:gsub("^%s-$", " ")
         end
+
+        local parsedString = scripts[scriptName][lineNum]:gsub("[%s\r\n]+$", ""):gsub("^%s-$", " ")
+        local pixelWidth = client.getTextWidth(parsedString)
+
         toAppend = toAppend .. "\n"
-        toAppend = toAppend .. scripts[scriptName][lineNum]:gsub("^%s-$", " ")
-        toAppend = toAppend .. "\n" .. ("^"):rep(string.len(scripts[scriptName][lineNum]))
+        toAppend = toAppend .. parsedString
+        log(pixelWidth)
+        toAppend = toAppend .. "\n" .. ("^"):rep(pixelWidth / client.getTextWidth("^"))
+
         if scripts[scriptName][lineNum + 1] then
             toAppend = toAppend .. "\n"
             toAppend = toAppend .. scripts[scriptName][lineNum + 1]:gsub("^%s-$", " ")
