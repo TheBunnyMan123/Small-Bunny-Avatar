@@ -40,7 +40,7 @@ function events.render(delta, context)
             local yOff = entity:getBoundingBox().y / 2
 
             pos = entity:getPos(delta):copy():add(0, yOff, 0)
-        elseif not block:isAir() then
+        elseif block:getOutlineShape()[1] then
             pos = block:getPos():copy():add(0.5, 0.5, 0.5)
             -- log(block:getOutlineShape()[1][2])
             local blockPosOffset = vec(0, 0, 0)
