@@ -1,4 +1,13 @@
 ---@diagnostic disable: discard-returns, param-type-mismatch
+
+if goofy ~= nil then
+    goofy:setDisableGUIElement("PLAYER_HEALTH", true)
+    goofy:setDisableGUIElement("VEHICLE_HEALTH", true)
+    goofy:setDisableGUIElement("EXPERIENCE_BAR", true)
+else
+    return
+end
+
 local UI = models:newPart("UI", "HUD")
 local healthGradient = gradient(vec(255, 85, 85), vec(85, 255, 85), 100)
 

@@ -330,7 +330,8 @@
 
     // The docs handle global variables themselves.
     "globals": [
-            "b"
+            "b",
+            "goofy"
         ],
 
     // All local variables must be checked (except for the empty variable "_")
