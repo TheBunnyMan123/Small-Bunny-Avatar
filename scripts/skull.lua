@@ -433,10 +433,27 @@ local nonBlockScripts = {
             models.camera.Skull:setPos(0, 0, 0):setParentType("Skull"):setVisible(false):setScale(0.75)
             models.drone_static.Skull:setPos(0, 3, 0):setParentType("Skull"):setVisible(true):setScale(1.5)
         end
+    },
+    {
+        texture = "wand",
+        func = function()
+            models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
+            models.blahaj.Skull:setVisible(false)
+            models["💀"].Skull.text:setVisible(false)
+            models["💀"].Skull:setPos(vec(0, -12, 0)):setScale(1):setVisible(true).Table:setVisible(false)
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull.TheHead.CommandBlockProjector:setVisible(false)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
+            models.camera.Skull:setPos(0, 0, 0):setParentType("Skull"):setVisible(false):setScale(0.75)
+            models.drone_static.Skull:setPos(0, 3, 0):setParentType("Skull"):setVisible(false):setScale(1.5)
+            models.wand.Skull:setVisible(true):setRot(0, renderer:isFirstPerson() and 180 or 135, 0):scale(renderer:isFirstPerson() and 0.7 or 1.5)
+        end
     }
 }
 
 function events.skull_render(delta, block, item, entity, mode)
+    models.wand.Skull:setVisible(false)
     if models["💀"].Skull.BlahajText then
         models["💀"].Skull.BlahajText:remove()
     end

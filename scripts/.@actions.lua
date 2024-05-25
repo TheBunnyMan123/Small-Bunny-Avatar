@@ -72,7 +72,7 @@ local creationDestructionActions = {
             elseif block == "minecraft:flint_and_steel" then
                 block = "minecraft:fire"
             end
-
+_log(player:getLookDir())
             if block.find(block, "minecraft:arrow") then
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
                     :format(block, block, motion.x, motion.y, motion.z))
@@ -88,11 +88,11 @@ local creationDestructionActions = {
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
                     :format(block, block, motion.x, motion.y, motion.z))
             elseif block == "minecraft:fire_charge" then
-                host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
-                    :format("minecraft:fireball", block, motion.x, motion.y, motion.z))
+                host:sendChatCommand(("summon %s ~ ~1 ~ {power:[%f, %f, %f]}")
+                    :format("minecraft:fireball", player:getLookDir():div(5, 5, 5):unpack()))
             else
                 host:sendChatCommand(("summon %s ~ ~1 ~ {Fuse:40,BlockState:{Name:\"%s\"},Motion:[%f, %f, %f]}")
-                    :format("minecraft:falling_block", block, motion.x, motion.y, motion.z))
+                    :format("minecraft:falling_block", block, motion:unpack()))
             end
         end,
     },

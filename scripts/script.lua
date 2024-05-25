@@ -1,3 +1,52 @@
+local attackKeybind = keybinds:fromVanilla("key.attack"):setGUI(false):setOnPress(function (modifiers, self)
+    if player:getHeldItem():getID() == "minecraft:player_head" and player:getHeldItem():getName() == "fireball" then
+        host:sendChatCommand(("summon %s ~ ~1 ~ {power:[%f, %f, %f],ExplosionPower:20}")
+                :format("minecraft:fireball", player:getLookDir():div(2.5, 2.5, 2.5):unpack()))
+        return true
+    end
+    if player:getHeldItem():getID() == "minecraft:player_head" and player:getHeldItem():getName() == "teleport" then
+        local plrPos = client:getCameraPos()
+        local block, pos, _ = raycast:block(plrPos, plrPos + player:getLookDir() * 1000, "COLLIDER")
+
+        local ent = raycast:entity(plrPos, plrPos + player:getLookDir() * 1000, function (entity)
+            return entity ~= player
+        end)
+
+        if ent then
+            plrPos = player:getPos()
+            local entPos = ent:getPos()
+
+            host:sendChatCommand(("tp @s %f %f %f")
+                    :format(entPos:unpack()))
+
+            return true
+        elseif pos and block:getOutlineShape()[1] then
+            host:sendChatCommand(("tp @s %f %f %f")
+                    :format(pos:unpack()))
+            return true
+        end
+    end
+    if player:getHeldItem():getID() == "minecraft:player_head" and player:getHeldItem():getName() == "swap" then
+        local plrPos = client:getCameraPos()
+
+        local ent = raycast:entity(plrPos, plrPos + player:getLookDir() * 1000, function (entity)
+            return entity ~= player
+        end)
+
+        if ent then
+            plrPos = player:getPos()
+            local entPos = ent:getPos()
+
+            host:sendChatCommand(("tp @s %f %f %f")
+                    :format(entPos:unpack()))
+            host:sendChatCommand(("tp %s %f %f %f")
+                    :format(ent:getUUID(), plrPos:unpack()))
+
+            return true
+        end
+    end
+end)
+
 local tpLocations = {
     FSMPBase = vec(207, 104, -1251),
     PORTALRoom = vec(-23923206, 14, -23687122)

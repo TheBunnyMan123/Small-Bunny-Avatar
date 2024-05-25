@@ -142,6 +142,10 @@ function getHeadModel(texture)
         } }):gsub('"Id":%[', '"Id":[I;')):toStackString()
 end
 
+function getWand()
+    host:sendChatCommand("/give @s " .. getHeadModel("wand"))
+end
+
 function errorHandler(errorMessage, test)
     local message = ""
 
