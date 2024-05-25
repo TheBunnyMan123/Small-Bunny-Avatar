@@ -447,7 +447,9 @@ local nonBlockScripts = {
             models["💀"].Skull["Ear 2"]:setVisible(false)
             models.camera.Skull:setPos(0, 0, 0):setParentType("Skull"):setVisible(false):setScale(0.75)
             models.drone_static.Skull:setPos(0, 3, 0):setParentType("Skull"):setVisible(false):setScale(1.5)
-            models.wand.Skull:setVisible(true):setRot(0, renderer:isFirstPerson() and 180 or 135, 0):scale(renderer:isFirstPerson() and 0.7 or 1.5)
+            models.wand.Skull:setVisible(true):setRot(0, renderer:isFirstPerson() and 0 or 315, 0)
+                :scale(renderer:isFirstPerson() and 0.7 or 1.5)
+                :setPivot(renderer:isFirstPerson() and vec(0, 0, 0) or vec(2.33333, 10, 4))
         end
     }
 }
