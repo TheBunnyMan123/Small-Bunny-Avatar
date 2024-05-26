@@ -399,6 +399,22 @@ local funcs = {
             end
         end,
     },
+    {
+        exact = true,
+        block = "",
+        texture = "plush",
+        func = function(delta, blockBelow)
+            models.blahaj.Skull:setVisible(false)
+            models["💀"].Skull:setPos(vec(0, -12, 0))
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
+            models["💀"].Skull.Table:setVisible(false)
+            models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
+            models["💀"].Skull.text:setVisible(false)
+            models.plush.Skull:scale(0.8 * 0.6):setVisible(true)
+        end,
+    },
 }
 
 local dronePart = deepCopy(models.drone)
@@ -451,10 +467,25 @@ local nonBlockScripts = {
                 :scale(renderer:isFirstPerson() and 0.7 or 1.5)
                 :setPivot(renderer:isFirstPerson() and vec(0, 0, 0) or vec(2.33333, 10, 4))
         end
-    }
+    },
+    {
+        texture = "plush",
+        func = function(delta, blockBelow)
+            models.blahaj.Skull:setVisible(false)
+            models["💀"].Skull:setPos(vec(0, -12, 0))
+            models["💀"].Skull.TheHead.Head:setVisible(false)
+            models["💀"].Skull["Ear 1"]:setVisible(false)
+            models["💀"].Skull["Ear 2"]:setVisible(false)
+            models["💀"].Skull.Table:setVisible(false)
+            models["💀"].Skull.TheHead.FloorPainting:setVisible(false)
+            models["💀"].Skull.text:setVisible(false)
+            models.plush.Skull:scale(0.8 * 0.6):setVisible(true)
+        end,
+    },
 }
 
 function events.skull_render(delta, block, item, entity, mode)
+    models.plush.Skull:scale(0.8 * 0.6):setVisible(false)
     models.wand.Skull:setVisible(false)
     if models["💀"].Skull.BlahajText then
         models["💀"].Skull.BlahajText:remove()
