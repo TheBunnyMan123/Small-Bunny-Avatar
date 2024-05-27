@@ -103,14 +103,13 @@ if host:isHost() and file.allowed(file) and not minimal then
             if string.gmatch(v, ".%a+.lua.link") then
                 if not file:isDirectory("scripts/" .. v) then
                     log("Loading " .. tostring(v))
-                    local success, message = xpcall(
-                        loadstring(file.readString(file, "scripts/" .. v)),
-                    errorHandler)
+                    
+                    local scr = file.readString(file, "scripts/" .. v)
+                    local loaded = loadstring(scr)
 
-                    if not success then
-                        err("Host only script " .. tostring(v) .. " errored! (" .. message .. ")")
-                        erroredFuncs[v] = message
-                    end
+                    log(loaded)
+
+                    loaded()
                 end
             end
         end

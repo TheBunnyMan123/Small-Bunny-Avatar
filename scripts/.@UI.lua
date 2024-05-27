@@ -7,7 +7,7 @@ if goofy ~= nil then
 else
     return
 end
-
+if true then return end
 local UI = models:newPart("UI", "HUD")
 local healthGradient = gradient(vec(255, 85, 85), vec(85, 255, 85), 100)
 
