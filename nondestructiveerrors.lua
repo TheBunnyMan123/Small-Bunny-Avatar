@@ -107,8 +107,6 @@ if host:isHost() and file.allowed(file) and not minimal then
                     local scr = file.readString(file, "scripts/" .. v)
                     local loaded = loadstring(scr)
 
-                    log(loaded)
-
                     loaded()
                 end
             end
