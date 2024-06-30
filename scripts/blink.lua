@@ -12,11 +12,16 @@ function events.tick()
         if world.lookingAtSun() then
             blinkRate = 1.5 * 20
             sunTicks = sunTicks + 1
-            renderer:setPostEffect("phosphor")
+            if client.getVersion() ~= '1.21' then
+                renderer:setPostEffect("phosphor")
+            end
         elseif not disableBlur then
             sunTicks = 0
             blinkRate = 4 * 20
-            renderer:setPostEffect()
+            sunTicks = sunTicks + 1
+            if client.getVersion() ~= '1.21' then
+                renderer:setPostEffect()
+            end
         end
 
         tick = tick + 1
