@@ -55,8 +55,8 @@ local tpLocations = {
 local crosshairModels = models:newPart("BunnyCrosshair", "GUI")
 if client.getVersion() ~= '1.21' then
     crosshairModels:addChild(models.crosshair)
-    models:removeChild(models.crosshair)
 end
+models:removeChild(models.crosshair)
 
 --hide vanilla models
 vanilla_model.PLAYER:setVisible(false)
